@@ -718,20 +718,18 @@
   // 4. DATASETS (LICHESS MULTI-MOVE PUZZLES + EVERYDAY CROSSWORDS + WORDS)
   // =========================================================================
   const LICHESS_BUILT_IN = [
-    { id: 'li_001', rating: 950, theme: 'Мат в 2 хода • Линейный удар', fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3', moves: ['g7g6', 'h5f3', 'f6g8', 'f3f7'] },
-    { id: 'li_002', rating: 1050, theme: 'Мат в 2 хода • Последняя горизонталь', fen: '3r2k1/5ppp/8/8/8/8/5PPP/3RR1K1 b - - 0 1', moves: ['d8d1', 'e1d1', 'g8f8', 'd1d8'] },
-    { id: 'li_003', rating: 1120, theme: 'Мат в 2 хода • Жертва ферзя', fen: 'r4rk1/5ppp/8/8/8/2Q5/5PPP/3R2K1 b - - 0 1', moves: ['f8d8', 'd1d8', 'a8d8', 'c3g7'] },
-    { id: 'li_004', rating: 1180, theme: 'Двойной удар • Вилка конём', fen: 'r1bq1rk1/ppp2ppp/2np4/4p3/2B1P1n1/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 7', moves: ['h2h3', 'g4f2', 'f1f2', 'c4f2'] },
-    { id: 'li_005', rating: 1240, theme: 'Мат в 2 хода • Батарея ферзя и слона', fen: 'r2q1rk1/ppp2ppp/2n5/3np1B1/2B5/2NP4/PPP2PPP/R2Q1RK1 b - - 0 10', moves: ['d5c3', 'g5d8', 'c3d1', 'a1d1'] },
-    { id: 'li_006', rating: 1300, theme: 'Мат в 2 хода • Вскрытый шах', fen: 'r1b2rk1/pppp1ppp/8/4N3/2B1n3/8/PPPP1PPP/R1BQ1RK1 b - - 0 8', moves: ['e4f2', 'c4f7', 'g8h8', 'e5g6'] },
-    { id: 'li_007', rating: 1360, theme: 'Мат в 3 хода • Атака на короля', fen: '2r3k1/5ppp/8/8/8/1Q6/5PPP/4R1K1 b - - 0 1', moves: ['c8c1', 'e1c1', 'g8f8', 'c1c8', 'f8e7', 'b3b7'] },
-    { id: 'li_008', rating: 1420, theme: 'Связка и выигрыш ферзя', fen: 'r1bqk2r/pppp1ppp/2n5/4p3/1bB1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 3 4', moves: ['d7d6', 'c2c3', 'b4a5', 'd1b3'] },
-    { id: 'li_009', rating: 1490, theme: 'Мат в 2 хода • Двойной шах', fen: 'r1b1k2r/ppppqppp/2n5/4N3/2B5/8/PPPP1PPP/R1BQK2R b KQkq - 0 7', moves: ['c6e5', 'd1e2', 'e5c4', 'e2e7'] },
-    { id: 'li_010', rating: 1550, theme: 'Спёртый мат • Классика Lichess', fen: 'r1b2rk1/pppp1Npp/8/8/2B1n3/8/PPPP1PPP/R1BQ1RK1 b - - 0 9', moves: ['f8f7', 'c4f7', 'g8h8', 'd1h5'] },
-    { id: 'li_011', rating: 1620, theme: 'Мат в 3 хода • Жертва ладьи', fen: '5rk1/5ppp/8/8/8/2B5/5PPP/3R2K1 b - - 0 1', moves: ['f8c8', 'd1d8', 'c8d8', 'c3g7'] },
-    { id: 'li_012', rating: 1710, theme: 'Эндшпиль • Проходная пешка', fen: '8/8/4k3/8/4P3/4K3/8/8 b - - 0 1', moves: ['e6e5', 'e3f3', 'e5d4', 'f3f4'] },
-    { id: 'li_013', rating: 1780, theme: 'Тактика Lichess • Линейный удар', fen: '3r2k1/5ppp/8/3Q4/8/8/5PPP/6K1 b - - 0 1', moves: ['d8d5', 'g1f1', 'd5d1', 'f1e2'] },
-    { id: 'li_014', rating: 1850, theme: 'Мат в 3 хода • Взаимодействие фигур', fen: 'r4rk1/1pp2ppp/p1np4/4p3/2B1P1b1/2NP1N2/PPP2PPP/R2Q1RK1 b - - 0 10', moves: ['g4f3', 'd1f3', 'c6d4', 'f3g3'] }
+    { id: 'li_101', rating: 1480, theme: 'Жертва качества и мат в 3 хода', fen: 'r2q1rk1/ppp2ppp/2n5/3np1B1/2B5/2NP4/PPP2PPP/R2Q1RK1 b - - 0 10', moves: ['d5c3', 'g5d8', 'c3d1', 'a1d1'] },
+    { id: 'li_102', rating: 1560, theme: 'Спёртый мат • Классика Lichess', fen: 'r1b2rk1/pppp1Npp/8/8/2B1n3/8/PPPP1PPP/R1BQ1RK1 b - - 0 9', moves: ['f8f7', 'c4f7', 'g8h8', 'd1h5'] },
+    { id: 'li_103', rating: 1640, theme: 'Отвлечение защитника • Мат в 3 хода', fen: '2r3k1/5ppp/8/8/8/1Q6/5PPP/4R1K1 b - - 0 1', moves: ['c8c1', 'e1c1', 'g8f8', 'c1c8', 'f8e7', 'b3b7'] },
+    { id: 'li_104', rating: 1710, theme: 'Связка и выигрыш фигуры', fen: 'r1bqk2r/pppp1ppp/2n5/4p3/1bB1P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 3 4', moves: ['d7d6', 'c2c3', 'b4a5', 'd1b3'] },
+    { id: 'li_105', rating: 1790, theme: 'Двойной удар и вскрытое нападение', fen: 'r1b1k2r/ppppqppp/2n5/4N3/2B5/8/PPPP1PPP/R1BQK2R b KQkq - 0 7', moves: ['c6e5', 'd1e2', 'e5c4', 'e2e7'] },
+    { id: 'li_106', rating: 1850, theme: 'Разрушение прикрытия короля', fen: 'r4rk1/1pp2ppp/p1np4/4p3/2B1P1b1/2NP1N2/PPP2PPP/R2Q1RK1 b - - 0 10', moves: ['g4f3', 'd1f3', 'c6d4', 'f3g3'] },
+    { id: 'li_107', rating: 1920, theme: 'Жертва ладьи на 8-й горизонтали', fen: '5rk1/5ppp/8/8/8/2B5/5PPP/3R2K1 b - - 0 1', moves: ['f8c8', 'd1d8', 'c8d8', 'c3g7'] },
+    { id: 'li_108', rating: 1980, theme: 'Тонкий эндшпиль • Цугцванг', fen: '8/8/4k3/8/4P3/4K3/8/8 b - - 0 1', moves: ['e6e5', 'e3f3', 'e5d4', 'f3f4'] },
+    { id: 'li_109', rating: 2050, theme: 'Тактика мастеров • Линейный удар', fen: '3r2k1/5ppp/8/3Q4/8/8/5PPP/6K1 b - - 0 1', moves: ['d8d5', 'g1f1', 'd5d1', 'f1e2'] },
+    { id: 'li_110', rating: 2140, theme: 'Комбинация с промежуточным шахом', fen: 'r2q1rk1/pp2ppbp/2np1np1/8/3NP3/2N1BP2/PPPQ2PP/2KR1B1R b - - 3 9', moves: ['c6d4', 'e3d4', 'd8a5', 'c1b1'] },
+    { id: 'li_111', rating: 2220, theme: 'Жертва ферзя и матовая сеть', fen: 'r1b2rk1/pp1p1ppp/2n1p3/q7/2BP4/P1P2N2/5PPP/R2Q1RK1 b - - 0 11', moves: ['a5c3', 'a1c1', 'c3a3', 'd4d5'] },
+    { id: 'li_112', rating: 2310, theme: 'Гроссмейстерский расчёт • Атака на ферзевом', fen: '2rq1rk1/pp1bppbp/2np1np1/8/2PNP3/2N1BP2/PP1Q2PP/R3KB1R b KQ - 4 9', moves: ['c6d4', 'e3d4', 'd8a5', 'f1e2'] }
   ];
 
   let LICHESS_POOL = [...LICHESS_BUILT_IN];
@@ -1328,13 +1326,126 @@
   }
 
   // =========================================================================
-  // GAME 0A: ЗАДАЧИ LICHESS + ЗАДАЧА ДНЯ LICHESS
+  // GAME 0A: ЗАДАЧИ LICHESS + ЗАДАЧА ДНЯ LICHESS (1-в-1 UX LICHESS + ТОЧНЫЙ ELO)
   // =========================================================================
   function initLichessPuzzlesGame(stage, saved, extraOpts = {}) {
     let isDaily = !!extraOpts.dailyMode;
-    let tier = saved?.tier || 'all';
-    let puzzle = null, board = null, playerColor = 'w', moveStep = 1;
-    let selected = null, lastMove = null, finished = false, hintSquare = null;
+    let tier = saved?.tier || 'mid';
+    let puzzle = null, board = null, castling = { wK:true, wQ:true, bK:true, bQ:true }, epSquare = null;
+    let playerColor = 'w', moveStep = 1;
+    let selected = null, legalForSel = [], lastMove = null;
+    let finished = false, hintSquare = null, usedHint = false, hadError = false, lastEloDelta = 0;
+    let animTimer = null;
+
+    if (!Array.isArray(state.solvedLichessIds)) state.solvedLichessIds = [];
+
+    // Генератор легальных ходов для подсветки точек и колец взятия при клике на фигуру
+    function getLegalTargetsForSquare(b, r, c, col, cas, ep) {
+      const p = b[r][c];
+      if (!p || pieceColorOf(p) !== col) return [];
+      const opp = col === 'w' ? 'b' : 'w';
+      const type = p.toLowerCase();
+      const inB = (rr, cc) => rr >= 0 && rr < 8 && cc >= 0 && cc < 8;
+      const pseudo = [];
+
+      if (type === 'p') {
+        const dir = col === 'w' ? -1 : 1, startR = col === 'w' ? 6 : 1;
+        if (inB(r + dir, c) && !b[r + dir][c]) {
+          pseudo.push([r, c, r + dir, c]);
+          if (r === startR && !b[r + 2 * dir][c]) pseudo.push([r, c, r + 2 * dir, c, 'dp']);
+        }
+        for (const dc of [-1, 1]) {
+          if (inB(r + dir, c + dc)) {
+            if (b[r + dir][c + dc] && pieceColorOf(b[r + dir][c + dc]) === opp) pseudo.push([r, c, r + dir, c + dc]);
+            else if (ep && ep[0] === r + dir && ep[1] === c + dc) pseudo.push([r, c, r + dir, c + dc, 'ep']);
+          }
+        }
+      } else if (type === 'n') {
+        for (const [dr, dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) {
+          const nr = r + dr, nc = c + dc;
+          if (inB(nr, nc) && pieceColorOf(b[nr][nc]) !== col) pseudo.push([r, c, nr, nc]);
+        }
+      } else if (type === 'k') {
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+          if (!dr && !dc) continue;
+          const nr = r + dr, nc = c + dc;
+          if (inB(nr, nc) && pieceColorOf(b[nr][nc]) !== col) pseudo.push([r, c, nr, nc]);
+        }
+        if (cas) {
+          if (col === 'w' && r === 7 && c === 4) {
+            if (cas.wK && !b[7][5] && !b[7][6] && b[7][7] === 'R') pseudo.push([7,4,7,6,'casK']);
+            if (cas.wQ && !b[7][3] && !b[7][2] && !b[7][1] && b[7][0] === 'R') pseudo.push([7,4,7,2,'casQ']);
+          }
+          if (col === 'b' && r === 0 && c === 4) {
+            if (cas.bK && !b[0][5] && !b[0][6] && b[0][7] === 'r') pseudo.push([0,4,0,6,'casK']);
+            if (cas.bQ && !b[0][3] && !b[0][2] && !b[0][1] && b[0][0] === 'r') pseudo.push([0,4,0,2,'casQ']);
+          }
+        }
+      } else {
+        const dirs = type === 'r' ? [[1,0],[-1,0],[0,1],[0,-1]] : type === 'b' ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+        for (const [dr, dc] of dirs) {
+          let nr = r + dr, nc = c + dc;
+          while (inB(nr, nc)) {
+            if (!b[nr][nc]) pseudo.push([r, c, nr, nc]);
+            else { if (pieceColorOf(b[nr][nc]) === opp) pseudo.push([r, c, nr, nc]); break; }
+            nr += dr; nc += dc;
+          }
+        }
+      }
+
+      const isKingAttacked = (testB, kingCol) => {
+        let kr = -1, kc = -1;
+        const kingChar = kingCol === 'w' ? 'K' : 'k';
+        for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) if (testB[rr][cc] === kingChar) { kr = rr; kc = cc; }
+        if (kr === -1) return true;
+        const enemy = kingCol === 'w' ? 'b' : 'w';
+        for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
+          const epc = testB[rr][cc];
+          if (!epc || pieceColorOf(epc) !== enemy) continue;
+          const et = epc.toLowerCase();
+          if (et === 'p') {
+            const pdir = enemy === 'w' ? -1 : 1;
+            if (rr + pdir === kr && (cc - 1 === kc || cc + 1 === kc)) return true;
+          } else if (et === 'n') {
+            if (Math.abs(rr - kr) * Math.abs(cc - kc) === 2) return true;
+          } else if (et === 'k') {
+            if (Math.abs(rr - kr) <= 1 && Math.abs(cc - kc) <= 1) return true;
+          } else {
+            const sdirs = et === 'r' ? [[1,0],[-1,0],[0,1],[0,-1]] : et === 'b' ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+            for (const [dr, dc] of sdirs) {
+              let nr = rr + dr, nc = cc + dc;
+              while (inB(nr, nc)) {
+                if (nr === kr && nc === kc) return true;
+                if (testB[nr][nc]) break;
+                nr += dr; nc += dc;
+              }
+            }
+          }
+        }
+        return false;
+      };
+
+      return pseudo.filter(m => {
+        const nb = b.map(row => row.slice());
+        const [fr, fc, tr, tc, flag] = m;
+        nb[tr][tc] = nb[fr][fc];
+        nb[fr][fc] = null;
+        if (flag === 'ep') nb[fr][tc] = null;
+        if (flag === 'casK') {
+          if (isKingAttacked(b, col)) return false;
+          const mid = b.map(row => row.slice()); mid[fr][5] = mid[fr][4]; mid[fr][4] = null;
+          if (isKingAttacked(mid, col)) return false;
+          nb[fr][5] = nb[fr][7]; nb[fr][7] = null;
+        }
+        if (flag === 'casQ') {
+          if (isKingAttacked(b, col)) return false;
+          const mid = b.map(row => row.slice()); mid[fr][3] = mid[fr][4]; mid[fr][4] = null;
+          if (isKingAttacked(mid, col)) return false;
+          nb[fr][3] = nb[fr][0]; nb[fr][0] = null;
+        }
+        return !isKingAttacked(nb, col);
+      });
+    }
 
     function getDailyPuzzleObj() {
       const today = getTodayKey();
@@ -1347,18 +1458,31 @@
     function pickLichessPuzzle(t) {
       if (isDaily) return getDailyPuzzleObj();
       let filtered = LICHESS_POOL;
-      if (t === 'easy') filtered = LICHESS_POOL.filter(p => p.rating < 1250);
-      else if (t === 'mid') filtered = LICHESS_POOL.filter(p => p.rating >= 1250 && p.rating < 1650);
-      else if (t === 'hard') filtered = LICHESS_POOL.filter(p => p.rating >= 1650);
+      if (t === 'easy') filtered = LICHESS_POOL.filter(p => p.rating < 1450);
+      else if (t === 'mid') filtered = LICHESS_POOL.filter(p => p.rating >= 1450 && p.rating < 1900);
+      else if (t === 'hard') filtered = LICHESS_POOL.filter(p => p.rating >= 1900);
       if (!filtered.length) filtered = LICHESS_POOL;
-      return filtered[Math.floor(Math.random() * filtered.length)];
+
+      const solvedSet = new Set(state.solvedLichessIds || []);
+      let unsolved = filtered.filter(p => !solvedSet.has(p.id));
+      if (!unsolved.length) {
+        // Если игрок прорешал вообще все задачи в этой категории, сбрасываем историю только для этой категории
+        const filteredIds = new Set(filtered.map(p => p.id));
+        state.solvedLichessIds = (state.solvedLichessIds || []).filter(id => !filteredIds.has(id));
+        saveState();
+        unsolved = filtered;
+      }
+      return unsolved[Math.floor(Math.random() * unsolved.length)];
     }
 
-    function execUCI(b, uciStr) {
+    function execUCI(b, cas, uciStr) {
       const { fr, fc, tr, tc, promo } = parseUCI(uciStr);
       const nb = b.map(r => r.slice());
+      const ncas = { ...cas };
+      let nep = null;
       let p = nb[fr][fc];
-      if (!p) return nb;
+      if (!p) return { nb, ncas, nep };
+      if (p.toLowerCase() === 'p' && Math.abs(tr - fr) === 2) nep = [(fr + tr) / 2, fc];
       if (p.toLowerCase() === 'k' && Math.abs(tc - fc) === 2) {
         if (tc === 6) { nb[fr][5] = nb[fr][7]; nb[fr][7] = null; }
         if (tc === 2) { nb[fr][3] = nb[fr][0]; nb[fr][0] = null; }
@@ -1366,87 +1490,112 @@
       if (p.toLowerCase() === 'p' && fc !== tc && !nb[tr][tc]) {
         nb[fr][tc] = null;
       }
+      if (p === 'K') { ncas.wK = false; ncas.wQ = false; }
+      if (p === 'k') { ncas.bK = false; ncas.bQ = false; }
+      if (fr === 7 && fc === 0) ncas.wQ = false;
+      if (fr === 7 && fc === 7) ncas.wK = false;
+      if (fr === 0 && fc === 0) ncas.bQ = false;
+      if (fr === 0 && fc === 7) ncas.bK = false;
+
       if (promo) p = isWhitePiece(p) ? promo.toUpperCase() : promo.toLowerCase();
       else if (p === 'P' && tr === 0) p = 'Q';
       else if (p === 'p' && tr === 7) p = 'q';
       nb[tr][tc] = p;
       nb[fr][fc] = null;
-      return nb;
+      return { nb, ncas, nep };
+    }
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function persistPuzzle() {
       if (finished || !puzzle || isDaily) return;
       saveGameSession('lichess', {
-        tier, puzzle, board, playerColor, moveStep, lastMove, lives: gameLives
+        tier, puzzle, board, castling, epSquare, playerColor, moveStep, lastMove, usedHint, hadError
       });
     }
-    onSyncLivesCallback = persistPuzzle;
+
+    // Скрываем верхний индикатор жизней в режиме задач Lichess (тут своя система ELO как на Lichess)
+    const livesBadge = document.getElementById('lives-indicator');
+    if (livesBadge) livesBadge.classList.add('hidden');
 
     function loadNewPuzzle(newTier = tier, customSaved = null) {
+      clearTimeout(animTimer);
       tier = newTier;
       finished = false;
       selected = null;
+      legalForSel = [];
       hintSquare = null;
+      lastEloDelta = 0;
 
       if (!isDaily && customSaved && customSaved.puzzle && customSaved.board) {
         puzzle = customSaved.puzzle;
         board = customSaved.board.map(r => r.slice());
+        castling = customSaved.castling || { wK:true, wQ:true, bK:true, bQ:true };
+        epSquare = customSaved.epSquare || null;
         playerColor = customSaved.playerColor;
         moveStep = customSaved.moveStep;
         lastMove = customSaved.lastMove;
+        usedHint = !!customSaved.usedHint;
+        hadError = !!customSaved.hadError;
       } else {
         puzzle = pickLichessPuzzle(tier);
         const parsed = parseFEN(puzzle.fen);
         board = parsed.board;
+        castling = parsed.castling;
+        epSquare = null;
         playerColor = parsed.turn === 'w' ? 'b' : 'w';
+        usedHint = false;
+        hadError = false;
+
         const first = parseUCI(puzzle.moves[0]);
-        board = execUCI(board, puzzle.moves[0]);
+        const res = execUCI(board, castling, puzzle.moves[0]);
+        board = res.nb;
+        castling = res.ncas;
+        epSquare = res.nep;
         lastMove = [first.fr, first.fc, first.tr, first.tc];
         moveStep = 1;
-        setLives(3);
         persistPuzzle();
       }
-      render();
+      render('prompt');
     }
 
     stage.innerHTML = `
       <div class="w-full max-w-xl flex flex-col items-center">
+        <!-- Top Lichess Bar: Difficulty + User ELO -->
         <div class="flex flex-wrap items-center justify-between gap-2 w-full mb-3">
           <div class="flex items-center gap-2">
-            <span id="lp-side-badge" class="px-3 py-1.5 rounded-xl font-black text-xs bg-amber-400/20 text-amber-300 border border-amber-400/35">Ход белых</span>
-            <span id="lp-rating-badge" class="px-2.5 py-1.5 rounded-xl surface-pill border text-xs font-bold">Рейтинг: 1200</span>
+            <div class="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 flex items-center gap-2">
+              <span class="text-[11px] font-bold text-slate-300 uppercase">Рейтинг:</span>
+              <span id="lp-user-elo" class="text-sm sm:text-base font-black text-white">${state.puzzleElo || 1000}</span>
+              <span id="lp-elo-delta" class="hidden text-xs font-black px-1.5 py-0.5 rounded"></span>
+            </div>
+            <span id="lp-puz-rating" class="px-2.5 py-1.5 rounded-xl surface-pill border text-xs font-bold text-slate-300">Задача: ???</span>
           </div>
+
           ${isDaily
             ? '<span class="px-3 py-1.5 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-300 font-black text-xs">⭐ Задача дня</span>'
             : `<select id="lp-tier" class="px-2.5 py-1.5 rounded-xl bg-slate-800 border border-white/15 text-xs font-bold text-white focus:outline-none">
-                <option value="all">Сложность: Все задачи</option>
-                <option value="easy">Новичок (&lt; 1250)</option>
-                <option value="mid">Разрядник (1250–1650)</option>
-                <option value="hard">Мастер (1650+)</option>
+                <option value="all">Сложность: Все (900–2500)</option>
+                <option value="easy">Разрядник (&lt; 1450)</option>
+                <option value="mid">КМС / Средний (1450–1900)</option>
+                <option value="hard">Мастер (1900+)</option>
               </select>`
           }
         </div>
 
-        <div class="w-full max-w-[448px] flex items-center justify-between px-3.5 py-2.5 rounded-t-2xl bg-[#262421] border border-white/10">
-          <div>
-            <div id="lp-theme" class="text-xs font-black text-amber-300">Тактика Lichess</div>
-            <div id="lp-progress" class="text-[11px] text-slate-300">Найдите лучший ход</div>
-          </div>
-          <div class="text-right">
-            <div class="text-[10px] uppercase font-bold text-slate-400">Ваш Puzzle ELO</div>
-            <div id="lp-user-elo" class="text-sm font-black text-emerald-400">${state.puzzleElo || 1000}</div>
-          </div>
+        <!-- Board Header -->
+        <div class="w-full max-w-[448px] flex items-center justify-between px-3.5 py-2 rounded-t-2xl bg-[#262421] border border-white/10">
+          <div id="lp-theme" class="text-xs font-black text-amber-300 truncate pr-2">Тактика Lichess</div>
+          <div id="lp-step-pill" class="shrink-0 text-[11px] font-bold text-slate-300 bg-white/10 px-2 py-0.5 rounded-md">Ход 1/1</div>
         </div>
 
+        <!-- Chess Board (Lichess classic colors + legal move circles + raised selected piece) -->
         <div id="lp-board" class="grid grid-cols-8 grid-rows-8 border-x-2 border-slate-700 shadow-2xl no-select relative" style="width: min(100%, 448px); aspect-ratio: 1 / 1;"></div>
 
-        <div class="w-full max-w-[448px] flex items-center justify-between px-3.5 py-2.5 rounded-b-2xl bg-[#262421] border border-white/10">
-          <div id="lp-status" class="text-xs font-bold text-slate-200">Ваш ход!</div>
-          <div class="flex items-center gap-2">
-            <button id="lp-hint-btn" class="px-3 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-300 font-black text-xs transition">💡 Подсказка</button>
-            <button id="lp-skip-btn" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition">${isDaily ? 'К потоку задач →' : 'Следующая →'}</button>
-          </div>
-        </div>
+        <!-- Lichess-Style Interactive Action Panel (Prompt / Wrong / Hint / Solved) -->
+        <div id="lp-panel" class="w-full max-w-[448px] rounded-b-2xl bg-[#262421] border border-white/10 p-3.5 sm:p-4 transition-all"></div>
       </div>
     `;
 
@@ -1459,13 +1608,24 @@
       sqEls[vr] = [];
       for (let vc = 0; vc < 8; vc++) {
         const btn = document.createElement('button');
-        btn.className = 'relative w-full h-full aspect-square focus:outline-none';
+        btn.className = 'relative w-full h-full aspect-square focus:outline-none overflow-visible';
+
+        const rankSpan = document.createElement('span');
+        rankSpan.className = 'rank-lbl absolute top-0.5 left-1 text-[9px] font-bold pointer-events-none';
+        btn.appendChild(rankSpan);
+
+        const fileSpan = document.createElement('span');
+        fileSpan.className = 'file-lbl absolute bottom-0.5 right-1 text-[9px] font-bold pointer-events-none';
+        btn.appendChild(fileSpan);
+
         const pieceWrap = document.createElement('div');
-        pieceWrap.className = 'absolute inset-0 flex items-center justify-center transition-transform duration-150 pointer-events-none';
+        pieceWrap.className = 'absolute inset-0 flex items-center justify-center transition-all duration-150 ease-out pointer-events-none';
         btn.appendChild(pieceWrap);
+
         const dot = document.createElement('span');
         dot.className = 'hidden pointer-events-none';
         btn.appendChild(dot);
+
         btn.addEventListener('pointerdown', (e) => {
           e.preventDefault();
           const r = playerColor === 'w' ? vr : 7 - vr;
@@ -1473,8 +1633,109 @@
           onCellTap(r, c);
         });
         bEl.appendChild(btn);
-        sqEls[vr][vc] = { btn, pieceWrap, dot, lastPiece: undefined };
+        sqEls[vr][vc] = { btn, pieceWrap, dot, rankSpan, fileSpan, lastPiece: undefined };
       }
+    }
+
+    function updateEloBadge(delta = 0) {
+      const eloEl = document.getElementById('lp-user-elo');
+      const deltaEl = document.getElementById('lp-elo-delta');
+      if (eloEl) eloEl.textContent = state.puzzleElo || 1000;
+      if (!deltaEl) return;
+      if (delta > 0) {
+        deltaEl.textContent = `+${delta}`;
+        deltaEl.className = 'text-xs font-black px-1.5 py-0.5 rounded bg-emerald-500/25 text-emerald-300';
+        deltaEl.classList.remove('hidden');
+      } else if (delta < 0) {
+        deltaEl.textContent = `${delta}`;
+        deltaEl.className = 'text-xs font-black px-1.5 py-0.5 rounded bg-rose-500/25 text-rose-300';
+        deltaEl.classList.remove('hidden');
+      } else {
+        deltaEl.classList.add('hidden');
+      }
+    }
+
+    function renderPanel(panelMode) {
+      const panel = document.getElementById('lp-panel');
+      if (!panel) return;
+      const sideIcon = playerColor === 'w' ? '♔' : '♚';
+      const sideText = playerColor === 'w' ? 'Найдите лучший ход за белых.' : 'Найдите лучший ход за чёрных.';
+
+      if (panelMode === 'solved') {
+        const deltaStr = lastEloDelta > 0
+          ? `<span class="text-emerald-300 font-black">+${lastEloDelta} ELO</span>`
+          : (lastEloDelta < 0
+            ? `<span class="text-rose-300 font-black">${lastEloDelta} ELO</span>`
+            : `<span class="text-slate-300 font-black">0 ELO (с подсказкой)</span>`);
+        panel.innerHTML = `
+          <div class="flex flex-col items-center text-center">
+            <div class="inline-flex items-center gap-2 text-emerald-400 font-black text-base sm:text-lg mb-1">
+              <span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-sm">✓</span>
+              <span>Задача решена!</span>
+            </div>
+            <div class="text-xs text-slate-300 mb-3">Рейтинг: ${deltaStr} • Решено всего: ${state.puzzlesSolved || 0}</div>
+            <button id="lp-next-btn" class="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-sm tracking-wide uppercase shadow-lg transition flex items-center justify-center gap-2">
+              <span>▶</span>
+              <span>Продолжить тренировку</span>
+            </button>
+          </div>
+        `;
+        document.getElementById('lp-next-btn').addEventListener('click', () => {
+          sfx.tap();
+          isDaily = false;
+          loadNewPuzzle(tier, null);
+        });
+        return;
+      }
+
+      if (panelMode === 'wrong') {
+        panel.innerHTML = `
+          <div class="flex flex-col items-center text-center">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-3xl font-black text-rose-500">✕</span>
+              <div class="text-left">
+                <div class="font-black text-sm sm:text-base text-white">Плохой ход!</div>
+                <div class="text-xs text-slate-300">Попробуйте иначе.</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 w-full">
+              <button id="lp-hint-btn" class="flex-1 min-w-[140px] py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs uppercase tracking-wider shadow transition">
+                Взять подсказку
+              </button>
+              <button id="lp-solution-btn" class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-sky-300 font-bold text-xs uppercase tracking-wider transition">
+                Посмотреть решение
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        panel.innerHTML = `
+          <div class="flex flex-col items-center text-center">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-3xl text-white">${sideIcon}</span>
+              <div class="text-left">
+                <div class="font-black text-sm sm:text-base text-white">Ваш ход</div>
+                <div class="text-xs text-slate-300">${sideText}</div>
+              </div>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 w-full">
+              <button id="lp-hint-btn" class="py-2 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-sky-400 font-black text-xs uppercase tracking-wider transition">
+                Взять подсказку
+              </button>
+              <button id="lp-skip-btn" class="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/15 text-slate-400 font-bold text-xs uppercase tracking-wider transition">
+                Пропустить
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      const hintBtn = document.getElementById('lp-hint-btn');
+      if (hintBtn) hintBtn.addEventListener('click', revealPuzzleHint);
+      const solBtn = document.getElementById('lp-solution-btn');
+      if (solBtn) solBtn.addEventListener('click', showFullSolution);
+      const skipBtn = document.getElementById('lp-skip-btn');
+      if (skipBtn) skipBtn.addEventListener('click', () => { sfx.tap(); isDaily = false; loadNewPuzzle(tier, null); });
     }
 
     function onCellTap(r, c) {
@@ -1482,109 +1743,143 @@
       const p = board[r][c];
       const isMine = playerColor === 'w' ? isWhitePiece(p) : isBlackPiece(p);
 
+      // Если уже выбрана фигура и игрок нажал на доступный кружок хода
       if (selected) {
         const [sr, sc] = selected;
-        if (sr === r && sc === c) { selected = null; render(); return; }
-        if (isMine) { selected = [r, c]; sfx.tap(); render(); return; }
+        if (sr === r && sc === c) {
+          selected = null;
+          legalForSel = [];
+          render();
+          return;
+        }
+        if (isMine) {
+          selected = [r, c];
+          legalForSel = getLegalTargetsForSquare(board, r, c, playerColor, castling, epSquare);
+          sfx.tap();
+          render();
+          return;
+        }
+
+        const isLegalTarget = legalForSel.some(m => m[2] === r && m[3] === c);
+        if (!isLegalTarget) {
+          selected = null;
+          legalForSel = [];
+          render();
+          return;
+        }
+
         const attemptedUci = toUCI(sr, sc, r, c);
         const expectedUci = (puzzle.moves[moveStep] || '').slice(0, 4);
 
         if (attemptedUci === expectedUci) {
-          board = execUCI(board, puzzle.moves[moveStep]);
+          const res = execUCI(board, castling, puzzle.moves[moveStep]);
+          board = res.nb;
+          castling = res.ncas;
+          epSquare = res.nep;
           lastMove = [sr, sc, r, c];
           selected = null;
+          legalForSel = [];
           hintSquare = null;
           moveStep += 1;
           sfx.good();
 
+          // Проверка окончания всей многоходовой комбинации
           if (moveStep >= puzzle.moves.length) {
             finished = true;
             if (!isDaily) clearGameSession('lichess');
-            const baseGain = Math.max(10, Math.round(18 + (puzzle.rating - (state.puzzleElo || 1000)) / 35));
-            const gain = isDaily ? baseGain + 15 : baseGain;
-            state.puzzleElo = (state.puzzleElo || 1000) + gain;
+
+            // Точный расчёт ELO по ТЗ:
+            // - без ошибки и без подсказки: +10 .. +20
+            // - с первой попытки после подсказки: 0
+            // - с ошибкой без подсказки: -7 .. -17
+            // - с ошибкой даже с подсказкой: -15 .. -25
+            let delta = 0;
+            if (!hadError && !usedHint) {
+              delta = randInt(10, 20);
+            } else if (!hadError && usedHint) {
+              delta = 0;
+            } else if (hadError && !usedHint) {
+              delta = -randInt(7, 17);
+            } else {
+              delta = -randInt(15, 25);
+            }
+
+            lastEloDelta = delta;
+            state.puzzleElo = Math.max(400, (state.puzzleElo || 1000) + delta);
             state.puzzlesSolved = (state.puzzlesSolved || 0) + 1;
 
-            let bonusNote = '';
+            if (!state.solvedLichessIds.includes(puzzle.id)) {
+              state.solvedLichessIds.push(puzzle.id);
+            }
+
             if (isDaily && !isDailyPuzzleSolvedToday()) {
               state.dailyPuzzleClaimedDay = getTodayKey();
               state.xp += 100;
               state.coins += 60;
-              bonusNote = ' (+100 XP, +60 🪙)';
             } else {
-              state.xp += 65;
-              state.coins += 30;
-              bonusNote = ' (+30 🪙)';
+              state.xp += delta > 0 ? 60 : 25;
+              state.coins += delta > 0 ? 30 : 10;
             }
             state.totalSolved += 1;
             saveState();
             updateHeader();
-            render();
-            document.getElementById('lp-status').innerHTML = `<span class="text-emerald-400 font-black">✅ Решено! +${gain} Puzzle ELO${bonusNote}</span>`;
+            updateEloBadge(delta);
+            render('solved');
             sfx.win();
-            try { if (typeof confetti === 'function') confetti({ particleCount: 65, spread: 65, origin: { y: 0.65 } }); } catch (_) {}
-
-            if (isDaily) {
-              isDaily = false;
-              setTimeout(() => {
-                if (state.activeGame === 'lichess' && finished) {
-                  showToast('Задача дня решена! Переходим к потоку задач Lichess');
-                  loadNewPuzzle(tier, null);
-                }
-              }, 1500);
-            } else {
-              setTimeout(() => {
-                if (state.activeGame === 'lichess' && finished) loadNewPuzzle(tier, null);
-              }, 1350);
-            }
+            try { if (typeof confetti === 'function') confetti({ particleCount: 55, spread: 60, origin: { y: 0.65 } }); } catch (_) {}
             return;
           }
 
-          render();
-          document.getElementById('lp-status').innerHTML = `<span class="text-emerald-300">Отличный ход! Соперник отвечает...</span>`;
+          render('prompt');
           persistPuzzle();
 
-          setTimeout(() => {
+          // Автоматический ответ соперника на следующий полуход
+          animTimer = setTimeout(() => {
             if (finished || !puzzle || moveStep >= puzzle.moves.length) return;
             const reply = parseUCI(puzzle.moves[moveStep]);
-            board = execUCI(board, puzzle.moves[moveStep]);
+            const repRes = execUCI(board, castling, puzzle.moves[moveStep]);
+            board = repRes.nb;
+            castling = repRes.ncas;
+            epSquare = repRes.nep;
             lastMove = [reply.fr, reply.fc, reply.tr, reply.tc];
             moveStep += 1;
             sfx.tap();
-            render();
+            render('prompt');
             persistPuzzle();
-          }, 360);
+          }, 340);
         } else {
+          // Неправильный ход — фиксируем ошибку и показываем панель «Плохой ход!»
+          hadError = true;
           selected = null;
-          render();
-          const dead = loseLife('Неточный ход в задаче Lichess! Поищите более сильное продолжение.');
-          if (dead) finished = true;
-          else document.getElementById('lp-status').innerHTML = `<span class="text-rose-400">❌ Не лучший ход — попробуйте снова!</span>`;
+          legalForSel = [];
+          sfx.bad();
+          persistPuzzle();
+          render('wrong');
         }
         return;
       }
 
       if (isMine) {
         selected = [r, c];
+        legalForSel = getLegalTargetsForSquare(board, r, c, playerColor, castling, epSquare);
         sfx.tap();
         render();
       }
     }
 
-    function render() {
+    function render(panelMode = null) {
       if (!puzzle || !board) return;
       const totalPlayerMoves = Math.ceil((puzzle.moves.length - 1) / 2);
       const donePlayerMoves = Math.floor((moveStep - 1) / 2);
-      document.getElementById('lp-side-badge').textContent = playerColor === 'w' ? '⬜ Ход белых' : '⬛ Ход чёрных';
-      document.getElementById('lp-rating-badge').textContent = `Задача: ${puzzle.rating} ELO`;
+
+      const puzRatEl = document.getElementById('lp-puz-rating');
+      if (puzRatEl) puzRatEl.textContent = finished ? `Рейтинг задачи: ${puzzle.rating}` : 'Рейтинг задачи: скрыт';
       document.getElementById('lp-theme').textContent = puzzle.theme;
-      document.getElementById('lp-progress').textContent = finished
-        ? 'Комбинация завершена!'
+      document.getElementById('lp-step-pill').textContent = finished
+        ? 'Готово ✓'
         : `Ход ${Math.min(donePlayerMoves + 1, totalPlayerMoves)} из ${totalPlayerMoves}`;
-      document.getElementById('lp-user-elo').textContent = state.puzzleElo || 1000;
-      if (!finished) {
-        document.getElementById('lp-status').textContent = playerColor === 'w' ? 'Найдите лучший ход за белых' : 'Найдите лучший ход за чёрных';
-      }
+
+      const legalTargets = new Set(legalForSel.map(m => `${m[2]},${m[3]}`));
 
       for (let vr = 0; vr < 8; vr++) for (let vc = 0; vc < 8; vc++) {
         const r = playerColor === 'w' ? vr : 7 - vr;
@@ -1595,30 +1890,92 @@
         const isSel = selected && selected[0] === r && selected[1] === c;
         const isLast = lastMove && ((lastMove[0] === r && lastMove[1] === c) || (lastMove[2] === r && lastMove[3] === c));
         const isHint = hintSquare && hintSquare[0] === r && hintSquare[1] === c;
+        const isLegal = legalTargets.has(`${r},${c}`);
 
-        let bg = darkSq ? '#818181' : '#b8b8b8';
-        if (isLast) bg = darkSq ? '#8ca33b' : '#a7be4d';
-        if (isSel) bg = '#c7d44e';
-        if (isHint) bg = '#38bdf8';
+        // Классическая палитра Lichess (коричневая доска + оливковая подсветка хода)
+        let bg = darkSq ? '#b58863' : '#f0d9b5';
+        if (isLast) bg = darkSq ? '#aaa23a' : '#cdd26a';
+        if (isSel) bg = darkSq ? '#646f40' : '#829769';
         cell.btn.style.background = bg;
+
+        // Координаты по краям доски
+        cell.rankSpan.textContent = vc === 0 ? (8 - r) : '';
+        cell.rankSpan.className = `rank-lbl absolute top-0.5 left-1 text-[9px] font-bold pointer-events-none ${darkSq ? 'text-[#f0d9b5]' : 'text-[#b58863]'}`;
+        cell.fileSpan.textContent = vr === 7 ? String.fromCharCode(97 + c) : '';
+        cell.fileSpan.className = `file-lbl absolute bottom-0.5 right-1 text-[9px] font-bold pointer-events-none ${darkSq ? 'text-[#f0d9b5]' : 'text-[#b58863]'}`;
 
         if (cell.lastPiece !== p) {
           cell.pieceWrap.innerHTML = p ? getPieceSVG(p) : '';
           cell.lastPiece = p;
         }
-        cell.pieceWrap.style.transform = isSel ? 'scale(1.12)' : 'scale(1)';
+
+        // Выбранная фигура плавно приподнимается вверх с тенью, как в Chess.com / Lichess!
+        if (isSel) {
+          cell.pieceWrap.style.zIndex = '20';
+          cell.pieceWrap.style.transform = 'translateY(-10%) scale(1.16)';
+          cell.pieceWrap.style.filter = 'drop-shadow(0 8px 10px rgba(0,0,0,0.55))';
+        } else {
+          cell.pieceWrap.style.zIndex = '1';
+          cell.pieceWrap.style.transform = 'translateY(0) scale(1)';
+          cell.pieceWrap.style.filter = 'none';
+        }
+
+        // Зелёные кружки ходов, кольца взятия и зелёное кольцо подсказки (как на 3-м скрине)
+        if (isHint) {
+          cell.dot.className = 'absolute inset-[6%] rounded-full border-[4px] border-emerald-600/90 bg-emerald-500/20 pointer-events-none animate-pulse';
+        } else if (isLegal) {
+          cell.dot.className = p
+            ? 'absolute inset-[7%] rounded-full border-[4px] border-[#14551e]/75 pointer-events-none'
+            : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[30%] rounded-full bg-[#14551e]/65 pointer-events-none';
+        } else {
+          cell.dot.className = 'hidden';
+        }
       }
+
+      if (panelMode) renderPanel(panelMode);
     }
 
     const revealPuzzleHint = () => {
       if (finished || !puzzle || moveStep >= puzzle.moves.length) return;
+      usedHint = true;
       const next = parseUCI(puzzle.moves[moveStep]);
       hintSquare = [next.fr, next.fc];
       selected = [next.fr, next.fc];
+      legalForSel = getLegalTargetsForSquare(board, next.fr, next.fc, playerColor, castling, epSquare);
       sfx.good();
-      render();
-      showToast('Подсвечена фигура, которой нужно походить!');
+      persistPuzzle();
+      render('prompt');
+      showToast('Подсвечена нужная фигура (0 ELO при решении без новых ошибок)');
     };
+
+    function showFullSolution() {
+      if (finished || !puzzle) return;
+      finished = true;
+      hadError = true;
+      usedHint = true;
+      clearGameSession('lichess');
+
+      // Доигрываем оставшиеся ходы решения на доске
+      while (moveStep < puzzle.moves.length) {
+        const mv = parseUCI(puzzle.moves[moveStep]);
+        const res = execUCI(board, castling, puzzle.moves[moveStep]);
+        board = res.nb;
+        castling = res.ncas;
+        epSquare = res.nep;
+        lastMove = [mv.fr, mv.fc, mv.tr, mv.tc];
+        moveStep += 1;
+      }
+      const delta = -randInt(15, 25);
+      lastEloDelta = delta;
+      state.puzzleElo = Math.max(400, (state.puzzleElo || 1000) + delta);
+      saveState();
+      updateHeader();
+      updateEloBadge(delta);
+      selected = null;
+      legalForSel = [];
+      hintSquare = null;
+      render('solved');
+    }
 
     if (tierSel) {
       tierSel.addEventListener('change', (e) => {
@@ -1627,16 +1984,15 @@
         loadNewPuzzle(e.target.value, null);
       });
     }
-    document.getElementById('lp-hint-btn').addEventListener('click', revealPuzzleHint);
-    document.getElementById('lp-skip-btn').addEventListener('click', () => {
-      sfx.tap();
-      isDaily = false;
-      loadNewPuzzle(tier, null);
-    });
 
+    activeCleanup = () => {
+      clearTimeout(animTimer);
+      const lb = document.getElementById('lives-indicator');
+      if (lb) lb.classList.remove('hidden');
+    };
     activeHintFn = revealPuzzleHint;
     activeForceNewFn = () => { isDaily = false; loadNewPuzzle(tier, null); };
-    onContinueCallback = () => { finished = false; render(); persistPuzzle(); };
+    onContinueCallback = () => { finished = false; render('prompt'); persistPuzzle(); };
 
     loadNewPuzzle(tier, saved);
   }
@@ -2085,9 +2441,104 @@
       return false;
     }
 
+    // Дебютная книга чёрных: Сицилианская, Каро-Канн, Французская, Испанская, Ферзевый гамбит, Староиндийская, Пирц
+    const OPENING_BOOK_BLACK = {
+      // Ответы на 1. e4
+      'e2e4': [
+        { uci: 'c7c5', name: 'Сицилианская защита' },
+        { uci: 'e7e5', name: 'Открытый дебют' },
+        { uci: 'c7c6', name: 'Защита Каро-Канн' },
+        { uci: 'e7e6', name: 'Французская защита' },
+        { uci: 'd7d6', name: 'Защита Пирца-Уфимцева' },
+        { uci: 'g8f6', name: 'Защита Алехина' }
+      ],
+      // Сицилианская: 1. e4 c5 2. Nf3
+      'e2e4 c7c5 g1f3': [
+        { uci: 'd7d6', name: 'Сицилианская (вариант Найдорфа/Дракона)' },
+        { uci: 'b8c6', name: 'Сицилианская (Челябинский вариант)' },
+        { uci: 'e7e6', name: 'Сицилианская (вариант Паульсена)' }
+      ],
+      // Открытый дебют: 1. e4 e5 2. Nf3
+      'e2e4 e7e5 g1f3': [
+        { uci: 'b8c6', name: 'Испанская / Итальянская партия' },
+        { uci: 'g8f6', name: 'Русская партия' }
+      ],
+      // Испанская партия: 1. e4 e5 2. Nf3 Nc6 3. Bb5
+      'e2e4 e7e5 g1f3 b8c6 f1b5': [
+        { uci: 'a7a6', name: 'Испанская партия (защита Морфи)' },
+        { uci: 'g8f6', name: 'Испанская партия (Берлинская стена)' }
+      ],
+      // Итальянская партия: 1. e4 e5 2. Nf3 Nc6 3. Bc4
+      'e2e4 e7e5 g1f3 b8c6 f1c4': [
+        { uci: 'f8c5', name: 'Итальянская партия (Тишайшая игра)' },
+        { uci: 'g8f6', name: 'Защита двух коней' }
+      ],
+      // Каро-Канн: 1. e4 c6 2. d4
+      'e2e4 c7c6 d2d4': [
+        { uci: 'd7d5', name: 'Защита Каро-Канн (основной вариант)' }
+      ],
+      // Французская: 1. e4 e6 2. d4
+      'e2e4 e7e6 d2d4': [
+        { uci: 'd7d5', name: 'Французская защита' }
+      ],
+      // Ответы на 1. d4
+      'd2d4': [
+        { uci: 'd7d5', name: 'Ферзевый гамбит / Славянская' },
+        { uci: 'g8f6', name: 'Староиндийская / Защита Нимцовича' },
+        { uci: 'e7e6', name: 'Голландско-французская структура' },
+        { uci: 'f7f5', name: 'Голландская защита' }
+      ],
+      // Ферзевый гамбит: 1. d4 d5 2. c4
+      'd2d4 d7d5 c2c4': [
+        { uci: 'e7e6', name: 'Отказанный ферзевый гамбит' },
+        { uci: 'c7c6', name: 'Славянская защита' },
+        { uci: 'd5c4', name: 'Принятый ферзевый гамбит' }
+      ],
+      // Староиндийская / Грюнфельд: 1. d4 Nf6 2. c4
+      'd2d4 g8f6 c2c4': [
+        { uci: 'g7g6', name: 'Староиндийская защита' },
+        { uci: 'e7e6', name: 'Защита Нимцовича / Новоиндийская' }
+      ],
+      // Ответы на 1. c4 (Английское начало)
+      'c2c4': [
+        { uci: 'e7e5', name: 'Английское начало (обратная сицилианская)' },
+        { uci: 'g8f6', name: 'Английское начало (симметрия)' },
+        { uci: 'c7c5', name: 'Симметричный вариант' }
+      ],
+      // Ответы на 1. Nf3 (Дебют Рети)
+      'g1f3': [
+        { uci: 'd7d5', name: 'Дебют Рети' },
+        { uci: 'g8f6', name: 'Симметричный дебют Рети' },
+        { uci: 'c7c5', name: 'Сицилианская схема против Рети' }
+      ]
+    };
+
+    function getBookMove(moves) {
+      if (moveLog.length > 8) return null;
+      const lineKey = moveLog.map(e => toUCI(e.move[0], e.move[1], e.move[2], e.move[3])).join(' ');
+      const candidates = OPENING_BOOK_BLACK[lineKey];
+      if (!candidates || !candidates.length) return null;
+      const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+      for (const item of shuffled) {
+        const parsed = parseUCI(item.uci);
+        const found = moves.find(m => m[0] === parsed.fr && m[1] === parsed.fc && m[2] === parsed.tr && m[3] === parsed.tc);
+        if (found) {
+          const st = document.getElementById('ch-status');
+          if (st) st.textContent = `Дебют: ${item.name}`;
+          return found;
+        }
+      }
+      return null;
+    }
+
     function pickAiMove() {
       const moves = legalMoves(board, 'b', castling, epSquare);
       if (moves.length === 0) return null;
+
+      // Сначала проверяем дебютную книгу, чтобы бот каждый раз играл разные дебюты
+      const bookMove = getBookMove(moves);
+      if (bookMove) return bookMove;
+
       if (aiDepth === 1) {
         const scored = moves.map(m => {
           const { nb } = applyMove(board, m, castling, epSquare);
@@ -2096,6 +2547,19 @@
         const pool = scored.slice(0, Math.min(4, scored.length));
         return pool[Math.floor(Math.random() * pool.length)].m;
       }
+
+      // На первых 6 ходах (если вышли из книги) добавляем лёгкую вариативность среди топ-2 ходов
+      if (moveLog.length < 6 && moves.length > 1) {
+        const evaluated = moves.map(m => {
+          const { nb, ncas, nep } = applyMove(board, m, castling, epSquare);
+          return { m, s: minimax(nb, ncas, nep, aiDepth - 1, -Infinity, Infinity, false).score };
+        }).sort((a, b) => b.s - a.s);
+        if (evaluated.length >= 2 && Math.abs(evaluated[0].s - evaluated[1].s) <= 35) {
+          return evaluated[Math.random() < 0.55 ? 0 : 1].m;
+        }
+        return evaluated[0].m;
+      }
+
       return minimax(board, castling, epSquare, aiDepth, -Infinity, Infinity, true).move;
     }
 
@@ -3495,4 +3959,3 @@
 </script>
 </body>
 </html>
-Обработано и проанализировано в коде
