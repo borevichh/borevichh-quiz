@@ -1,4 +1,4 @@
-name: Auto-Update Quiz Dictionary
+name: Auto-Update Quiz & Lichess Puzzles
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  update-words:
+  update-all:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,13 +20,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Scrape & merge new words
-        run: python scripts/scrape_puzzles.py
+      - name: Update quiz words & fetch Lichess puzzles
+        run: |
+          python scripts/scrape_puzzles.py
+          python scripts/fetch_lichess_puzzles.py
 
-      - name: Commit updated extra_puzzles.json
+      - name: Commit updated datasets
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add extra_puzzles.json
-          git diff --staged --quiet || git commit -m "chore: auto-update quiz puzzles"
+          git add extra_puzzles.json lichess_puzzles.json
+          git diff --staged --quiet || git commit -m "chore: update words and lichess puzzles"
           git push
