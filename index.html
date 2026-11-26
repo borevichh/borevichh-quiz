@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>borevichh quiz — 7 Edition</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg-body: radial-gradient(circle at top right, #1b1636 0%, #090b14 55%, #05060b 100%);
+      --bg-header: rgba(11, 14, 26, 0.88);
+      --bg-card: rgba(18, 22, 38, 0.82);
+      --bg-hero: linear-gradient(135deg, #161a30 0%, #121629 55%, #1e1424 100%);
+      --border-card: rgba(255, 255, 255, 0.09);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #fbbf24;
+      --accent-glow: rgba(245, 158, 11, 0.24);
+    }
+    body.theme-light {
+      --bg-body: radial-gradient(circle at top right, #eef2ff 0%, #f8fafc 60%, #e2e8f0 100%);
+      --bg-header: rgba(255, 255, 255, 0.92);
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-hero: linear-gradient(135deg, #312e81 0%, #4338ca 55%, #6d28d9 100%);
+      --border-card: rgba(15, 23, 42, 0.1);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.18);
+    }
+    body.theme-cr7 {
+      --bg-body: radial-gradient(circle at top right, #5c0a14 0%, #190408 45%, #07050a 100%);
+      --bg-header: rgba(25, 5, 9, 0.9);
+      --bg-card: rgba(34, 10, 16, 0.86);
+      --bg-hero: linear-gradient(135deg, #7f1d1d 0%, #450a0a 50%, #1c1917 100%);
+      --border-card: rgba(251, 191, 36, 0.28);
+      --text-main: #fef3c7;
+      --text-muted: #e5c07b;
+      --accent: #fbbf24;
+      --accent-glow: rgba(251, 191, 36, 0.35);
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      margin: 0;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.25s ease;
+    }
+    .app-header {
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-card);
+    }
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-card);
+    }
+    .hero-banner {
+      background: var(--bg-hero);
+      border: 1px solid var(--border-card);
+    }
+    .game-card {
+      transition: transform 0.2s cubic-bezier(.22,1,.36,1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 18px 34px -12px var(--accent-glow);
+    }
+    body.theme-light .text-white-adaptive { color: #0f172a; }
+    body:not(.theme-light) .text-white-adaptive { color: #f8fafc; }
+    body.theme-light .text-muted-adaptive { color: #475569; }
+    body:not(.theme-light) .text-muted-adaptive { color: #94a3b8; }
+    body.theme-light .surface-pill { background: #f1f5f9; color: #1e293b; border-color: #cbd5e1; }
+    body:not(.theme-light) .surface-pill { background: rgba(255,255,255,0.08); color: #e2e8f0; border-color: rgba(255,255,255,0.12); }
+
+    .tile-pop { animation: popIn 0.14s ease-out; }
+    @keyframes popIn { 0% { transform: scale(0.85); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+    .shake { animation: shakeAnim 0.35s ease-in-out; }
+    @keyframes shakeAnim { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+    .no-select { user-select: none; -webkit-user-select: none; }
+    .chess-white-piece { color: #ffffff; -webkit-text-stroke: 1.4px #0f172a; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.65)); }
+    .chess-black-piece { color: #0b0f19; -webkit-text-stroke: 0.9px rgba(255,255,255,0.55); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.45)); }
+    @keyframes kingFall {
+      0% { transform: rotate(0deg) scale(1); }
+      40% { transform: rotate(25deg) scale(1.08); }
+      100% { transform: rotate(90deg) translateY(5px) scale(0.95); }
+    }
+    .king-fallen { animation: kingFall 0.65s cubic-bezier(.22,1,.36,1) forwards; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 999px; }
+  </style>
+</head>
+<body class="pb-14">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-30 app-header backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+      <button id="btn-home" class="flex items-center gap-3 text-left group focus:outline-none">
+        <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-600 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-amber-500/25 group-hover:scale-105 transition">
+          7
+          <span class="absolute -top-1 -right-1 text-[10px] bg-slate-950 text-amber-400 px-1 rounded-md font-black border border-amber-400/40">CR</span>
+        </div>
+        <div>
+          <div class="font-black text-base sm:text-xl leading-tight tracking-tight text-white-adaptive">borevichh <span class="text-amber-500">quiz</span></div>
+          <div id="header-subtitle" class="text-[11px] font-semibold text-muted-adaptive leading-tight">20+ Edition • #7 Legacy</div>
+        </div>
+      </button>
+
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Theme Switcher -->
+        <div class="flex items-center rounded-xl p-0.5 surface-pill border" title="Тема оформления">
+          <button data-theme="dark" class="theme-btn px-2 py-1 rounded-lg text-xs font-bold transition" title="Тёмная тема">🌙</button>
+          <button data-theme="light" class="theme-btn px-2 py-1 rounded-lg text-xs font-bold transition" title="Светлая тема">☀️</button>
+          <button data-theme="cr7" class="theme-btn px-2 py-1 rounded-lg text-xs font-black transition" title="Стиль Криштиану Роналду CR7">⚽7</button>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-orange-500/15 border border-orange-400/30 text-orange-400 font-bold text-xs sm:text-sm" title="Серия побед">
+          <span>🔥</span>
+          <span id="stat-streak">0</span>
+        </div>
+        <div class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-400 font-bold text-xs sm:text-sm" title="Монеты для подсказок">
+          <span>🪙</span>
+          <span id="stat-coins">140</span>
+        </div>
+        <button id="btn-profile" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs sm:text-sm hover:bg-indigo-500/30 transition" title="Профиль">
+          <span>🏆</span>
+          <span class="hidden sm:inline">Ур.</span> <span id="stat-level">1</span>
+        </button>
+        <button id="btn-sound" class="w-9 h-9 rounded-xl surface-pill border flex items-center justify-center transition" title="Звук">
+          🔊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto px-4 pt-6">
+
+    <!-- ==================== HUB VIEW ==================== -->
+    <section id="view-hub">
+      <div class="hero-banner relative rounded-3xl p-5 sm:p-8 mb-7 overflow-hidden text-white shadow-2xl">
+        <!-- Giant #7 / CR7 Watermark -->
+        <div class="absolute right-4 -bottom-10 text-[210px] sm:text-[260px] font-black leading-none text-amber-400/[0.08] select-none pointer-events-none">7</div>
+        <div id="cr7-crest" class="hidden absolute right-8 top-4 text-right select-none pointer-events-none opacity-25">
+          <div class="text-4xl font-black tracking-tighter text-amber-300">CR7</div>
+          <div class="text-[10px] font-black uppercase tracking-[0.25em] text-amber-200">SIUUU • GOAT</div>
+        </div>
+
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+              <span id="hub-date-label" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-amber-300 text-xs font-bold tracking-wide uppercase">Сегодня • 26 ноября</span>
+              <button id="btn-toggle-hard" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition bg-white/10 hover:bg-white/20 border border-white/15 text-slate-100">
+                ⚡ <span id="hard-mode-label">Сложность: 20+ Стандарт</span>
+              </button>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] font-black">⚽ CR7 #7</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
+              borevichh <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-orange-400">quiz</span>
+            </h1>
+            <p class="text-slate-200/85 text-sm sm:text-base max-w-xl">
+              13 интеллектуальных режимов для 20+: сотни слов, цитаты, бесконечные партии, Блиц 3:00 и <strong class="text-amber-300">Шахматы против ИИ</strong>.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-stretch gap-3">
+            <!-- Chess vs AI Quick Card -->
+            <button id="btn-start-chess" class="bg-white/10 hover:bg-white/20 border border-amber-400/40 text-white rounded-2xl p-4 min-w-[155px] text-left shadow-lg transition transform hover:-translate-y-0.5 flex flex-col justify-between">
+              <div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Новый режим</div>
+              <div class="text-lg font-black leading-tight my-0.5">♟️ Шахматы</div>
+              <div class="text-[11px] font-semibold text-slate-200">Против ИИ-бота →</div>
+            </button>
+
+            <!-- Blitz Mode Card -->
+            <button id="btn-start-blitz" class="bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-500 hover:brightness-105 text-slate-950 rounded-2xl p-4 min-w-[155px] text-left shadow-xl shadow-amber-500/20 transition transform hover:-translate-y-0.5 flex flex-col justify-between">
+              <div class="text-[11px] font-black uppercase tracking-wider opacity-80">Тайм-атака</div>
+              <div class="text-lg font-black leading-tight my-0.5">⚡ Блиц 3:00</div>
+              <div class="text-[11px] font-bold opacity-85">На скорость →</div>
+            </button>
+
+            <!-- Progress Card -->
+            <div class="bg-white/[0.08] backdrop-blur-md rounded-2xl p-4 min-w-[145px] border border-white/15">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Матч дня</div>
+              <div class="flex items-baseline gap-1.5">
+                <span id="hub-solved-count" class="text-3xl font-black text-white">0</span>
+                <span class="text-slate-300 font-bold">/ 13</span>
+              </div>
+              <div class="w-full h-2 bg-black/40 rounded-full mt-2 overflow-hidden">
+                <div id="hub-progress-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Tabs & Day Archive Selector -->
+        <div class="relative z-10 mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2 overflow-x-auto pb-1" id="day-selector"></div>
+          <button id="btn-endless-mode" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5">
+            <span>♾️</span>
+            <span id="endless-label">Бесконечный режим: ВКЛ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Games Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="games-grid"></div>
+    </section>
+
+    <!-- ==================== GAME VIEW ==================== -->
+    <section id="view-game" class="hidden">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 glass-card rounded-2xl p-3 sm:px-5 shadow-lg">
+        <button id="btn-back-hub" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl surface-pill border font-semibold text-sm transition">
+          ← Назад
+        </button>
+        <div class="text-center">
+          <div id="active-game-title" class="font-extrabold text-base sm:text-lg text-white-adaptive leading-tight">Игра</div>
+          <div id="active-game-sub" class="text-xs text-amber-400 font-medium">Режим</div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <!-- 3 Attempts / Lives Indicator -->
+          <div id="lives-indicator" class="px-2.5 py-1.5 rounded-xl bg-rose-500/15 border border-rose-400/30 text-xs sm:text-sm font-black flex items-center gap-1" title="Попытки в игре">
+            ❤️❤️❤️
+          </div>
+          <button id="btn-new-round" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/35 border border-indigo-400/30 text-indigo-400 font-bold text-xs sm:text-sm transition" title="Загрузить новое задание">
+            🎲 <span class="hidden sm:inline">Следующее</span>
+          </button>
+          <button id="btn-game-rules" class="w-9 h-9 rounded-xl surface-pill border flex items-center justify-center font-bold transition" title="Как играть">?</button>
+          <button id="btn-game-hint" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-400 font-bold text-xs sm:text-sm transition" title="Подсказка (20 монет)">
+            💡 <span class="hidden sm:inline">Подсказка</span> <span>20🪙</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Blitz Status Bar -->
+      <div id="blitz-bar" class="hidden mb-4 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 rounded-2xl px-5 py-3 flex items-center justify-between shadow-lg">
+        <div class="font-black text-sm sm:text-base">⚡ БЛИЦ-МАРАФОН • Решено: <span id="blitz-score">0</span></div>
+        <div class="font-black text-lg sm:text-xl tabular-nums bg-white/80 px-3 py-1 rounded-xl" id="blitz-timer">03:00</div>
+      </div>
+
+      <!-- Game Stage -->
+      <div id="game-stage" class="glass-card rounded-3xl p-4 sm:p-6 shadow-xl min-h-[440px] flex flex-col items-center justify-center"></div>
+    </section>
+
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-amber-400 text-slate-950 font-black text-sm shadow-2xl opacity-0 pointer-events-none transition-all duration-200"></div>
+
+  <!-- MODAL -->
+  <div id="modal-overlay" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div id="modal-box" class="bg-[#121626] border border-white/15 rounded-3xl max-w-md w-full p-6 shadow-2xl text-slate-100 transform transition-all">
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="modal-title" class="text-xl font-black text-white">Заголовок</h2>
+        <button id="modal-close" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 font-bold">✕</button>
+      </div>
+      <div id="modal-body" class="text-slate-300 text-sm leading-relaxed"></div>
+      <div id="modal-footer" class="mt-6 flex flex-wrap gap-2 justify-end"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // =========================================================================
+  // 1. AUDIO ENGINE
+  // =========================================================================
+  let audioCtx = null, soundEnabled = true;
+  function initAudio() {
+    if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function playTone(freq, dur = 0.08, type = 'sine', vol = 0.08) {
+    if (!soundEnabled) return;
+    try {
+      initAudio(); if (!audioCtx) return;
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + dur);
+    } catch (_) {}
+  }
+  // Telegram Mini App integration (safe no-op outside Telegram)
+  const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+  if (tg) {
+    try {
+      tg.ready();
+      tg.expand();
+      const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+      if (u && u.first_name) {
+        const sub = document.getElementById('header-subtitle');
+        if (sub) sub.textContent = `Игрок: ${u.first_name} • #7 Legacy`;
+      }
+    } catch (_) {}
+  }
+  function haptic(type = 'light') {
+    try {
+      if (!tg || !tg.HapticFeedback) return;
+      if (type === 'success' || type === 'error') tg.HapticFeedback.notificationOccurred(type);
+      else tg.HapticFeedback.impactOccurred(type);
+    } catch (_) {}
+  }
+
+  const sfx = {
+    tap: () => { haptic('light'); playTone(520, 0.05, 'sine', 0.05); },
+    good: () => { haptic('medium'); playTone(587, 0.09, 'triangle', 0.08); setTimeout(() => playTone(880, 0.12, 'triangle', 0.08), 70); },
+    bad: () => { haptic('error'); playTone(185, 0.16, 'sawtooth', 0.06); },
+    win: () => { haptic('success'); [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'triangle', 0.09), i * 90)); }
+  };
+
+  // =========================================================================
+  // 2. STATE, THEMES & META
+  // =========================================================================
+  const STORAGE_KEY = 'borevichh_quiz_v3';
+  const DAYS = [
+    { id: 'day0', label: 'Сегодня', dateStr: '26 ноября' },
+    { id: 'day1', label: 'Вчера', dateStr: '25 ноября' },
+    { id: 'day2', label: '24 ноя', dateStr: '24 ноября' },
+    { id: 'day3', label: '23 ноя', dateStr: '23 ноября' },
+    { id: 'day4', label: '22 ноя', dateStr: '22 ноября' }
+  ];
+
+  const GAMES_META = [
+    { id: 'chess', name: 'Шахматы vs ИИ', desc: 'Классические шахматы против умного ИИ-бота', icon: '♟️', color: 'from-amber-500 to-red-700', xp: 120, coins: 60,
+      rules: 'Играйте белыми против ИИ-бота. Доступны все правила: рокировка, превращение пешек, шах и мат. Выберите уровень сложности ИИ прямо над доской.' },
+    { id: 'password', name: 'Пароль', desc: 'Лексика 20+: угадайте слово из 5–6 букв', icon: '🔐', color: 'from-emerald-500 to-teal-600', xp: 55, coins: 25,
+      rules: 'Угадайте слово из 5–6 букв. Зелёная буква на месте, жёлтая есть в слове, серая отсутствует.' },
+    { id: 'hashtag', name: 'Хэштег', desc: 'Соберите 4 пересекающихся слова', icon: '#️⃣', color: 'from-violet-500 to-purple-600', xp: 65, coins: 30,
+      rules: 'Меняйте плитки местами, чтобы собрать 4 слова (2 по горизонтали и 2 по вертикали) до окончания ходов.' },
+    { id: 'crossword', name: 'Мини-кроссворд', desc: 'Интеллектуальный кроссворд 5×5', icon: '✏️', color: 'from-sky-500 to-blue-600', xp: 65, coins: 30,
+      rules: 'Заполните белые клетки по определениям. Клик по активной клетке меняет направление ввода.' },
+    { id: 'wordsearch', name: 'Поиск слов', desc: 'Найдите термины (включая диагонали!)', icon: '🔎', color: 'from-amber-500 to-orange-600', xp: 50, coins: 25,
+      rules: 'Проведите пальцем или мышью по горизонтали, вертикали или наискосок, чтобы выделить все слова.' },
+    { id: 'sudoku', name: 'Судоку', desc: 'Классика 9×9 с чёткими блоками', icon: '🔢', color: 'from-indigo-500 to-blue-700', xp: 80, coins: 35,
+      rules: 'Заполните сетку 9×9 цифрами 1–9 без повторов в строках, столбцах и квадратах 3×3. У вас 3 попытки на ошибки!' },
+    { id: 'connected', name: 'Связи', desc: 'Объедините 16 понятий в 4 группы', icon: '🧩', color: 'from-pink-500 to-rose-600', xp: 70, coins: 30,
+      rules: 'Найдите 4 группы по 4 слова. У вас ровно 3 жизни (ошибки).' },
+    { id: 'cladder', name: 'Лесенка', desc: 'Меняйте по 1 букве в 4-буквенных словах', icon: '🪜', color: 'from-cyan-500 to-teal-600', xp: 60, coins: 25,
+      rules: 'На каждом шаге замените ровно одну букву, чтобы ответить на вопрос.' },
+    { id: 'anygram', name: 'Анаграммы', desc: 'Соберите все слова из сложных букв', icon: '🔤', color: 'from-fuchsia-500 to-purple-700', xp: 55, coins: 25,
+      rules: 'Составляйте слова из предложенных букв, чтобы открыть весь список.' },
+    { id: 'cryptogram', name: 'Криптограмма', desc: 'Расшифруйте философские и дерзкие цитаты', icon: '🕵️', color: 'from-slate-600 to-slate-800', xp: 75, coins: 35,
+      rules: 'Каждая буква заменена числовым кодом. Подберите ключ и восстановите цитату.' },
+    { id: 'wordchain', name: 'Цепочка слов', desc: 'Ассоциации 20+: от экономики до кино', icon: '🔗', color: 'from-lime-500 to-emerald-600', xp: 60, coins: 25,
+      rules: 'Отгадайте следующее слово в логической цепочке.' },
+    { id: 'stopgame', name: 'Стоп-игра!', desc: 'Мегаполис, бренд, фильм, профессия и блюдо', icon: '✋', color: 'from-red-500 to-rose-600', xp: 65, coins: 30,
+      rules: 'Подберите слова на заданную букву для 5 взрослых категорий (от 3 букв).' },
+    { id: 'tangle', name: 'Клубок', desc: 'Превратите 4-буквенное слово в другое', icon: '🧶', color: 'from-orange-500 to-red-600', xp: 70, coins: 35,
+      rules: 'Меняйте по 1 букве за ход по словарю, чтобы дойти от старта к цели.' }
+  ];
+
+  const GAME_DEMOS = {
+    chess: `<div class="flex justify-center gap-2 my-3 text-3xl"><span>♖</span><span>♘</span><span>♗</span><span>♕</span><span>♔</span></div><p class="text-xs text-slate-400 text-center">Нажмите на белую фигуру, чтобы увидеть доступные ходы, и выберите клетку. ИИ ответит автоматически!</p>`,
+    password: `<div class="flex gap-1.5 justify-center my-3"><span class="w-9 h-9 rounded-lg bg-emerald-500 text-white font-black flex items-center justify-center">Б</span><span class="w-9 h-9 rounded-lg bg-slate-700 text-slate-300 font-black flex items-center justify-center">О</span><span class="w-9 h-9 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center">Н</span><span class="w-9 h-9 rounded-lg bg-slate-700 text-slate-300 font-black flex items-center justify-center">У</span><span class="w-9 h-9 rounded-lg bg-emerald-500 text-white font-black flex items-center justify-center">С</span></div><p class="text-xs text-slate-400 text-center">Зелёная — на месте, жёлтая — есть в слове, серая — отсутствует.</p>`,
+    hashtag: `<div class="flex items-center justify-center gap-2 my-3"><span class="w-10 h-10 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center ring-2 ring-white">К</span><span class="text-amber-300 font-black">⇄</span><span class="w-10 h-10 rounded-lg bg-slate-700 text-white font-black flex items-center justify-center">Р</span></div><p class="text-xs text-slate-400 text-center">Нажмите на две плитки по очереди, чтобы поменять их местами.</p>`,
+    crossword: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-9 h-9 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center">Л</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">О</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">Т</span></div><p class="text-xs text-slate-400 text-center">Кликните по клетке и вводите буквы с привычной клавиатуры ЙЦУКЕН.</p>`,
+    wordsearch: `<div class="grid grid-cols-3 gap-1 w-28 mx-auto my-3"><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">К</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">А</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">М</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Р</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">О</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">П</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Л</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Т</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">Д</span></div><p class="text-xs text-slate-400 text-center">Ведите пальцем/мышью по прямой или наискосок — линия сама выровняется по 45°!</p>`,
+    sudoku: `<div class="grid grid-cols-3 border-2 border-amber-400 w-28 mx-auto my-3 bg-slate-900"><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">5</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-amber-300">3</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">4</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-amber-300">6</span><span class="h-8 border border-white/15 bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-black">7</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">2</span></div><p class="text-xs text-slate-400 text-center">Заполняйте цифры 1–9. Осторожно: 3 ошибки — поражение!</p>`,
+    connected: `<div class="bg-amber-400/20 border border-amber-400/40 rounded-xl p-2 text-center my-3"><div class="text-[11px] font-black text-amber-300">ФИНАНСЫ</div><div class="text-xs text-white font-bold">МАРЖА • САЛЬДО • ДЕБЕТ • РЕНТА</div></div><p class="text-xs text-slate-400 text-center">Выберите 4 связанных слова и нажмите «Проверить». Доступно 3 попытки.</p>`,
+    cladder: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2.5 py-1 rounded bg-white/10 text-white">РАНГ</span><span>→</span><span class="px-2.5 py-1 rounded bg-emerald-500/25 text-emerald-300">РИНГ</span></div><p class="text-xs text-slate-400 text-center">Меняйте ровно 1 букву. Неверный ответ отнимает 1 жизнь.</p>`,
+    anygram: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">К</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">О</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">Д</span></div><p class="text-xs text-slate-400 text-center">Нажимайте на буквы и собирайте загаданные слова.</p>`,
+    cryptogram: `<div class="flex justify-center gap-1.5 my-3"><div class="px-2 py-1 rounded border border-amber-400 bg-amber-400/20 text-center"><div class="font-black text-sm text-white">У</div><div class="text-[10px] text-slate-400">1</div></div><div class="px-2 py-1 rounded border border-white/15 bg-white/5 text-center"><div class="font-black text-sm text-white">М</div><div class="text-[10px] text-slate-400">2</div></div></div><p class="text-xs text-slate-400 text-center">Одинаковым цифрам соответствует одна буква.</p>`,
+    wordchain: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2.5 py-1 rounded bg-emerald-500/25 text-emerald-300">КАПИТАЛ</span><span>→</span><span class="px-2.5 py-1 rounded bg-amber-400/20 text-amber-200">П • • • • • • •</span></div><p class="text-xs text-slate-400 text-center">Угадайте следующее по смыслу слово.</p>`,
+    stopgame: `<div class="flex items-center justify-center gap-2 my-3"><span class="w-8 h-8 rounded-lg bg-rose-500 text-white font-black flex items-center justify-center">М</span><span class="text-xs font-bold text-slate-200">→ Мадрид, Майкрософт...</span></div><p class="text-xs text-slate-400 text-center">Заполните все 5 категорий словами на заданную букву.</p>`,
+    tangle: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2 py-1 rounded bg-amber-400/20 text-amber-300">ФОНД</span><span>→</span><span class="px-2 py-1 rounded bg-white/10 text-white">ФОНТ</span><span>→</span><span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">ФОРТ</span></div><p class="text-xs text-slate-400 text-center">Меняйте 1 букву за ход по словарю.</p>`
+  };
+
+  const BADGES = [
+    { id: 'first_win', name: 'Дебют', desc: 'Решить первую головоломку', icon: '🌟', check: s => s.totalSolved >= 1 },
+    { id: 'streak_3', name: 'В форме', desc: 'Поддержать серию побед', icon: '🔥', check: s => s.streak >= 1 },
+    { id: 'level_3', name: 'Эрудит', desc: 'Достичь 3-го уровня XP', icon: '🎓', check: s => getLevel(s.xp) >= 3 },
+    { id: 'cr7_seven', name: 'Легенда #7', desc: 'Набрать 7+ побед всего (бонус CR7!)', icon: '⚽', check: s => s.totalSolved >= 7 },
+    { id: 'day_sweep', name: 'Хет-трик+', desc: 'Решить 6+ игр за один день', icon: '👑', check: s => DAYS.some(d => Object.keys(s.solved[d.id] || {}).length >= 6) },
+    { id: 'rich', name: 'Капитал', desc: 'Накопить 250 монет', icon: '💰', check: s => s.coins >= 250 },
+    { id: 'blitz_pro', name: 'Спринтер CR7', desc: 'Набрать 3+ побед в Блице', icon: '⚡', check: s => (s.bestBlitz || 0) >= 3 }
+  ];
+
+  let state = {
+    xp: 0, coins: 140, streak: 1, totalSolved: 0, bestBlitz: 0,
+    solved: {}, currentDay: 'day0', endless: true, hardMode: false,
+    theme: 'dark', activeGame: null, lastIndices: {}, hideTutorial: {}
+  };
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        state = { ...state, ...parsed, solved: parsed.solved || {}, hideTutorial: parsed.hideTutorial || {} };
+      }
+    } catch (_) {}
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        xp: state.xp, coins: state.coins, streak: state.streak,
+        totalSolved: state.totalSolved, bestBlitz: state.bestBlitz,
+        solved: state.solved, hideTutorial: state.hideTutorial, theme: state.theme
+      }));
+    } catch (_) {}
+  }
+
+  function applyTheme(theme) {
+    state.theme = theme;
+    document.body.classList.remove('theme-light', 'theme-cr7');
+    if (theme === 'light') document.body.classList.add('theme-light');
+    else if (theme === 'cr7') document.body.classList.add('theme-cr7');
+    document.getElementById('cr7-crest').classList.toggle('hidden', theme !== 'cr7');
+    document.querySelectorAll('.theme-btn').forEach(b => {
+      const active = b.dataset.theme === theme;
+      b.className = `theme-btn px-2 py-1 rounded-lg text-xs font-black transition ${
+        active ? 'bg-amber-400 text-slate-950 shadow' : 'opacity-70 hover:opacity-100'
+      }`;
+    });
+    saveState();
+  }
+
+  function getLevel(xp) { return Math.floor(xp / 150) + 1; }
+  function isSolved(dayId, gameId) { return !!(state.solved[dayId] && state.solved[dayId][gameId]); }
+
+  // =========================================================================
+  // 3. 3-ATTEMPT (LIVES) SYSTEM + LOSE MODAL
+  // =========================================================================
+  let gameLives = 3;
+  let onContinueCallback = null;
+
+  function setLives(n) {
+    gameLives = Math.max(0, Math.min(3, n));
+    const el = document.getElementById('lives-indicator');
+    if (el) el.textContent = '❤️'.repeat(gameLives) + '🖤'.repeat(3 - gameLives);
+  }
+
+  function loseLife(reason = '') {
+    if (gameLives <= 0) return true;
+    setLives(gameLives - 1);
+    sfx.bad();
+    if (gameLives <= 0) {
+      openModal(
+        '💀 Попытки закончились!',
+        `<div class="text-center py-2">
+          <div class="text-3xl font-black text-rose-400 mb-2">Ты проиграл, лох! 😂</div>
+          <p class="text-slate-300 text-sm">${reason || 'Все 3 попытки израсходованы.'}</p>
+        </div>`,
+        `<button id="lose-close" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-sm">Закрыть</button>
+         <button id="lose-continue" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">Продолжить (+3 ❤️)</button>`
+      );
+      document.getElementById('lose-close').addEventListener('click', () => { closeModal(); showHub(); });
+      document.getElementById('lose-continue').addEventListener('click', () => {
+        closeModal();
+        setLives(3);
+        if (typeof onContinueCallback === 'function') onContinueCallback();
+      });
+      return true;
+    }
+    return false;
+  }
+
+  // =========================================================================
+  // 4. DATASETS (20+ ADULT VOCABULARY)
+  // =========================================================================
+  const RAW_WORDS = [
+    'АБЗАЦ','АВАНС','АЗАРТ','АКТИВ','АЛИБИ','АМПИР','АНФАС','АРЕАЛ','АСКЕТ','АУДИТ',
+    'БАГЕТ','БАРОН','БЛАНК','БОНУС','БРЕНД','БРОНЯ','ВЗНОС','ВИРАЖ','ВИРУС','ВОКАЛ',
+    'ВЫВОД','ГАММА','ГЕНИЙ','ГОНОР','ГРАНТ','ГРАФА','ДЕБЕТ','ДЕБЮТ','ДЕКОР','ДЕМОН',
+    'ДИЛЕР','ДОГМА','ДОСЬЕ','ДРАМА','ДРАЙВ','ДУЭЛЬ','ЕГЕРЬ','ЖЕТОН','ЗАКОН','ЗАЛОГ',
+    'ЗАПАС','ЗЕНИТ','ИДЕАЛ','ИЗЪЯН','ИМИДЖ','ИСХОД','КАДРЫ','КАЗУС','КАНОН','КАРМА',
+    'КАСТА','КВОТА','КЛИШЕ','КРЕДО','КУРАЖ','ЛАЗЕР','ЛИДЕР','ЛИМИТ','МАГИЯ','МАЖОР',
+    'МАКЕТ','МАРЖА','МЕДИА','МЕТОД','МИРАЖ','МОДУС','МОТИВ','НАЛОГ','НАМЕК','НИША',
+    'НОРМА','НЮАНС','ОБРАЗ','ОБЪЕМ','ОМЕГА','ОПЕРА','ОПЦИЯ','ПАФОС','ПИАР','ПОВОД',
+    'ПОЛИС','ПОРОГ','ПОТОК','ПРАВО','ПРАЙС','ПРИНТ','ПРОФИ','ПУЛЬС','РАУНД','РЕБУС',
+    'РЕЖИМ','РЕЛИЗ','РЕНТА','РИСК','РИФМА','РОМАН','РУБИН','РЫНОК','СБЫТ','СЕЗОН',
+    'СМЕТА','СМЫСЛ','СНОБ','СПЕКТР','СПОРТ','СРЕДА','СТИЛЬ','СТРАХ','СТРИМ','СУММА',
+    'СФЕРА','СХЕМА','ТАЙНА','ТАКТ','ТАРИФ','ТЕЗИС','ТЕМП','ТИРАЖ','ТИТАН','ТОНУС',
+    'ТРАСТ','ТРЕНД','ТРИУМФ','ТУРНИР','УСПЕХ','ФАРС','ФИНАЛ','ФИНИШ','ФИРМА','ФИШКА',
+    'ФЛАНГ','ФОБИЯ','ФОКУС','ФОРМА','ФОРУМ','ФРАЗА','ФРАНТ','ФРОНТ','ХАОС','ХОББИ',
+    'ЦЕЛЬ','ЦЕНЗ','ЦИКЛ','ШАНС','ШАРМ','ШИФР','ШТАБ','ШТРАФ','ШТУРМ','ЭКРАН',
+    'ЭЛИТА','ЭПОС','ЭПОХА','ЭТИКА','ЮМОР','ЮРИСТ','ВИХРЬ','КВАРЦ','СМЕРЧ','ФЬОРД',
+    'ТЕМБР','ДРОЖЬ','ПОРОХ','ФАКЕЛ','СПЛАВ','ОБРЫВ','ПЕПЕЛ','ПЛАМЯ','ИЗГИБ','НЕДРА',
+    'БАЛАНС','ВАКУУМ','ВАНДАЛ','ГЛЯНЕЦ','ГРАНИТ','ДИЗАЙН','ЖАРГОН','ЖЕМЧУГ','ЗАПРОС',
+    'ИНДЕКС','ИНСАЙД','ИРОНИЯ','КАПРИЗ','КОДЕКС','КОЗЫРЬ','КОНТУР','КОРПУС','КРИЗИС',
+    'КРИПТА','ЛАЗУРЬ','ЛИЗИНГ','ЛОГИКА','ЛОЗУНГ','МАНЕВР','МЕТЕЛЬ','ОРБИТА','ОФЕРТА',
+    'ОФСАЙД','ПАНИКА','ПРЕССА','ПРИЗМА','РАКУРС','РЕВАНШ','РЕМЕЙК','РЕСУРС','САЛЬДО',
+    'СДЕЛКА','СЕКТОР','СЕРВИС','СИГНАЛ','СИНТЕЗ','СЛОГАН','СПИКЕР','СПРИНТ','СТАТУС',
+    'СТРОКА','СТУДИЯ','СФИНКС','ТАЛАНТ','ТЕНДЕР','ТЕОРИЯ','ТЕРМИН','ТРОФЕЙ','ТЮНИНГ',
+    'УЩЕЛЬЕ','ФАБУЛА','ФАКТОР','ФАНТОМ','ФИАСКО','ФИЛЬТР','ФОРСАЖ','ФУТБОЛ','ХРОНОС',
+    'ЦИКЛОН','ЦИНИЗМ','ЦИТАТА','ШЕДЕВР','ЭМОЦИЯ','ЭФФЕКТ','ЮБИЛЕЙ','ЯНТАРЬ','БАРЬЕР',
+    'ВИТРАЖ','ГЕЙЗЕР','ДИАЛОГ','ЗАТВОР','КАСКАД','КОМПАС','МАГНИТ','НЕКТАР','ОСТРОВ',
+    'РАКЕТА','ТАЙФУН','ЭКСПЕРТ'
+  ];
+
+  const PUZZLES = {
+    password5: [...new Set(RAW_WORDS.filter(w => w.length === 5))],
+    password6: [...new Set(RAW_WORDS.filter(w => w.length === 6))],
+    hashtag: [
+      { h1: 'КВАРЦ', h2: 'КРУПА', v1: 'ЗВЕРЬ', v2: 'ТРОПА' },
+      { h1: 'МИРАЖ', h2: 'ОКЕАН', v1: 'ЛИПКА', v2: 'ПАРАД' },
+      { h1: 'ШТОРМ', h2: 'СПАЗМ', v1: 'СТУПА', v2: 'ГРОЗА' },
+      { h1: 'ФАКЕЛ', h2: 'ТИТАН', v1: 'МАГИЯ', v2: 'СЕНАТ' },
+      { h1: 'ЯКОРЬ', h2: 'ЛАМПА', v1: 'ОКЕАН', v2: 'ТРОПА' },
+      { h1: 'ЛАЗЕР', h2: 'ШТУКА', v1: 'ПАРТА', v2: 'ВЕТКА' },
+      { h1: 'САХАР', h2: 'МОДЕМ', v1: 'БАТОН', v2: 'ЛАЗЕР' },
+      { h1: 'МОРОЗ', h2: 'КАНАЛ', v1: 'ПОЖАР', v2: 'БОКАЛ' },
+      { h1: 'ПЕСОК', h2: 'ЧЕХОЛ', v1: 'ВЕТЕР', v2: 'ГОРОД' },
+      { h1: 'МАРКА', h2: 'МОЛОТ', v1: 'ЗАБОР', v2: 'СКЛОН' }
+    ],
+    crossword: [
+      {
+        grid: [['Л','О','Т','.','.'],['О','К','О','.','.'],['Т','А','П','О','К'],['.','.','О','С','А'],['.','.','Р','А','К']],
+        across: [
+          { r:0, c:0, clue: 'Позиция товара на аукционе' },
+          { r:1, c:0, clue: 'Архаичное название глаза' },
+          { r:2, c:0, clue: 'Мягкая домашняя обувь (ед. ч.)' },
+          { r:3, c:2, clue: 'Жалящее насекомое' },
+          { r:4, c:2, clue: 'Речной обитатель с клешнями' }
+        ],
+        down: [
+          { r:0, c:0, clue: 'Единица торгов на бирже' },
+          { r:0, c:1, clue: 'Правый приток Волги' },
+          { r:0, c:2, clue: 'Инструмент Раскольникова' },
+          { r:2, c:3, clue: 'Полосатое насекомое' },
+          { r:2, c:4, clue: 'Вопросительное наречие' }
+        ]
+      },
+      {
+        grid: [['К','О','Т','.','.'],['О','К','О','.','.'],['К','А','П','О','Т'],['.','.','О','К','О'],['.','.','Р','А','К']],
+        across: [
+          { r:0, c:0, clue: 'Персонаж Булгакова Бегемот' },
+          { r:1, c:0, clue: 'Орган зрения в поэзии' },
+          { r:2, c:0, clue: 'Крышка моторного отсека авто' },
+          { r:3, c:2, clue: 'Зеркало души в старину' },
+          { r:4, c:2, clue: 'Знак зодиака (июнь–июль)' }
+        ],
+        down: [
+          { r:0, c:0, clue: 'Повар на морском судне' },
+          { r:0, c:1, clue: 'Река в центральной России' },
+          { r:0, c:2, clue: 'Орудие дровосека' },
+          { r:2, c:3, clue: 'Российская река' },
+          { r:2, c:4, clue: 'Движение электрических зарядов' }
+        ]
+      }
+    ],
+    wordsearch: [
+      { theme: 'Финансы и Рынок', words: ['АУДИТ','МАРЖА','ЛИЗИНГ','ДИВИДЕНД','АКТИВ','САЛЬДО','КВОТА','ОФЕРТА','ДЕБЕТ','ИНДЕКС'] },
+      { theme: 'Футбол и CR7', words: ['ПЕНАЛЬТИ','ОФСАЙД','ХЕТТРИК','ДРИБЛИНГ','МАДРИД','ТРОФЕЙ','СТАДИОН','ФОРВАРД','КАПИТАН','ТУРНИР'] },
+      { theme: 'Психология', words: ['ИНСАЙТ','ТРИГГЕР','ЭМПАТИЯ','ГЕШТАЛЬТ','ФОБИЯ','СКЕПСИС','ХАРИЗМА','ЭГОИЗМ','АПАТИЯ','МОТИВ'] },
+      { theme: 'IT и Бизнес', words: ['ДЕПЛОЙ','СЕРВЕР','ПИКСЕЛЬ','РЕЛИЗ','ТЕНДЕР','СТАРТАП','КОНТРАКТ','АПГРЕЙД','ТРАФИК','БРЕНД'] },
+      { theme: 'Кинематограф', words: ['СЦЕНАРИЙ','МОНТАЖ','КАСТИНГ','РАКУРС','СИКВЕЛ','РЕМЕЙК','ТИТРЫ','ФИАСКО','ШЕДЕВР','ФАБУЛА'] },
+      { theme: 'Наука и Космос', words: ['КВАЗАР','СПЕКТР','ГЕНОМ','ПРИЗМА','ВАКУУМ','КАТАЛИЗ','ТЕОРЕМА','ОРБИТА','ВЕКТОР','МАГНИТ'] }
+    ],
+    connected: [
+      [
+        { title: 'Финансовые показатели', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['МАРЖА','САЛЬДО','ДЕБЕТ','РЕНТА'] },
+        { title: 'Эпохи и стили искусства', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['АМПИР','БАРОККО','МОДЕРН','РОКОКО'] },
+        { title: 'Футбольные термины', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ОФСАЙД','ПЕНАЛЬТИ','ХЕТТРИК','АРБИТР'] },
+        { title: 'Что бывает «холодным»', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['РАСЧЕТ','ОРУЖИЕ','ЗВОНОК','ДУШ'] }
+      ],
+      [
+        { title: 'Клубы и символы Роналду', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['СПОРТИНГ','МАНЧЕСТЕР','МАДРИД','ТУРИН'] },
+        { title: 'Коктейли', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['НЕГРОНИ','МОХИТО','ДАЙКИРИ','АПЕРОЛЬ'] },
+        { title: 'Психологические термины', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ИНСАЙТ','ТРИГГЕР','ГЕШТАЛЬТ','ЭМПАТИЯ'] },
+        { title: 'Слова с приставкой «РЕ-»', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['РЕЛИЗ','РЕМЕЙК','РЕВАНШ','РЕСУРС'] }
+      ],
+      [
+        { title: 'Киноиндустрия', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['РАКУРС','МОНТАЖ','КАСТИНГ','СИКВЕЛ'] },
+        { title: 'Философские понятия', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['ДОГМА','СОФИЗМ','КАТАРСИС','ПАРАДОКС'] },
+        { title: 'ИТ и разработка', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ДЕПЛОЙ','СЕРВЕР','БЭКЕНД','ТОКЕН'] },
+        { title: 'Что можно «закрыть»', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['СДЕЛКУ','ГЕШТАЛЬТ','ВОПРОС','СЕССИЮ'] }
+      ],
+      [
+        { title: 'Юридические термины', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['АЛИБИ','ВЕРДИКТ','ОФЕРТА','ИСК'] },
+        { title: 'Режиссёры мирового кино', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['НОЛАН','ТАРАНТИНО','ФИНЧЕР','СКОРСЕЗЕ'] },
+        { title: 'Понятия оптики', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ПРИЗМА','СПЕКТР','ФОКУС','ЛАЗЕР'] },
+        { title: 'Бывают «чёрными»', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['ДЫРА','ПЯТНИЦА','ПИАР','ЯЩИК'] }
+      ],
+      [
+        { title: 'Античная мифология', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['ТИТАН','СФИНКС','ОЛИМП','ФЕНИКС'] },
+        { title: 'Журналистика', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['ЭКСКЛЮЗИВ','ТИРАЖ','ПРЕССА','ОЧЕРК'] },
+        { title: 'Макроэкономика', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ИНФЛЯЦИЯ','КРИЗИС','САНКЦИЯ','ТАРИФ'] },
+        { title: 'Связаны с числом 7', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['РОНАЛДУ','ЧУДЕС','НОТ','ДНЕЙ'] }
+      ]
+    ],
+    cladder: [
+      { start: 'РАНГ', steps: [
+        { word: 'РИНГ', clue: 'Площадка для бокса' },
+        { word: 'РИСК', clue: 'Возможная опасность в бизнесе' },
+        { word: 'ДИСК', clue: 'Круглый носитель информации' },
+        { word: 'ПИСК', clue: 'Последний «...» моды' }
+      ]},
+      { start: 'КУРС', steps: [
+        { word: 'КУСТ', clue: 'Растение без единого ствола' },
+        { word: 'ПУСТ', clue: 'Кратк. прил.: ничем не заполнен' },
+        { word: 'ПОСТ', clue: 'Запись в блоге или должность' },
+        { word: 'ТОСТ', clue: 'Короткая речь с бокалом' }
+      ]},
+      { start: 'РОЛЬ', steps: [
+        { word: 'БОЛЬ', clue: 'Неприятное чувство' },
+        { word: 'СОЛЬ', clue: '«Пуд ... съесть» — узнать человека' },
+        { word: 'МОЛЬ', clue: 'Насекомое, портящее шерсть' },
+        { word: 'НОЛЬ', clue: 'Абсолютный минимум на табло' }
+      ]},
+      { start: 'ФОНД', steps: [
+        { word: 'ФОНТ', clue: 'Шрифт в типографике' },
+        { word: 'ФОРТ', clue: 'Укреплённое сооружение' },
+        { word: 'СОРТ', clue: 'Разновидность вина или товара' },
+        { word: 'ПОРТ', clue: 'Гавань для судов' }
+      ]},
+      { start: 'СРОК', steps: [
+        { word: 'УРОК', clue: 'Вывод из жизненной ошибки' },
+        { word: 'УРОН', clue: 'Ущерб, потери' },
+        { word: 'ТРОН', clue: 'Кресло монарха' },
+        { word: 'ТРОС', clue: 'Стальной канат' }
+      ]}
+    ],
+    anygram: [
+      { letters: ['С','Т','Р','А','Т','Е','Г','И','Я'], targets: ['СТРАТЕГИЯ','АРТИСТ','ТЕАТР','ТРАСТ','СТАРТ','РЕГАТА','ТИГР'] },
+      { letters: ['К','О','Н','Т','Р','А','К','Т'], targets: ['КОНТРАКТ','КОНТАКТ','КАРТОН','ТРАКТ','КРОНА','ТАНК'] },
+      { letters: ['П','А','Р','А','Д','О','К','С'], targets: ['ПАРАДОКС','ДОСКА','ДРАКА','КАДР','ПАРК','СПОР'] },
+      { letters: ['К','О','Н','Ф','Л','И','К','Т'], targets: ['КОНФЛИКТ','ЛИФТ','КИНО','КЛИН','ФОН','ТОК'] },
+      { letters: ['М','Е','Т','А','Ф','О','Р','А'], targets: ['МЕТАФОРА','ФОРМАТ','АТОМ','ТЕМА','МАРТ','РОТА','ФАРА'] },
+      { letters: ['К','А','П','И','Т','А','Л'], targets: ['КАПИТАЛ','ПЛИТА','ЛАПА','ПАКТ','ТИП','ПИК'] }
+    ],
+    cryptogram: [
+      { quote: 'ЧЕМ БОЛЬШЕ ТРУДИШЬСЯ ТЕМ БОЛЬШЕ ВЕЗЕТ', author: 'Криштиану Роналду' },
+      { quote: 'ВАША ЛЮБОВЬ ДЕЛАЕТ МЕНЯ СИЛЬНЫМ А НЕНАВИСТЬ НЕУДЕРЖИМЫМ', author: 'Криштиану Роналду' },
+      { quote: 'УСПЕХ ЭТО КОГДА ВОЗМОЖНОСТЬ ВСТРЕЧАЕТСЯ С ПОДГОТОВКОЙ', author: 'Сенека' },
+      { quote: 'КТО ИМЕЕТ ЗАЧЕМ ЖИТЬ СМОЖЕТ ВЫДЕРЖАТЬ ПОЧТИ ЛЮБОЕ КАК', author: 'Фридрих Ницше' },
+      { quote: 'НЕ БОЙСЯ СОВЕРШЕНСТВА ОНО ТЕБЕ ВСЕ РАВНО НЕ ГРОЗИТ', author: 'Сальвадор Дали' },
+      { quote: 'ДИСЦИПЛИНА ЭТО МОСТ МЕЖДУ ЦЕЛЯМИ И ДОСТИЖЕНИЯМИ', author: 'Джим Рон' },
+      { quote: 'ПЕССИМИСТ ВИДИТ ТРУДНОСТЬ В КАЖДОЙ ВОЗМОЖНОСТИ', author: 'Уинстон Черчилль' },
+      { quote: 'ТАЛАНТ БЕЗ ТРУДА НИЧТО', author: 'Криштиану Роналду' },
+      { quote: 'ХОРОШИЙ ВКУС ЭТО ЗАЩИТА ОТ БАНАЛЬНОСТИ', author: 'Иосиф Бродский' },
+      { quote: 'САМЫЙ БЫСТРЫЙ СПОСОБ ПОТЕРЯТЬ ДЕНЬГИ СЛУШАТЬ ВСЕХ ПОДРЯД', author: 'Нассим Талеб' }
+    ],
+    wordchain: [
+      { theme: 'Инвестиции', words: ['КАПИТАЛ','ПОРТФЕЛЬ','АКЦИЯ','ДИВИДЕНД','ДОХОДНОСТЬ'] },
+      { theme: 'Лига Чемпионов', words: ['КВАЛИФИКАЦИЯ','ЖЕРЕБЬЕВКА','ПЛЕЙОФФ','ФИНАЛ','ТРОФЕЙ'] },
+      { theme: 'Психология', words: ['ТРИГГЕР','ЭМОЦИЯ','РЕАКЦИЯ','ОСОЗНАННОСТЬ','ИНСАЙТ'] },
+      { theme: 'Кинопроизводство', words: ['ПИТЧИНГ','СЦЕНАРИЙ','КАСТИНГ','МОНТАЖ','ПРЕМЬЕРА'] },
+      { theme: 'IT-продукт', words: ['ГИПОТЕЗА','ПРОТОТИП','ТЕСТИРОВАНИЕ','РЕЛИЗ','МЕТРИКА'] },
+      { theme: 'Криминалистика', words: ['МОТИВ','УЛИКА','ЭКСПЕРТИЗА','АЛИБИ','ВЕРДИКТ'] }
+    ],
+    stopgame: [
+      { letter: 'К', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'М', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'С', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'П', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'А', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'В', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'Б', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'Р', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] }
+    ]
+  };
+
+  const TANGLE_4_WORDS = [
+    'БАНК','БАРС','БАРТ','БОРТ','ПОРТ','ФОРТ','ФОНТ','ФОНД','СОНД','ЗОНД','ЗОНТ','БОНТ','БОЛТ','КОЛТ','КОРТ','СОРТ','ТОРГ','МОРГ',
+    'РОЛЬ','БОЛЬ','СОЛЬ','МОЛЬ','НОЛЬ','ТОЛЬ','ВОЛЬ','ПЫЛЬ','БЫЛЬ','КОНЬ','ТЕНЬ','ПЕНЬ','ДЕНЬ','ЛЕНЬ','СЕНЬ','ЛИНЬ',
+    'КУРС','КУСТ','ПУСТ','ПОСТ','ТОСТ','РОСТ','МОСТ','ХОСТ','ГОСТ','КОСТ',
+    'ПЛАН','КЛАН','КРАН','КРАЙ','КРОЙ','ТРОЙ','СЛОЙ','ЗНОЙ','ГНОЙ',
+    'СРОК','УРОК','УРОН','ТРОН','ТРОС','КРОС','БРОС','ПЛЮС','ШЛЮЗ',
+    'ФАКТ','ТАКТ','ПАКТ','ПАРК','ПАРИ','МАРИ','МАРС','ФАРС',
+    'БРАТ','БРАК','МРАК','ЗРАК','ФРАК','КРАБ','ГРАБ','ГРИБ','ГРОБ','СНОБ','ЗНОБ',
+    'РИСК','ДИСК','ПИСК','ВИСК','ТИСК','БЛЕФ','РИНГ','РАНГ','ТАНК','ПАНК','РАНК'
+  ].filter(w => w.length === 4);
+  const TANGLE_4_SET = new Set(TANGLE_4_WORDS);
+
+  function diff1(a, b) {
+    if (a.length !== b.length) return false;
+    let d = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++;
+    return d === 1;
+  }
+
+  function generateTanglePuzzle() {
+    for (let tries = 0; tries < 40; tries++) {
+      const start = TANGLE_4_WORDS[Math.floor(Math.random() * TANGLE_4_WORDS.length)];
+      const q = [[start, [start]]], vis = new Set([start]), candidates = [];
+      while (q.length > 0) {
+        const [cur, path] = q.shift();
+        if (path.length >= 4 && path.length <= 6) candidates.push({ start, target: cur, par: path.length - 1, path });
+        if (path.length >= 6) continue;
+        for (const w of TANGLE_4_WORDS) if (!vis.has(w) && diff1(cur, w)) { vis.add(w); q.push([w, [...path, w]]); }
+      }
+      if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+    return { start: 'ФОНД', target: 'ПОСТ', par: 4, path: ['ФОНД','ФОНТ','ФОРТ','ПОРТ','ПОСТ'] };
+  }
+
+  function pickPuzzle(key, arr) {
+    if (state.endless) {
+      let idx = Math.floor(Math.random() * arr.length);
+      if (arr.length > 1 && state.lastIndices[key] === idx) idx = (idx + 1) % arr.length;
+      state.lastIndices[key] = idx;
+      return arr[idx];
+    }
+    const dayIdx = Math.max(0, DAYS.findIndex(d => d.id === state.currentDay));
+    return arr[dayIdx % arr.length];
+  }
+
+  // =========================================================================
+  // 5. UI HELPERS, TUTORIALS & BLITZ
+  // =========================================================================
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('toast'); el.textContent = msg;
+    el.classList.remove('opacity-0', 'pointer-events-none'); el.classList.add('opacity-100');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.classList.add('opacity-0', 'pointer-events-none'); el.classList.remove('opacity-100'); }, 2200);
+  }
+
+  function openModal(title, htmlBody, footerHtml = '') {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = htmlBody;
+    document.getElementById('modal-footer').innerHTML = footerHtml;
+    const ov = document.getElementById('modal-overlay');
+    ov.classList.remove('hidden'); ov.classList.add('flex');
+  }
+
+  function closeModal() {
+    const ov = document.getElementById('modal-overlay');
+    ov.classList.add('hidden'); ov.classList.remove('flex');
+  }
+
+  function showTutorial(gameId, force = false) {
+    if (!force && (blitz.active || state.hideTutorial[gameId])) return;
+    const meta = GAMES_META.find(g => g.id === gameId);
+    if (!meta) return;
+    openModal(
+      `${meta.icon} ${meta.name}: как играть`,
+      `<div class="bg-white/5 border border-white/10 rounded-2xl p-3 mb-3">
+         <div class="text-[11px] font-black uppercase tracking-wider text-amber-300 mb-1">Что нужно сделать</div>
+         <p class="text-slate-200 text-sm">${meta.rules}</p>
+       </div>
+       <div class="bg-black/30 border border-white/10 rounded-2xl p-3">
+         <div class="text-[11px] font-black uppercase tracking-wider text-sky-300 mb-1 text-center">Как это работает</div>
+         ${GAME_DEMOS[gameId] || ''}
+       </div>`,
+      `<button id="tut-never" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 font-bold text-xs transition">Больше не показывать</button>
+       <button id="tut-go" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">Понятно, играть!</button>`
+    );
+    document.getElementById('tut-go').addEventListener('click', closeModal);
+    document.getElementById('tut-never').addEventListener('click', () => {
+      state.hideTutorial[gameId] = true; saveState(); closeModal(); showToast('Обучение отключено для этой игры');
+    });
+  }
+
+  function updateHeader() {
+    document.getElementById('stat-streak').textContent = state.streak;
+    document.getElementById('stat-coins').textContent = state.coins;
+    document.getElementById('stat-level').textContent = getLevel(state.xp);
+  }
+
+  let blitz = { active: false, timeLeft: 180, score: 0, timerId: null };
+  const BLITZ_POOL = ['password', 'connected', 'cladder', 'anygram', 'wordchain', 'tangle'];
+
+  function stopBlitz() { blitz.active = false; clearInterval(blitz.timerId); blitz.timerId = null; document.getElementById('blitz-bar').classList.add('hidden'); }
+
+  function startBlitz() {
+    blitz = { active: true, timeLeft: 180, score: 0, timerId: null }; state.endless = true;
+    document.getElementById('blitz-bar').classList.remove('hidden');
+    document.getElementById('blitz-score').textContent = '0'; updateBlitzTimerUI();
+    blitz.timerId = setInterval(() => {
+      blitz.timeLeft -= 1; updateBlitzTimerUI();
+      if (blitz.timeLeft <= 0) {
+        const finalScore = blitz.score; stopBlitz();
+        if (finalScore > (state.bestBlitz || 0)) { state.bestBlitz = finalScore; saveState(); }
+        sfx.win();
+        openModal(
+          '⚡ Блиц завершён! SIUUU!',
+          `<p class="text-slate-200 font-medium mb-2">Решено <strong class="text-amber-400 text-lg">${finalScore}</strong> головоломок за 3 минуты.</p><p class="text-xs text-slate-400">Рекорд: ${state.bestBlitz}</p>`,
+          `<button id="blitz-again" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Ещё раз ⚡</button><button id="blitz-home" class="px-4 py-2 rounded-xl bg-white/15 text-white font-bold text-sm">В меню</button>`
+        );
+        document.getElementById('blitz-again').addEventListener('click', () => { closeModal(); startBlitz(); });
+        document.getElementById('blitz-home').addEventListener('click', () => { closeModal(); showHub(); });
+      }
+    }, 1000);
+    launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)]);
+  }
+
+  function updateBlitzTimerUI() {
+    const m = String(Math.floor(blitz.timeLeft / 60)).padStart(2, '0'), s = String(blitz.timeLeft % 60).padStart(2, '0');
+    document.getElementById('blitz-timer').textContent = `${m}:${s}`;
+  }
+
+  function renderHub() {
+    updateHeader();
+    const dayObj = DAYS.find(d => d.id === state.currentDay) || DAYS[0];
+    document.getElementById('hub-date-label').textContent = state.endless ? '♾️ Бесконечный режим • 20+ Словарь' : `${dayObj.label} • ${dayObj.dateStr}`;
+    document.getElementById('hard-mode-label').textContent = state.hardMode ? 'Сложность: Pro (Хард) ⚡' : 'Сложность: 20+ Стандарт';
+    document.getElementById('endless-label').textContent = state.endless ? 'Бесконечный режим: ВКЛ' : 'Бесконечный режим: ВЫКЛ';
+    document.getElementById('btn-endless-mode').className = `shrink-0 px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
+      state.endless ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20' : 'bg-white/10 text-slate-200 hover:bg-white/20'
+    }`;
+
+    const daySel = document.getElementById('day-selector');
+    daySel.innerHTML = DAYS.map(d => {
+      const active = !state.endless && d.id === state.currentDay;
+      const count = Object.keys(state.solved[d.id] || {}).length;
+      return `
+        <button data-day="${d.id}" class="day-pill shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+          active ? 'bg-white text-slate-950 shadow-md' : 'bg-white/10 text-slate-200 hover:bg-white/20'
+        }">
+          <span>${d.label}</span>
+          <span class="px-1.5 py-0.5 rounded-md text-[10px] ${active ? 'bg-slate-200 text-slate-800' : 'bg-black/30 text-slate-300'}">${count}/13</span>
+        </button>
+      `;
+    }).join('');
+    daySel.querySelectorAll('.day-pill').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); state.endless = false; state.currentDay = btn.dataset.day; renderHub(); }));
+
+    const solvedToday = Object.keys(state.solved[state.currentDay] || {}).length;
+    document.getElementById('hub-solved-count').textContent = solvedToday;
+    document.getElementById('hub-progress-bar').style.width = `${(solvedToday / GAMES_META.length) * 100}%`;
+
+    const grid = document.getElementById('games-grid');
+    grid.innerHTML = GAMES_META.map(g => {
+      const done = !state.endless && isSolved(state.currentDay, g.id);
+      return `
+        <button data-game="${g.id}" class="game-card glass-card text-left rounded-3xl p-5 ${done ? 'border-emerald-400/50' : ''} flex flex-col justify-between h-full">
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${g.color} flex items-center justify-center text-2xl shadow-lg">${g.icon}</div>
+              ${done
+                ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 font-bold text-xs">Решено ✓</span>'
+                : `<span class="px-2.5 py-1 rounded-full surface-pill border font-semibold text-xs">+${g.xp} XP</span>`
+              }
+            </div>
+            <h3 class="font-extrabold text-lg text-white-adaptive mb-1">${g.name}</h3>
+            <p class="text-xs text-muted-adaptive leading-relaxed mb-4">${g.desc}</p>
+          </div>
+          <div class="flex items-center justify-between pt-3 border-t border-white/10 w-full">
+            <span class="text-xs font-bold text-amber-400">+${g.coins} 🪙</span>
+            <span class="text-xs font-bold ${done ? 'text-emerald-400' : 'text-amber-400'}">${g.id === 'chess' ? 'Сыграть с ИИ →' : (state.endless ? 'Бесконечно ♾️ →' : (done ? 'Ещё раз →' : 'Играть →'))}</span>
+          </div>
+        </button>
+      `;
+    }).join('');
+    grid.querySelectorAll('[data-game]').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); launchGame(btn.dataset.game); }));
+  }
+
+  function showHub() {
+    cleanupActiveGame(); stopBlitz(); state.activeGame = null;
+    document.getElementById('view-game').classList.add('hidden');
+    document.getElementById('view-hub').classList.remove('hidden');
+    renderHub();
+  }
+
+  let activeCleanup = null, activeHintFn = null;
+  function cleanupActiveGame() { if (typeof activeCleanup === 'function') { activeCleanup(); activeCleanup = null; } activeHintFn = null; onContinueCallback = null; }
+
+  function launchGame(gameId) {
+    cleanupActiveGame(); state.activeGame = gameId; setLives(3);
+    const meta = GAMES_META.find(g => g.id === gameId);
+    const dayObj = DAYS.find(d => d.id === state.currentDay);
+    document.getElementById('active-game-title').textContent = `${meta.icon} ${meta.name}`;
+    document.getElementById('active-game-sub').textContent = gameId === 'chess'
+      ? 'Интеллектуальный бот • Белые начинают'
+      : (blitz.active ? '⚡ Блиц-режим' : (state.endless ? `♾️ Бесконечная партия • ${state.hardMode ? 'Pro' : '20+'}` : `${dayObj.label} • ${dayObj.dateStr}`));
+    document.getElementById('view-hub').classList.add('hidden');
+    document.getElementById('view-game').classList.remove('hidden');
+
+    const stage = document.getElementById('game-stage'); stage.innerHTML = '';
+    const runners = {
+      chess: initChessGame, password: initPasswordGame, hashtag: initHashtagGame, crossword: initCrosswordGame,
+      wordsearch: initWordSearchGame, sudoku: initSudokuGame, connected: initConnectedGame,
+      cladder: initCladderGame, anygram: initAnygramGame, cryptogram: initCryptogramGame,
+      wordchain: initWordChainGame, stopgame: initStopGame, tangle: initTangleGame
+    };
+    if (runners[gameId]) runners[gameId](stage);
+    showTutorial(gameId, false);
+  }
+
+  function completeGame(gameId, extraNote = '') {
+    sfx.win();
+    try { if (typeof confetti === 'function') confetti({ particleCount: 75, spread: 70, origin: { y: 0.6 } }); } catch (_) {}
+    const meta = GAMES_META.find(g => g.id === gameId);
+    const bonusMult = state.hardMode ? 1.5 : 1;
+    const isSevenBonus = ((state.totalSolved + 1) % 7 === 0);
+    const xpGain = Math.round(meta.xp * bonusMult) + (isSevenBonus ? 77 : 0);
+    const coinGain = Math.round(meta.coins * bonusMult) + (isSevenBonus ? 70 : 0);
+
+    if (blitz.active) {
+      blitz.score += 1; document.getElementById('blitz-score').textContent = blitz.score;
+      state.xp += xpGain; state.coins += coinGain; state.totalSolved += 1;
+      saveState(); updateHeader(); showToast(`⚡ +1 в Блице! (+${xpGain} XP)`);
+      setTimeout(() => { if (blitz.active) launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)]); }, 600);
+      return;
+    }
+
+    const already = !state.endless && isSolved(state.currentDay, gameId);
+    let rewardHtml = '';
+    if (!already) {
+      if (!state.endless) { if (!state.solved[state.currentDay]) state.solved[state.currentDay] = {}; state.solved[state.currentDay][gameId] = true; }
+      state.xp += xpGain; state.coins += coinGain; state.totalSolved += 1;
+      saveState(); updateHeader();
+      rewardHtml = `
+        ${isSevenBonus ? '<div class="mb-3 px-3 py-2 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-300 font-black text-xs text-center">⚽ БОНУС #7 (CR7): +77 XP и +70 🪙!</div>' : ''}
+        <div class="grid grid-cols-2 gap-3 my-3">
+          <div class="bg-indigo-500/20 border border-indigo-400/30 rounded-2xl p-3 text-center"><div class="text-xs font-bold text-indigo-300 uppercase">Опыт</div><div class="text-xl font-black text-white">+${xpGain} XP</div></div>
+          <div class="bg-amber-500/20 border border-amber-400/30 rounded-2xl p-3 text-center"><div class="text-xs font-bold text-amber-300 uppercase">Монеты</div><div class="text-xl font-black text-amber-300">+${coinGain} 🪙</div></div>
+        </div>`;
+    } else {
+      rewardHtml = `<p class="text-xs text-slate-400 my-3">Дневная партия засчитана. Жмите «Следующее» для бесконечной игры!</p>`;
+    }
+
+    openModal(
+      `🏆 ${meta.name}: SIUUU!`,
+      `<p class="text-slate-200 font-medium">${extraNote || 'Чистая победа!'}</p>${rewardHtml}`,
+      `<button id="win-next-btn" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">🎲 Следующее</button>
+       <button id="win-hub-btn" class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm transition">В меню</button>`
+    );
+    document.getElementById('win-next-btn').addEventListener('click', () => { closeModal(); state.endless = true; launchGame(gameId); });
+    document.getElementById('win-hub-btn').addEventListener('click', () => { closeModal(); showHub(); });
+  }
+
+  function spendCoinsForHint(cost = 20) {
+    if (state.coins < cost) { sfx.bad(); showToast(`Нужно ${cost} 🪙 для подсказки!`); return false; }
+    state.coins -= cost; saveState(); updateHeader(); sfx.good(); return true;
+  }
+
+  // =========================================================================
+  // GAME 0: ШАХМАТЫ ПРОТИВ ИИ (Chess.com Layout + 10-Min Clocks + Smooth 60FPS)
+  // =========================================================================
+  function initChessGame(stage) {
+    const VAL = { p:100, n:320, b:330, r:500, q:900, k:20000 };
+    const isWhite = p => p && p === p.toUpperCase();
+    const isBlack = p => p && p === p.toLowerCase();
+    const colorOf = p => !p ? null : (isWhite(p) ? 'w' : 'b');
+
+    const SVG_CACHE = {};
+    function pieceSVG(p) {
+      if (SVG_CACHE[p]) return SVG_CACHE[p];
+      const t = p.toLowerCase(), w = isWhite(p);
+      const fill = w ? '#ffffff' : '#111111';
+      const stroke = w ? '#111111' : '#ffffff';
+      const inner = w ? '#111111' : '#ffffff';
+      const sw = w ? '2.1' : '1.6';
+      let svg = '';
+      if (t === 'p') {
+        svg = `<svg viewBox="0 0 45 45" class="w-[84%] h-[84%] drop-shadow pointer-events-none"><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/></svg>`;
+      } else if (t === 'r') {
+        svg = `<svg viewBox="0 0 45 45" class="w-[84%] h-[84%] drop-shadow pointer-events-none"><g fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M9 39h27v-3H9v3zM12 36v-4h21v4H12zM11 14V9h4v2h5V9h5v2h5V9h4v5"/><path d="M34 14l-3 3H14l-3-3"/><path d="M31 17v12.5H14V17"/><path d="M31 29.5l1.5 2.5h-20l1.5-2.5"/><path d="M11 14h23" fill="none" stroke="${inner}" stroke-width="1.4"/></g></svg>`;
+      } else if (t === 'n') {
+        svg = `<svg viewBox="0 0 45 45" class="w-[84%] h-[84%] drop-shadow pointer-events-none"><g fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10c10.5 1 16.5 8 16 29H15c0-9 10-6.5 8-21"/><path d="M24 18c.38 2.91-5.55 7.37-8 9-3 2-2.82 4.34-5 4-1.042-.94 1.41-3.04 0-3-1 0 .19 1.23-1 2-1 0-4.003 1-4-4 0-2 6-12 6-12s1.89-1.9 2-3.5c-.73-.994-.5-2-.5-3 1-1 3 2.5 3 2.5h2s.78-1.992 2.5-3c1 0 1 3 1 3"/><circle cx="15" cy="15.5" r="1.2" fill="${inner}" stroke="none"/></g></svg>`;
+      } else if (t === 'b') {
+        svg = `<svg viewBox="0 0 45 45" class="w-[84%] h-[84%] drop-shadow pointer-events-none"><g fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2z"/><circle cx="22.5" cy="8" r="2.5"/><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" fill="none" stroke="${inner}" stroke-width="1.6"/></g></svg>`;
+      } else if (t === 'q') {
+        svg = `<svg viewBox="0 0 45 45" class="w-[86%] h-[86%] drop-shadow pointer-events-none"><g fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.4"/><circle cx="14" cy="9" r="2.4"/><circle cx="22.5" cy="8" r="2.4"/><circle cx="31" cy="9" r="2.4"/><circle cx="39" cy="12" r="2.4"/><path d="M9 26c8.5-1.5 21-1.5 27 0l2.5-12.5L31 25l-.3-14.1-5.2 13.6-3-14.5-3 14.5-5.2-13.6L14 25 6.5 13.5 9 26z"/><path d="M9 26c0 2 1.5 2 2.5 4 1 1.5 1 1 .5 3.5-1.5 1-1.5 2.5-1.5 2.5-1.5 1.5.5 2.5.5 2.5 6.5 1 16.5 1 23 0 0 0 1.5-1 0-2.5 0 0 .5-1.5-1-2.5-.5-2.5-.5-2 .5-3.5 1-2 2.5-2 2.5-4-8.5-1.5-18.5-1.5-27 0z"/><path d="M11.5 30c3.5-1 18.5-1 22 0M12 33.5c6-1 15-1 21 0" fill="none" stroke="${inner}" stroke-width="1.4"/></g></svg>`;
+      } else {
+        svg = `<svg viewBox="0 0 45 45" class="w-[86%] h-[86%] drop-shadow pointer-events-none"><g fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 11.63V6M20 8h5" fill="none" stroke="${stroke}" stroke-width="2.2"/><path d="M22.5 25s4.5-7.5 3-10.5c0 0-1-2.5-3-2.5s-3 2.5-3 2.5c-1.5 3 3 10.5 3 10.5"/><path d="M11.5 37c5.5 3.5 15.5 3.5 21 0v-7s9-4.5 6-10.5c-4-6.5-13.5-3.5-16 4V27v-3.5c-3.5-7.5-13-10.5-16-4-3 6 5 10 5 10V37z"/><path d="M11.5 30c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0m-21 3.5c5.5-3 15.5-3 21 0" fill="none" stroke="${inner}" stroke-width="1.4"/></g></svg>`;
+      }
+      SVG_CACHE[p] = svg;
+      return svg;
+    }
+
+    let board, turn, selected, legalForSel, lastMove, aiDepth = 2, gameOver = false, winner = null, castling, epSquare = null;
+    let history = [], moveLog = [], reviewIdx = -1, reviewData = null;
+    let timeW = 600, timeB = 600, clockInterval = null, clockStarted = false, aiTimeout = null;
+
+    function resetBoard() {
+      board = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+      ];
+      turn = 'w'; selected = null; legalForSel = []; lastMove = null; gameOver = false; winner = null;
+      castling = { wK: true, wQ: true, bK: true, bQ: true }; epSquare = null;
+      history = []; moveLog = []; reviewIdx = -1; reviewData = null;
+      timeW = 600; timeB = 600; clockStarted = false;
+      clearInterval(clockInterval); clearTimeout(aiTimeout); clockInterval = null;
+    }
+    resetBoard();
+
+    stage.innerHTML = `
+      <div class="w-full max-w-xl flex flex-col items-center relative">
+        <!-- Controls Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 w-full mb-3">
+          <div id="ch-status" class="text-xs font-black px-3 py-1.5 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/30">Ваш ход • 10:00</div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <select id="ch-diff" class="px-2.5 py-1.5 rounded-xl bg-slate-800 border border-white/15 text-xs font-bold text-white focus:outline-none">
+              <option value="1">ИИ: Новичок</option>
+              <option value="2" selected>ИИ: Любитель</option>
+              <option value="3">ИИ: Мастер</option>
+            </select>
+            <button id="ch-undo" class="px-2.5 py-1.5 rounded-xl surface-pill border text-xs font-bold">↩ Ход</button>
+            <button id="ch-resign" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-400/30 text-xs font-bold">Сдаться</button>
+            <button id="ch-reset" class="px-2.5 py-1.5 rounded-xl surface-pill border text-xs font-bold">Заново</button>
+          </div>
+        </div>
+
+        <!-- Opponent Bar (Chess.com Style) -->
+        <div class="w-full max-w-[448px] flex items-center justify-between px-3 py-2 rounded-t-2xl bg-[#262421] border border-white/10">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 flex items-center justify-center text-sm font-black text-white shadow">🤖</div>
+            <div>
+              <div class="text-xs font-black text-white leading-tight">Bot CR7 <span class="text-amber-400 font-bold" id="ch-bot-elo">(1400)</span></div>
+              <div id="ch-cap-b" class="text-[11px] text-slate-400 h-4 leading-4"></div>
+            </div>
+          </div>
+          <div id="ch-clock-b" class="px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums bg-[#1b1a17] text-slate-400 border border-white/10">10:00</div>
+        </div>
+
+        <!-- Chess Board (Persistent 64 DOM cells, zero flicker!) -->
+        <div id="ch-board" class="grid grid-cols-8 grid-rows-8 border-x-2 border-slate-700 shadow-2xl no-select relative" style="width: min(100%, 448px); aspect-ratio: 1 / 1;"></div>
+
+        <!-- Player Bar (Chess.com Style) -->
+        <div class="w-full max-w-[448px] flex items-center justify-between px-3 py-2 rounded-b-2xl bg-[#262421] border border-white/10">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-sm font-black text-slate-950 shadow">7</div>
+            <div>
+              <div class="text-xs font-black text-white leading-tight">Вы (Белые)</div>
+              <div id="ch-cap-w" class="text-[11px] text-slate-400 h-4 leading-4"></div>
+            </div>
+          </div>
+          <div id="ch-clock-w" class="px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums bg-white text-slate-950 shadow">10:00</div>
+        </div>
+
+        <!-- AI Post-Game Review Panel -->
+        <div id="ch-review" class="hidden w-full mt-4 bg-black/35 border border-amber-400/30 rounded-2xl p-4">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="font-black text-sm text-amber-300">🔍 Анализ партии с ИИ</div>
+            <div class="flex items-center gap-1.5">
+              <button id="rev-prev" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm">◀</button>
+              <span id="rev-step" class="text-xs font-bold text-slate-300 px-2">0 / 0</span>
+              <button id="rev-next" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-sm">▶</button>
+            </div>
+          </div>
+          <div id="rev-verdict" class="text-xs sm:text-sm text-slate-200 bg-white/5 rounded-xl p-3 border border-white/10"></div>
+        </div>
+      </div>
+
+      <!-- Fullscreen Checkmate / Timeout Banner -->
+      <div id="ch-mate-overlay" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="text-center max-w-md w-full bg-[#121626] border-2 border-amber-400/60 rounded-3xl p-7 shadow-2xl">
+          <div id="mate-emoji" class="text-6xl mb-3">👑</div>
+          <h2 id="mate-title" class="text-4xl sm:text-5xl font-black tracking-tight text-amber-400 mb-2">МАТ!</h2>
+          <p id="mate-sub" class="text-slate-200 text-sm sm:text-base mb-6"></p>
+          <div class="flex flex-col sm:flex-row gap-2.5 justify-center">
+            <button id="mate-analyze" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">🔍 Анализ партии ИИ</button>
+            <button id="mate-retry" class="px-5 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm transition">Новая партия</button>
+            <button id="mate-home" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 font-bold text-sm transition">В меню</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Build 64 persistent DOM cells ONCE for ultra-smooth 60fps updates
+    const bEl = document.getElementById('ch-board');
+    const sqEls = [];
+    for (let r = 0; r < 8; r++) {
+      sqEls[r] = [];
+      for (let c = 0; c < 8; c++) {
+        const btn = document.createElement('button');
+        btn.dataset.r = r; btn.dataset.c = c;
+        btn.className = 'relative w-full h-full aspect-square focus:outline-none';
+        const darkSq = (r + c) % 2 === 1;
+        if (c === 0) {
+          const rk = document.createElement('span');
+          rk.className = `absolute top-0.5 left-1 text-[9px] font-bold pointer-events-none ${darkSq ? 'text-neutral-300' : 'text-neutral-600'}`;
+          rk.textContent = 8 - r;
+          btn.appendChild(rk);
+        }
+        if (r === 7) {
+          const fl = document.createElement('span');
+          fl.className = `absolute bottom-0.5 right-1 text-[9px] font-bold pointer-events-none ${darkSq ? 'text-neutral-300' : 'text-neutral-600'}`;
+          fl.textContent = String.fromCharCode(97 + c);
+          btn.appendChild(fl);
+        }
+        const pieceWrap = document.createElement('div');
+        pieceWrap.className = 'piece-wrap absolute inset-0 flex items-center justify-center transition-transform duration-150 ease-out pointer-events-none';
+        btn.appendChild(pieceWrap);
+
+        const dot = document.createElement('span');
+        dot.className = 'legal-dot hidden pointer-events-none';
+        btn.appendChild(dot);
+
+        btn.addEventListener('pointerdown', (e) => { e.preventDefault(); onSquareClick(r, c); });
+        bEl.appendChild(btn);
+        sqEls[r][c] = { btn, pieceWrap, dot, lastPiece: undefined };
+      }
+    }
+
+    function fmtClock(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function updateClocksUI() {
+      const cw = document.getElementById('ch-clock-w'), cb = document.getElementById('ch-clock-b');
+      if (!cw || !cb) return;
+      cw.textContent = fmtClock(timeW);
+      cb.textContent = fmtClock(timeB);
+      cw.className = `px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums transition ${
+        !gameOver && turn === 'w' ? (timeW <= 30 ? 'bg-rose-600 text-white' : 'bg-white text-slate-950 shadow') : 'bg-[#1b1a17] text-slate-400 border border-white/10'
+      }`;
+      cb.className = `px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums transition ${
+        !gameOver && turn === 'b' ? (timeB <= 30 ? 'bg-rose-600 text-white' : 'bg-white text-slate-950 shadow') : 'bg-[#1b1a17] text-slate-400 border border-white/10'
+      }`;
+    }
+
+    function ensureClockRunning() {
+      if (clockStarted || gameOver) return;
+      clockStarted = true;
+      clockInterval = setInterval(() => {
+        if (gameOver || reviewData) return;
+        if (turn === 'w') {
+          timeW = Math.max(0, timeW - 1);
+          if (timeW === 0) {
+            gameOver = true; winner = 'b'; clearInterval(clockInterval);
+            sfx.bad(); render(); showMateBanner('ВРЕМЯ ВЫШЛО!', 'У вас закончились 10 минут. ИИ победил по времени.', '⏱️');
+          }
+        } else {
+          timeB = Math.max(0, timeB - 1);
+          if (timeB === 0) {
+            gameOver = true; winner = 'w'; clearInterval(clockInterval);
+            sfx.win(); render(); showMateBanner('ВРЕМЯ ВЫШЛО! ПОБЕДА!', 'У ИИ закончилось время — вы победили!', '⏱️');
+          }
+        }
+        updateClocksUI();
+      }, 1000);
+    }
+
+    function cloneBoard(b) { return b.map(r => r.slice()); }
+    function sqName(r, c) { return String.fromCharCode(97 + c) + (8 - r); }
+
+    function pseudoMoves(b, r, c, cas, ep) {
+      const p = b[r][c]; if (!p) return [];
+      const col = colorOf(p), opp = col === 'w' ? 'b' : 'w', type = p.toLowerCase(), moves = [];
+      const inB = (rr, cc) => rr >= 0 && rr < 8 && cc >= 0 && cc < 8;
+      if (type === 'p') {
+        const dir = col === 'w' ? -1 : 1, startR = col === 'w' ? 6 : 1;
+        if (inB(r + dir, c) && !b[r + dir][c]) {
+          moves.push([r, c, r + dir, c]);
+          if (r === startR && !b[r + 2 * dir][c]) moves.push([r, c, r + 2 * dir, c, 'dp']);
+        }
+        for (const dc of [-1, 1]) {
+          if (inB(r + dir, c + dc)) {
+            if (b[r + dir][c + dc] && colorOf(b[r + dir][c + dc]) === opp) moves.push([r, c, r + dir, c + dc]);
+            else if (ep && ep[0] === r + dir && ep[1] === c + dc) moves.push([r, c, r + dir, c + dc, 'ep']);
+          }
+        }
+      } else if (type === 'n') {
+        for (const [dr, dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) {
+          const nr = r + dr, nc = c + dc; if (inB(nr, nc) && colorOf(b[nr][nc]) !== col) moves.push([r, c, nr, nc]);
+        }
+      } else if (type === 'k') {
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+          if (!dr && !dc) continue; const nr = r + dr, nc = c + dc;
+          if (inB(nr, nc) && colorOf(b[nr][nc]) !== col) moves.push([r, c, nr, nc]);
+        }
+        if (cas) {
+          if (col === 'w' && r === 7 && c === 4) {
+            if (cas.wK && !b[7][5] && !b[7][6] && b[7][7] === 'R') moves.push([7,4,7,6,'casK']);
+            if (cas.wQ && !b[7][3] && !b[7][2] && !b[7][1] && b[7][0] === 'R') moves.push([7,4,7,2,'casQ']);
+          }
+          if (col === 'b' && r === 0 && c === 4) {
+            if (cas.bK && !b[0][5] && !b[0][6] && b[0][7] === 'r') moves.push([0,4,0,6,'casK']);
+            if (cas.bQ && !b[0][3] && !b[0][2] && !b[0][1] && b[0][0] === 'r') moves.push([0,4,0,2,'casQ']);
+          }
+        }
+      } else {
+        const dirs = type === 'r' ? [[1,0],[-1,0],[0,1],[0,-1]] : type === 'b' ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+        for (const [dr, dc] of dirs) {
+          let nr = r + dr, nc = c + dc;
+          while (inB(nr, nc)) {
+            if (!b[nr][nc]) moves.push([r, c, nr, nc]);
+            else { if (colorOf(b[nr][nc]) === opp) moves.push([r, c, nr, nc]); break; }
+            nr += dr; nc += dc;
+          }
+        }
+      }
+      return moves;
+    }
+
+    function applyMove(b, m, cas, ep) {
+      const nb = cloneBoard(b), ncas = { ...cas }; let nep = null;
+      const [fr, fc, tr, tc, flag] = m, p = nb[fr][fc];
+      nb[tr][tc] = p; nb[fr][fc] = null;
+      if (flag === 'ep') nb[fr][tc] = null;
+      if (flag === 'dp') nep = [(fr + tr) / 2, fc];
+      if (p === 'P' && tr === 0) nb[tr][tc] = 'Q';
+      if (p === 'p' && tr === 7) nb[tr][tc] = 'q';
+      if (flag === 'casK') { nb[tr][5] = nb[tr][7]; nb[tr][7] = null; }
+      if (flag === 'casQ') { nb[tr][3] = nb[tr][0]; nb[tr][0] = null; }
+      if (p === 'K') { ncas.wK = false; ncas.wQ = false; }
+      if (p === 'k') { ncas.bK = false; ncas.bQ = false; }
+      if (fr === 7 && fc === 0) ncas.wQ = false; if (fr === 7 && fc === 7) ncas.wK = false;
+      if (fr === 0 && fc === 0) ncas.bQ = false; if (fr === 0 && fc === 7) ncas.bK = false;
+      if (tr === 7 && tc === 0) ncas.wQ = false; if (tr === 7 && tc === 7) ncas.wK = false;
+      if (tr === 0 && tc === 0) ncas.bQ = false; if (tr === 0 && tc === 7) ncas.bK = false;
+      return { nb, ncas, nep };
+    }
+
+    function isInCheck(b, col) {
+      let kr = -1, kc = -1; const king = col === 'w' ? 'K' : 'k';
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (b[r][c] === king) { kr = r; kc = c; }
+      if (kr === -1) return true;
+      const opp = col === 'w' ? 'b' : 'w';
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        if (colorOf(b[r][c]) === opp && pseudoMoves(b, r, c, null, null).some(m => m[2] === kr && m[3] === kc)) return true;
+      }
+      return false;
+    }
+
+    function legalMoves(b, col, cas, ep) {
+      const res = [];
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        if (colorOf(b[r][c]) === col) {
+          for (const m of pseudoMoves(b, r, c, cas, ep)) {
+            if (m[4] === 'casK' && (isInCheck(b, col) || isInCheck(applyMove(b, [m[0],m[1],m[0],5], cas, null).nb, col))) continue;
+            if (m[4] === 'casQ' && (isInCheck(b, col) || isInCheck(applyMove(b, [m[0],m[1],m[0],3], cas, null).nb, col))) continue;
+            const { nb } = applyMove(b, m, cas, ep);
+            if (!isInCheck(nb, col)) res.push(m);
+          }
+        }
+      }
+      // MVV-LVA move ordering for 10x faster Alpha-Beta pruning!
+      res.sort((a, bMove) => {
+        const capA = b[a[2]][a[3]] ? VAL[b[a[2]][a[3]].toLowerCase()] : 0;
+        const capB = b[bMove[2]][bMove[3]] ? VAL[b[bMove[2]][bMove[3]].toLowerCase()] : 0;
+        return capB - capA;
+      });
+      return res;
+    }
+
+    function evaluate(b) {
+      let score = 0;
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const p = b[r][c]; if (!p) continue;
+        const v = VAL[p.toLowerCase()], centerBonus = (3.5 - Math.abs(3.5 - r)) + (3.5 - Math.abs(3.5 - c));
+        const val = v + centerBonus * 4;
+        score += isBlack(p) ? val : -val;
+      }
+      return score;
+    }
+
+    function minimax(b, cas, ep, depth, alpha, beta, maximizing) {
+      const col = maximizing ? 'b' : 'w', moves = legalMoves(b, col, cas, ep);
+      if (moves.length === 0) return { score: isInCheck(b, col) ? (maximizing ? -99999 - depth : 99999 + depth) : 0 };
+      if (depth === 0) return { score: evaluate(b) };
+      let bestMove = moves[0];
+      if (maximizing) {
+        let maxEval = -Infinity;
+        for (const m of moves) {
+          const { nb, ncas, nep } = applyMove(b, m, cas, ep);
+          const ev = minimax(nb, ncas, nep, depth - 1, alpha, beta, false).score;
+          if (ev > maxEval) { maxEval = ev; bestMove = m; }
+          alpha = Math.max(alpha, ev); if (beta <= alpha) break;
+        }
+        return { score: maxEval, move: bestMove };
+      } else {
+        let minEval = Infinity;
+        for (const m of moves) {
+          const { nb, ncas, nep } = applyMove(b, m, cas, ep);
+          const ev = minimax(nb, ncas, nep, depth - 1, alpha, beta, true).score;
+          if (ev < minEval) { minEval = ev; bestMove = m; }
+          beta = Math.min(beta, ev); if (beta <= alpha) break;
+        }
+        return { score: minEval, move: bestMove };
+      }
+    }
+
+    function showMateBanner(title, sub, emoji) {
+      document.getElementById('mate-emoji').textContent = emoji;
+      document.getElementById('mate-title').textContent = title;
+      document.getElementById('mate-sub').textContent = sub;
+      const ov = document.getElementById('ch-mate-overlay');
+      ov.classList.remove('hidden'); ov.classList.add('flex');
+    }
+
+    function checkEnd() {
+      const moves = legalMoves(board, turn, castling, epSquare), inChk = isInCheck(board, turn);
+      const st = document.getElementById('ch-status');
+      if (moves.length === 0) {
+        gameOver = true; clearInterval(clockInterval); updateClocksUI();
+        if (inChk) {
+          winner = turn === 'b' ? 'w' : 'b'; render();
+          if (winner === 'w') {
+            st.textContent = 'МАТ! Вы победили!'; sfx.win();
+            setTimeout(() => showMateBanner('МАТ! SIUUU!', 'Вы поставили мат ИИ-боту! Разберите партию или начните новую.', '👑'), 700);
+          } else {
+            st.textContent = 'МАТ! ИИ победил'; sfx.bad();
+            setTimeout(() => showMateBanner('МАТ! Вы проиграли', 'Король пал! Запустите «Анализ партии ИИ», чтобы увидеть ошибки.', '💀'), 700);
+          }
+        } else {
+          winner = 'draw'; st.textContent = 'Пат — ничья!';
+          setTimeout(() => showMateBanner('ПАТ — НИЧЬЯ', 'У сторон больше нет легальных ходов.', '🤝'), 400);
+        }
+        return true;
+      }
+      st.textContent = turn === 'w' ? (inChk ? 'Шах! Ваш ход' : 'Ваш ход (Белые)') : 'Ход ИИ...';
+      updateClocksUI();
+      return false;
+    }
+
+    function pickAiMove() {
+      const moves = legalMoves(board, 'b', castling, epSquare);
+      if (moves.length === 0) return null;
+      if (aiDepth === 1) {
+        // Новичок (~600): играет как человек с опытом 1 месяц
+        const scored = moves.map(m => {
+          const { nb } = applyMove(board, m, castling, epSquare);
+          return { m, s: evaluate(nb) + (Math.random() * 160 - 80) };
+        }).sort((a, b) => b.s - a.s);
+        const pool = scored.slice(0, Math.min(4, scored.length));
+        return pool[Math.floor(Math.random() * pool.length)].m;
+      }
+      // Любитель (Depth 2 ~1400) & Мастер (Depth 3 ~1900)
+      return minimax(board, castling, epSquare, aiDepth, -Infinity, Infinity, true).move;
+    }
+
+    function aiTurn() {
+      if (gameOver || turn !== 'b') return;
+      aiTimeout = setTimeout(() => {
+        const chosen = pickAiMove();
+        if (chosen) {
+          const bBefore = cloneBoard(board), casBefore = { ...castling }, epBefore = epSquare;
+          const { nb, ncas, nep } = applyMove(board, chosen, castling, epSquare);
+          moveLog.push({ who: 'b', move: chosen, boardBefore: bBefore, casBefore, epBefore, boardAfter: cloneBoard(nb) });
+          board = nb; castling = ncas; epSquare = nep; lastMove = chosen; turn = 'w';
+          sfx.tap(); render(); checkEnd();
+        }
+      }, 340);
+    }
+
+    function startReview() {
+      document.getElementById('ch-mate-overlay').classList.add('hidden');
+      document.getElementById('ch-mate-overlay').classList.remove('flex');
+      if (moveLog.length === 0) { showToast('Сыграйте хотя бы 1 ход для анализа!'); return; }
+      reviewData = moveLog.map(entry => {
+        const isW = entry.who === 'w';
+        const bestRes = minimax(entry.boardBefore, entry.casBefore, entry.epBefore, 2, -Infinity, Infinity, !isW);
+        const { nb, ncas, nep } = applyMove(entry.boardBefore, entry.move, entry.casBefore, entry.epBefore);
+        const playedEval = minimax(nb, ncas, nep, 1, -Infinity, Infinity, isW).score;
+        const diff = isW ? (playedEval - bestRes.score) : (bestRes.score - playedEval);
+        let tag = '🌟 Лучший ход', cls = 'text-emerald-400';
+        if (diff > 220) { tag = '💥 Зевок!'; cls = 'text-rose-400'; }
+        else if (diff > 90) { tag = '❌ Ошибка'; cls = 'text-orange-400'; }
+        else if (diff > 35) { tag = '⚠️ Неточность'; cls = 'text-amber-300'; }
+        const bestStr = bestRes.move ? `${sqName(bestRes.move[0], bestRes.move[1])}→${sqName(bestRes.move[2], bestRes.move[3])}` : '—';
+        const playedStr = `${sqName(entry.move[0], entry.move[1])}→${sqName(entry.move[2], entry.move[3])}`;
+        return { ...entry, tag, cls, bestMove: bestRes.move, bestStr, playedStr };
+      });
+      reviewIdx = 0;
+      document.getElementById('ch-review').classList.remove('hidden');
+      renderReviewStep();
+    }
+
+    function renderReviewStep() {
+      if (!reviewData || reviewData.length === 0) return;
+      const item = reviewData[reviewIdx];
+      board = cloneBoard(item.boardBefore); lastMove = item.move; selected = null; legalForSel = [];
+      document.getElementById('rev-step').textContent = `${reviewIdx + 1} / ${reviewData.length}`;
+      const whoLabel = item.who === 'w' ? 'Белые (Вы)' : 'Чёрные (ИИ)';
+      document.getElementById('rev-verdict').innerHTML = `
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-bold text-slate-300">Ход ${reviewIdx + 1} • ${whoLabel}: <strong class="text-white">${item.playedStr}</strong></span>
+          <span class="font-black ${item.cls}">${item.tag}</span>
+        </div>
+        <div class="text-xs text-slate-400">ИИ рекомендует: <strong class="text-emerald-400">${item.bestStr}</strong> (подсвечено зелёным на доске)</div>
+      `;
+      render(item.bestMove);
+    }
+
+    function onSquareClick(r, c) {
+      if (gameOver || turn !== 'w' || reviewData) return;
+      const matchMove = legalForSel.find(m => m[2] === r && m[3] === c);
+      if (matchMove) {
+        ensureClockRunning();
+        const bBefore = cloneBoard(board), casBefore = { ...castling }, epBefore = epSquare;
+        history.push({ board: bBefore, castling: casBefore, epSquare: epBefore, lastMove });
+        const { nb, ncas, nep } = applyMove(board, matchMove, castling, epSquare);
+        moveLog.push({ who: 'w', move: matchMove, boardBefore: bBefore, casBefore, epBefore, boardAfter: cloneBoard(nb) });
+        board = nb; castling = ncas; epSquare = nep; lastMove = matchMove; selected = null; legalForSel = []; turn = 'b';
+        sfx.good(); render();
+        if (!checkEnd()) aiTurn();
+        return;
+      }
+      if (isWhite(board[r][c])) {
+        selected = [r, c];
+        legalForSel = legalMoves(board, 'w', castling, epSquare).filter(m => m[0] === r && m[1] === c);
+        sfx.tap(); render();
+      } else { selected = null; legalForSel = []; render(); }
+    }
+
+    function render(reviewBestMove = null) {
+      const legalTargets = new Set(legalForSel.map(m => `${m[2]},${m[3]}`));
+      const wChk = isInCheck(board, 'w'), bChk = isInCheck(board, 'b');
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const cell = sqEls[r][c], p = board[r][c], darkSq = (r + c) % 2 === 1;
+        const isSel = selected && selected[0] === r && selected[1] === c;
+        const isLast = lastMove && ((lastMove[0] === r && lastMove[1] === c) || (lastMove[2] === r && lastMove[3] === c));
+        const isRevBest = reviewBestMove && ((reviewBestMove[0] === r && reviewBestMove[1] === c) || (reviewBestMove[2] === r && reviewBestMove[3] === c));
+        const isLegal = legalTargets.has(`${r},${c}`);
+        const isKingFallen = gameOver && ((winner === 'w' && p === 'k') || (winner === 'b' && p === 'K'));
+        const isKingChk = (p === 'K' && wChk) || (p === 'k' && bChk);
+
+        let bg = darkSq ? '#818181' : '#b8b8b8';
+        if (isLast) bg = darkSq ? '#8ca33b' : '#a7be4d';
+        if (isSel) bg = '#c7d44e';
+        if (isRevBest) bg = '#22c55e';
+        if (isKingChk) bg = '#dc2626';
+        cell.btn.style.background = bg;
+
+        // Only update innerHTML if the piece on this square actually changed -> ZERO flicker!
+        if (cell.lastPiece !== p) {
+          cell.pieceWrap.innerHTML = p ? pieceSVG(p) : '';
+          cell.lastPiece = p;
+          if (p && lastMove && lastMove[2] === r && lastMove[3] === c) {
+            const dx = (lastMove[1] - lastMove[3]) * 100;
+            const dy = (lastMove[0] - lastMove[2]) * 100;
+            cell.pieceWrap.style.zIndex = '20';
+            cell.pieceWrap.style.transition = 'none';
+            cell.pieceWrap.style.transform = `translate3d(${dx}%, ${dy}%, 0) scale(1.06)`;
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                cell.pieceWrap.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                cell.pieceWrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
+                setTimeout(() => { cell.pieceWrap.style.zIndex = '1'; }, 250);
+              });
+            });
+          } else {
+            cell.pieceWrap.style.zIndex = '1';
+            cell.pieceWrap.style.transform = isSel ? 'scale(1.1)' : 'translate3d(0, 0, 0) scale(1)';
+          }
+        } else {
+          cell.pieceWrap.classList.toggle('king-fallen', !!isKingFallen);
+          if (!lastMove || lastMove[2] !== r || lastMove[3] !== c) {
+            cell.pieceWrap.style.transform = isSel ? 'scale(1.1)' : 'translate3d(0, 0, 0) scale(1)';
+          }
+        }
+        cell.pieceWrap.classList.toggle('king-fallen', !!isKingFallen);
+
+        if (isLegal) {
+          cell.dot.className = p
+            ? 'legal-dot absolute inset-[10%] border-[3px] border-emerald-500/85 rounded-full pointer-events-none'
+            : 'legal-dot absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28%] h-[28%] rounded-full bg-black/25 pointer-events-none';
+        } else {
+          cell.dot.className = 'legal-dot hidden';
+        }
+      }
+      updateClocksUI();
+    }
+
+    document.getElementById('ch-diff').addEventListener('change', (e) => {
+      aiDepth = +e.target.value;
+      const elos = { 1: '(600)', 2: '(1400)', 3: '(1900)' };
+      document.getElementById('ch-bot-elo').textContent = elos[aiDepth] || '(1400)';
+    });
+    document.getElementById('ch-undo').addEventListener('click', () => {
+      if (history.length > 0 && !gameOver && !reviewData) {
+        clearTimeout(aiTimeout);
+        const prev = history.pop(); board = prev.board; castling = prev.castling; epSquare = prev.epSquare; lastMove = prev.lastMove;
+        if (moveLog.length >= 2) moveLog.splice(-2, 2); else moveLog.pop();
+        turn = 'w'; selected = null; legalForSel = []; render(); checkEnd();
+      }
+    });
+    document.getElementById('ch-resign').addEventListener('click', () => {
+      if (gameOver) return;
+      gameOver = true; winner = 'b'; clearInterval(clockInterval); render();
+      showMateBanner('СДАЧА', 'Вы сдались. Запустите «Анализ партии ИИ», чтобы разобрать ходы!', '🏳️');
+    });
+    document.getElementById('ch-reset').addEventListener('click', () => {
+      document.getElementById('ch-review').classList.add('hidden');
+      resetBoard(); setLives(3); render(); checkEnd();
+    });
+    document.getElementById('mate-analyze').addEventListener('click', startReview);
+    document.getElementById('mate-retry').addEventListener('click', () => {
+      document.getElementById('ch-mate-overlay').classList.add('hidden'); document.getElementById('ch-mate-overlay').classList.remove('flex');
+      document.getElementById('ch-review').classList.add('hidden'); resetBoard(); setLives(3); render(); checkEnd();
+    });
+    document.getElementById('mate-home').addEventListener('click', () => {
+      document.getElementById('ch-mate-overlay').classList.add('hidden'); document.getElementById('ch-mate-overlay').classList.remove('flex');
+      showHub();
+    });
+    document.getElementById('rev-prev').addEventListener('click', () => { if (reviewData && reviewIdx > 0) { reviewIdx -= 1; sfx.tap(); renderReviewStep(); } });
+    document.getElementById('rev-next').addEventListener('click', () => { if (reviewData && reviewIdx < reviewData.length - 1) { reviewIdx += 1; sfx.tap(); renderReviewStep(); } });
+
+    activeCleanup = () => { clearInterval(clockInterval); clearTimeout(aiTimeout); };
+    onContinueCallback = () => { resetBoard(); render(); checkEnd(); };
+    activeHintFn = () => {
+      if (gameOver || turn !== 'w' || !spendCoinsForHint(20)) return;
+      const res = minimax(board, castling, epSquare, 2, -Infinity, Infinity, false);
+      if (res.move) { const [fr, fc, tr, tc] = res.move; selected = [fr, fc]; legalForSel = [res.move]; render(); showToast(`ИИ советует: ${sqName(fr,fc)} → ${sqName(tr,tc)}`); }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 1: ПАРОЛЬ
+  // =========================================================================
+  function initPasswordGame(stage) {
+    const pool = state.hardMode ? PUZZLES.password6 : PUZZLES.password5;
+    const target = pickPuzzle('pw_' + (state.hardMode ? 6 : 5), pool);
+    const len = target.length, maxRows = 6;
+    let guesses = [], current = '', finished = false;
+    const keyStates = {};
+    const kbRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['ENTER','Я','Ч','С','М','И','Т','Ь','Б','Ю','DEL']];
+
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div class="text-xs font-bold text-amber-400 mb-2">Слово из ${len} букв • Словарь 20+</div>
+        <div id="pw-board" class="grid grid-rows-6 gap-1.5 mb-5"></div>
+        <div id="pw-kb" class="w-full flex flex-col gap-1.5"></div>
+      </div>
+    `;
+
+    function render() {
+      const board = document.getElementById('pw-board');
+      let html = '';
+      for (let r = 0; r < maxRows; r++) {
+        html += `<div class="grid ${len === 6 ? 'grid-cols-6' : 'grid-cols-5'} gap-1.5" id="pw-row-${r}">`;
+        const word = r < guesses.length ? guesses[r].word : (r === guesses.length ? current : '');
+        const evals = r < guesses.length ? guesses[r].evals : null;
+        for (let c = 0; c < len; c++) {
+          const ch = word[c] || '';
+          let cls = 'bg-white/5 border-white/15 text-white-adaptive';
+          if (evals) {
+            if (evals[c] === 'correct') cls = 'bg-emerald-500 border-emerald-400 text-white';
+            else if (evals[c] === 'present') cls = 'bg-amber-400 border-amber-300 text-slate-950';
+            else cls = 'bg-slate-600 border-slate-500 text-slate-200';
+          } else if (ch) cls = 'bg-amber-400/15 border-amber-400 text-white-adaptive tile-pop';
+          const sz = len === 6 ? 'w-11 h-11 sm:w-12 sm:h-12 text-lg sm:text-xl' : 'w-12 h-12 sm:w-14 sm:h-14 text-xl sm:text-2xl';
+          html += `<div class="${sz} rounded-xl border-2 flex items-center justify-center font-black ${cls}">${ch}</div>`;
+        }
+        html += '</div>';
+      }
+      board.innerHTML = html;
+
+      const kb = document.getElementById('pw-kb');
+      kb.innerHTML = kbRows.map(row => `
+        <div class="flex justify-center gap-1">
+          ${row.map(k => {
+            const st = keyStates[k];
+            let bg = 'surface-pill border';
+            if (st === 'correct') bg = 'bg-emerald-500 text-white border-emerald-400';
+            else if (st === 'present') bg = 'bg-amber-400 text-slate-950 border-amber-300';
+            else if (st === 'absent') bg = 'bg-slate-700/60 text-slate-400 border-transparent';
+            const label = k === 'ENTER' ? '✓' : (k === 'DEL' ? '⌫' : k);
+            const wide = (k === 'ENTER' || k === 'DEL') ? 'px-2.5 sm:px-3.5 text-sm' : 'flex-1 min-w-[24px] max-w-[36px] text-xs sm:text-sm';
+            return `<button data-key="${k}" class="pw-key h-11 rounded-lg font-bold ${bg} ${wide} flex items-center justify-center transition">${label}</button>`;
+          }).join('')}
+        </div>
+      `).join('');
+      kb.querySelectorAll('.pw-key').forEach(b => b.addEventListener('click', () => handleKey(b.dataset.key)));
+    }
+
+    function evaluateGuess(word) {
+      const res = Array(len).fill('absent'), tArr = target.split(''), wArr = word.split('');
+      for (let i = 0; i < len; i++) if (wArr[i] === tArr[i]) { res[i] = 'correct'; tArr[i] = null; wArr[i] = null; }
+      for (let i = 0; i < len; i++) if (wArr[i]) { const idx = tArr.indexOf(wArr[i]); if (idx !== -1) { res[i] = 'present'; tArr[idx] = null; } }
+      return res;
+    }
+
+    onContinueCallback = () => { guesses = guesses.slice(0, -2); finished = false; render(); };
+
+    function handleKey(k) {
+      if (finished) return;
+      if (k === 'DEL') { if (current.length > 0) { sfx.tap(); current = current.slice(0, -1); render(); } return; }
+      if (k === 'ENTER') {
+        if (current.length < len) {
+          sfx.bad(); const row = document.getElementById(`pw-row-${guesses.length}`); if (row) row.classList.add('shake');
+          showToast(`Введите слово из ${len} букв`); return;
+        }
+        const evals = evaluateGuess(current); guesses.push({ word: current, evals });
+        for (let i = 0; i < len; i++) {
+          const ch = current[i], prev = keyStates[ch];
+          if (evals[i] === 'correct') keyStates[ch] = 'correct';
+          else if (evals[i] === 'present' && prev !== 'correct') keyStates[ch] = 'present';
+          else if (!prev) keyStates[ch] = 'absent';
+        }
+        const won = current === target; current = '';
+        if (!won) setLives(Math.max(1, Math.ceil((maxRows - guesses.length) / 2)));
+        render();
+        if (won) { finished = true; setTimeout(() => completeGame('password', `Слово «${target}» взято с ${guesses.length}-й попытки!`), 250); }
+        else if (guesses.length >= maxRows) { finished = true; setLives(1); loseLife(`Загаданное слово было: ${target}`); }
+        else sfx.good();
+        return;
+      }
+      if (/^[А-ЯЁ]$/.test(k) && current.length < len) { sfx.tap(); current += (k === 'Ё' ? 'Е' : k); render(); }
+    }
+
+    const onKeyDown = (e) => { if (e.key === 'Backspace') handleKey('DEL'); else if (e.key === 'Enter') handleKey('ENTER'); else { const up = e.key.toUpperCase(); if (/^[А-ЯЁ]$/.test(up)) handleKey(up); } };
+    window.addEventListener('keydown', onKeyDown); activeCleanup = () => window.removeEventListener('keydown', onKeyDown);
+    activeHintFn = () => {
+      if (finished) return;
+      const idx = Array.from({ length: len }, (_, i) => i).find(i => !guesses.some(g => g.evals[i] === 'correct'));
+      if (idx === undefined) return showToast('Все буквы уже открыты!');
+      if (!spendCoinsForHint(20)) return;
+      showToast(`Подсказка: ${idx + 1}-я буква — «${target[idx]}»`);
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 2: ХЭШТЕГ
+  // =========================================================================
+  function initHashtagGame(stage) {
+    const p = pickPuzzle('ht', PUZZLES.hashtag);
+    const targetGrid = Array.from({ length: 5 }, () => Array(5).fill(null));
+    for (let i = 0; i < 5; i++) { targetGrid[1][i] = p.h1[i]; targetGrid[3][i] = p.h2[i]; targetGrid[i][1] = p.v1[i]; targetGrid[i][3] = p.v2[i]; }
+    const activeCoords = []; for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (targetGrid[r][c] !== null) activeCoords.push([r, c]);
+    const letters = activeCoords.map(([r, c]) => targetGrid[r][c]);
+    for (let i = letters.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [letters[i], letters[j]] = [letters[j], letters[i]]; }
+    const curGrid = Array.from({ length: 5 }, () => Array(5).fill(null)); activeCoords.forEach(([r, c], idx) => { curGrid[r][c] = letters[idx]; });
+    let movesLeft = state.hardMode ? 10 : 12, selected = null, finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-sm flex flex-col items-center">
+        <div class="flex items-center justify-between w-full mb-4 px-2"><span class="text-sm font-bold text-muted-adaptive">Осталось ходов:</span><span id="ht-moves" class="px-3 py-1 rounded-xl bg-amber-400/20 text-amber-400 border border-amber-400/30 font-black text-base">${movesLeft}</span></div>
+        <div id="ht-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+      </div>
+    `;
+    function getCellStatus(r, c) {
+      const ch = curGrid[r][c]; if (ch === targetGrid[r][c]) return 'correct';
+      const inRow = (r === 1 || r === 3) && targetGrid[r].includes(ch), inCol = (c === 1 || c === 3) && targetGrid.some(row => row[c] === ch);
+      return (inRow || inCol) ? 'present' : 'wrong';
+    }
+    const checkWin = () => activeCoords.every(([r, c]) => curGrid[r][c] === targetGrid[r][c]);
+    onContinueCallback = () => { movesLeft = 5; finished = false; render(); };
+
+    function render() {
+      document.getElementById('ht-moves').textContent = movesLeft;
+      const grid = document.getElementById('ht-grid'); let html = '';
+      for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+        if (curGrid[r][c] === null) html += `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/[0.03]"></div>`;
+        else {
+          const st = getCellStatus(r, c), isSel = selected && selected[0] === r && selected[1] === c;
+          let cls = 'bg-slate-700 text-white border-slate-800';
+          if (st === 'correct') cls = 'bg-emerald-500 text-white border-emerald-700';
+          else if (st === 'present') cls = 'bg-amber-400 text-slate-950 border-amber-600';
+          html += `<button data-r="${r}" data-c="${c}" class="ht-cell w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-b-4 font-black text-xl flex items-center justify-center transition ${cls} ${isSel ? 'ring-4 ring-white scale-105' : ''}">${curGrid[r][c]}</button>`;
+        }
+      }
+      grid.innerHTML = html;
+      grid.querySelectorAll('.ht-cell').forEach(btn => btn.addEventListener('click', () => {
+        if (finished) return;
+        const r = +btn.dataset.r, c = +btn.dataset.c;
+        if (!selected) { sfx.tap(); selected = [r, c]; render(); }
+        else if (selected[0] === r && selected[1] === c) { selected = null; render(); }
+        else {
+          const [sr, sc] = selected; [curGrid[sr][sc], curGrid[r][c]] = [curGrid[r][c], curGrid[sr][sc]];
+          selected = null; movesLeft -= 1; sfx.good(); render();
+          if (checkWin()) { finished = true; setTimeout(() => completeGame('hashtag'), 200); }
+          else if (movesLeft <= 0) { finished = true; setLives(1); loseLife('Закончились ходы!'); }
+        }
+      }));
+    }
+    activeHintFn = () => {
+      if (finished) return;
+      const wrong = activeCoords.find(([r, c]) => curGrid[r][c] !== targetGrid[r][c]);
+      if (!wrong || !spendCoinsForHint(20)) return;
+      const [tr, tc] = wrong, needed = targetGrid[tr][tc], donor = activeCoords.find(([r, c]) => curGrid[r][c] === needed && curGrid[r][c] !== targetGrid[r][c]);
+      if (donor) { const [dr, dc] = donor; [curGrid[tr][tc], curGrid[dr][dc]] = [curGrid[dr][dc], curGrid[tr][tc]]; selected = null; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('hashtag'), 200); } }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 3: МИНИ-КРОССВОРД (ЙЦУКЕН)
+  // =========================================================================
+  function initCrosswordGame(stage) {
+    const p = pickPuzzle('cw', PUZZLES.crossword);
+    const userGrid = p.grid.map(row => row.map(ch => ch === '.' ? '.' : ''));
+    let sel = [0, 0], dir = 'across', finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div class="flex flex-col items-center">
+          <div id="cw-grid" class="grid grid-cols-5 gap-1.5 mb-3"></div>
+          <div class="flex gap-2 mb-3">
+            <button id="cw-dir-btn" class="px-3 py-1.5 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30 font-bold text-xs">По горизонтали →</button>
+            <button id="cw-clear-btn" class="px-3 py-1.5 rounded-xl surface-pill border font-bold text-xs">Очистить</button>
+          </div>
+        </div>
+        <div class="surface-pill border rounded-2xl p-4 space-y-4 max-h-[340px] overflow-y-auto">
+          <div><h4 class="font-extrabold text-xs uppercase tracking-wider text-amber-400 mb-2">По горизонтали</h4><ul class="space-y-1.5 text-xs">${p.across.map((item, idx) => `<li><button data-dir="across" data-r="${item.r}" data-c="${item.c}" class="cw-clue text-left hover:text-amber-400"><strong>${idx + 1}.</strong> ${item.clue}</button></li>`).join('')}</ul></div>
+          <div><h4 class="font-extrabold text-xs uppercase tracking-wider text-sky-400 mb-2">По вертикали</h4><ul class="space-y-1.5 text-xs">${p.down.map((item, idx) => `<li><button data-dir="down" data-r="${item.r}" data-c="${item.c}" class="cw-clue text-left hover:text-sky-400"><strong>${idx + 1}.</strong> ${item.clue}</button></li>`).join('')}</ul></div>
+        </div>
+      </div>
+      <div class="mt-4 w-full max-w-md flex flex-col gap-1" id="cw-mobile-kb"></div>
+    `;
+    const checkWin = () => p.grid.every((row, r) => row.every((ch, c) => ch === '.' || userGrid[r][c] === ch));
+
+    function render() {
+      const gridEl = document.getElementById('cw-grid'); let html = '';
+      for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+        if (p.grid[r][c] === '.') html += `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-black/50"></div>`;
+        else {
+          const isSel = sel[0] === r && sel[1] === c, inLine = (dir === 'across' && sel[0] === r) || (dir === 'down' && sel[1] === c);
+          const cls = isSel ? 'bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-300/60' : (inLine ? 'bg-sky-500/20 text-white-adaptive border-sky-400/50' : 'surface-pill border');
+          html += `<button data-r="${r}" data-c="${c}" class="cw-cell w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-2 font-black text-xl flex items-center justify-center transition ${cls}">${userGrid[r][c]}</button>`;
+        }
+      }
+      gridEl.innerHTML = html;
+      document.getElementById('cw-dir-btn').textContent = dir === 'across' ? 'По горизонтали →' : 'По вертикали ↓';
+      gridEl.querySelectorAll('.cw-cell').forEach(b => b.addEventListener('click', () => {
+        const r = +b.dataset.r, c = +b.dataset.c; if (sel[0] === r && sel[1] === c) dir = dir === 'across' ? 'down' : 'across'; else sel = [r, c];
+        sfx.tap(); render();
+      }));
+    }
+    function moveNext(step = 1) { let [r, c] = sel; if (dir === 'across') c += step; else r += step; if (r >= 0 && r < 5 && c >= 0 && c < 5 && p.grid[r][c] !== '.') sel = [r, c]; }
+    function inputLetter(ch) {
+      if (finished) return; const [r, c] = sel; if (p.grid[r][c] === '.') return;
+      userGrid[r][c] = ch === 'Ё' ? 'Е' : ch; sfx.tap(); moveNext(1); render();
+      if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); }
+    }
+
+    document.getElementById('cw-dir-btn').addEventListener('click', () => { dir = dir === 'across' ? 'down' : 'across'; render(); });
+    document.getElementById('cw-clear-btn').addEventListener('click', () => { userGrid[sel[0]][sel[1]] = ''; render(); });
+    stage.querySelectorAll('.cw-clue').forEach(b => b.addEventListener('click', () => { dir = b.dataset.dir; sel = [+b.dataset.r, +b.dataset.c]; render(); }));
+
+    const mobKb = document.getElementById('cw-mobile-kb');
+    const cwRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['Я','Ч','С','М','И','Т','Ь','Б','Ю','⌫']];
+    mobKb.innerHTML = cwRows.map(row => `<div class="flex justify-center gap-1">${row.map(l => `<button data-l="${l}" class="cw-mkey ${l === '⌫' ? 'px-3 bg-rose-500/25 text-rose-400' : 'flex-1 min-w-[24px] max-w-[34px] surface-pill border'} h-10 rounded-lg font-bold text-xs flex items-center justify-center transition">${l}</button>`).join('')}</div>`).join('');
+    mobKb.querySelectorAll('.cw-mkey').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === '⌫') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); } else inputLetter(b.dataset.l); }));
+
+    const onKey = (e) => { if (finished) return; if (e.key === 'Backspace') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); } else { const up = e.key.toUpperCase(); if (/^[А-ЯЁ]$/.test(up)) inputLetter(up); } };
+    window.addEventListener('keydown', onKey); activeCleanup = () => window.removeEventListener('keydown', onKey);
+    activeHintFn = () => {
+      if (finished) return;
+      for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (p.grid[r][c] !== '.' && userGrid[r][c] !== p.grid[r][c]) {
+        if (!spendCoinsForHint(20)) return; userGrid[r][c] = p.grid[r][c]; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); } return;
+      }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 4: ПОИСК СЛОВ (Fixed 8-Direction Snap + Clean Diagonal Selection)
+  // =========================================================================
+  function initWordSearchGame(stage) {
+    const p = pickPuzzle('ws', PUZZLES.wordsearch);
+    const size = state.hardMode ? 10 : 9;
+    const targetWords = p.words.filter(w => w.length <= size).slice(0, state.hardMode ? 8 : 7);
+    const grid = Array.from({ length: size }, () => Array(size).fill(''));
+    const placed = [];
+    const dirs = [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+    const alpha = 'АБВГДЕЖИКЛМНОПРСТУФХЦЧШЭЮЯ';
+
+    targetWords.forEach((word) => {
+      let ok = false;
+      for (let attempt = 0; attempt < 250 && !ok; attempt++) {
+        const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
+        const r0 = Math.floor(Math.random() * size), c0 = Math.floor(Math.random() * size);
+        const rEnd = r0 + dr * (word.length - 1), cEnd = c0 + dc * (word.length - 1);
+        if (rEnd < 0 || rEnd >= size || cEnd < 0 || cEnd >= size) continue;
+        let fits = true; const cells = [];
+        for (let k = 0; k < word.length; k++) {
+          const r = r0 + dr * k, c = c0 + dc * k;
+          if (grid[r][c] !== '' && grid[r][c] !== word[k]) { fits = false; break; }
+          cells.push([r, c]);
+        }
+        if (fits) { cells.forEach(([r, c], k) => { grid[r][c] = word[k]; }); placed.push({ word, cells }); ok = true; }
+      }
+    });
+    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (grid[r][c] === '') grid[r][c] = alpha[Math.floor(Math.random() * alpha.length)];
+
+    const foundWords = new Set(), foundCells = new Set();
+    let dragStart = null, dragCells = [], finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-lg flex flex-col items-center">
+        <div class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-400/30 px-3 py-1 rounded-full mb-3">Тема: ${p.theme} (${size}×${size})</div>
+        <div id="ws-words" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+        <div id="ws-grid" class="grid ${size === 10 ? 'grid-cols-10' : 'grid-cols-9'} gap-1 no-select touch-none bg-black/30 p-2 rounded-2xl border border-white/10"></div>
+        <p class="text-[11px] text-muted-adaptive mt-3 text-center">Зажмите и ведите по буквам (прямо или наискосок — 8 направлений).</p>
+      </div>
+    `;
+
+    const gEl = document.getElementById('ws-grid');
+    const cellSz = size === 10 ? 'w-7 h-7 sm:w-9 sm:h-9 text-xs sm:text-sm' : 'w-8 h-8 sm:w-10 sm:h-10 text-xs sm:text-base';
+    const cellEls = [];
+    for (let r = 0; r < size; r++) {
+      cellEls[r] = [];
+      for (let c = 0; c < size; c++) {
+        const d = document.createElement('div'); d.dataset.r = r; d.dataset.c = c; d.textContent = grid[r][c];
+        gEl.appendChild(d); cellEls[r][c] = d;
+      }
+    }
+
+    // Snap drag vector smoothly to nearest 45-degree angle!
+    function getSnappedLine(r1, c1, r2, c2) {
+      const dr = r2 - r1, dc = c2 - c1;
+      const steps = Math.max(Math.abs(dr), Math.abs(dc));
+      if (steps === 0) return [[r1, c1]];
+      const angle = Math.atan2(dr, dc);
+      const octant = Math.round(angle / (Math.PI / 4));
+      const sr = Math.round(Math.sin(octant * Math.PI / 4));
+      const sc = Math.round(Math.cos(octant * Math.PI / 4));
+      const res = [];
+      for (let i = 0; i <= steps; i++) {
+        const nr = r1 + sr * i, nc = c1 + sc * i;
+        if (nr >= 0 && nr < size && nc >= 0 && nc < size) res.push([nr, nc]);
+      }
+      return res;
+    }
+
+    function render() {
+      document.getElementById('ws-words').innerHTML = placed.map(item =>
+        `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${foundWords.has(item.word) ? 'bg-emerald-500 text-white line-through' : 'surface-pill border'}">${item.word}</span>`
+      ).join('');
+      const dragSet = new Set(dragCells.map(([r, c]) => `${r},${c}`));
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+        const key = `${r},${c}`;
+        let cls = 'bg-white/10 text-white-adaptive';
+        if (dragSet.has(key)) cls = 'bg-amber-400 text-slate-950 scale-105 shadow';
+        else if (foundCells.has(key)) cls = 'bg-emerald-500 text-white';
+        cellEls[r][c].className = `ws-cell ${cellSz} rounded-lg font-extrabold flex items-center justify-center cursor-pointer transition-transform ${cls}`;
+      }
+    }
+
+    function cellFromCoords(clientX, clientY) {
+      const rect = gEl.getBoundingClientRect();
+      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return null;
+      const c = Math.min(size - 1, Math.max(0, Math.floor(((clientX - rect.left) / rect.width) * size)));
+      const r = Math.min(size - 1, Math.max(0, Math.floor(((clientY - rect.top) / rect.height) * size)));
+      return [r, c];
+    }
+
+    const onDown = (e) => {
+      if (finished) return;
+      e.preventDefault();
+      const cell = cellFromCoords(e.clientX, e.clientY);
+      if (cell) { dragStart = cell; dragCells = [cell]; sfx.tap(); render(); }
+    };
+    const onMove = (e) => {
+      if (!dragStart || finished) return;
+      const cell = cellFromCoords(e.clientX, e.clientY);
+      if (cell) { dragCells = getSnappedLine(dragStart[0], dragStart[1], cell[0], cell[1]); render(); }
+    };
+    const onUp = () => {
+      if (!dragStart || finished) return;
+      if (dragCells.length >= 2) {
+        const word = dragCells.map(([r, c]) => grid[r][c]).join(''), rev = word.split('').reverse().join('');
+        const match = placed.find(item => !foundWords.has(item.word) && (item.word === word || item.word === rev));
+        if (match) {
+          foundWords.add(match.word); dragCells.forEach(([r, c]) => foundCells.add(`${r},${c}`));
+          sfx.good(); showToast(`Найдено: ${match.word}!`);
+          if (foundWords.size === placed.length) { finished = true; setTimeout(() => completeGame('wordsearch'), 200); }
+        } else if (dragCells.length >= 3) {
+          if (loseLife('Такого слова нет в списке!')) finished = true;
+        }
+      }
+      dragStart = null; dragCells = []; render();
+    };
+
+    onContinueCallback = () => { finished = false; dragStart = null; dragCells = []; render(); };
+    gEl.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    activeCleanup = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+    activeHintFn = () => {
+      if (finished) return;
+      const next = placed.find(item => !foundWords.has(item.word));
+      if (!next || !spendCoinsForHint(20)) return;
+      foundWords.add(next.word); next.cells.forEach(([r, c]) => foundCells.add(`${r},${c}`)); render();
+      if (foundWords.size === placed.length) { finished = true; setTimeout(() => completeGame('wordsearch'), 200); }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 5: СУДОКУ (Clear 3x3 Borders + 3 Lives)
+  // =========================================================================
+  function initSudokuGame(stage) {
+    const base = [
+      [5,3,4,6,7,8,9,1,2],[6,7,2,1,9,5,3,4,8],[1,9,8,3,4,2,5,6,7],
+      [8,5,9,7,6,1,4,2,3],[4,2,6,8,5,3,7,9,1],[7,1,3,9,2,4,8,5,6],
+      [9,6,1,5,3,7,2,8,4],[2,8,7,4,1,9,6,3,5],[3,4,5,2,8,6,1,7,9]
+    ];
+    const digits = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
+    const solution = base.map(row => row.map(v => digits[v - 1]));
+    const given = Array.from({ length: 9 }, () => Array(9).fill(false));
+    const clueProb = state.hardMode ? 0.30 : 0.44;
+    const grid = solution.map((row, r) => row.map((v, c) => { if (Math.random() < clueProb) { given[r][c] = true; return v; } return 0; }));
+    let sel = [0, 0], finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div id="su-grid" class="grid grid-cols-9 border-2 border-amber-400 rounded-xl overflow-hidden shadow-xl mb-4 bg-slate-950"></div>
+        <div id="su-pad" class="grid grid-cols-5 gap-2 w-full max-w-xs">
+          ${[1,2,3,4,5,6,7,8,9].map(n => `<button data-n="${n}" class="su-num h-11 rounded-xl surface-pill border font-black text-lg transition">${n}</button>`).join('')}
+          <button data-n="0" class="su-num h-11 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-400/30 font-bold text-sm transition">⌫</button>
+        </div>
+      </div>
+    `;
+    const checkWin = () => grid.every((row, r) => row.every((v, c) => v === solution[r][c]));
+    onContinueCallback = () => { finished = false; render(); };
+
+    function render() {
+      const gEl = document.getElementById('su-grid'), [sr, sc] = sel, selBoxR = Math.floor(sr / 3), selBoxC = Math.floor(sc / 3);
+      let html = '';
+      for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+        const val = grid[r][c], isGiven = given[r][c], isSel = sr === r && sc === c;
+        const inScope = (r === sr || c === sc || (Math.floor(r / 3) === selBoxR && Math.floor(c / 3) === selBoxC));
+        const isWrong = val !== 0 && val !== solution[r][c];
+        const br = (c === 2 || c === 5) ? 'border-r-2 border-r-amber-400' : (c < 8 ? 'border-r border-r-slate-600/70' : '');
+        const bb = (r === 2 || r === 5) ? 'border-b-2 border-b-amber-400' : (r < 8 ? 'border-b border-b-slate-600/70' : '');
+        let cls = isGiven ? 'bg-slate-800 text-white font-black' : (inScope ? 'bg-slate-800/50 text-amber-300' : 'bg-slate-900 text-amber-300');
+        if (isWrong) cls = 'bg-rose-900/90 text-rose-300';
+        if (isSel) cls = 'bg-amber-400 text-slate-950 font-black';
+        html += `<button data-r="${r}" data-c="${c}" class="su-cell w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm sm:text-base font-bold ${cls} ${br} ${bb}">${val || ''}</button>`;
+      }
+      gEl.innerHTML = html;
+      gEl.querySelectorAll('.su-cell').forEach(b => b.addEventListener('click', () => { sel = [+b.dataset.r, +b.dataset.c]; sfx.tap(); render(); }));
+    }
+
+    function setNum(n) {
+      if (finished) return;
+      const [r, c] = sel; if (given[r][c]) return;
+      grid[r][c] = n;
+      if (n !== 0 && n !== solution[r][c]) { if (loseLife('Неверная цифра в Судоку!')) finished = true; }
+      else sfx.tap();
+      render();
+      if (!finished && checkWin()) { finished = true; setTimeout(() => completeGame('sudoku'), 200); }
+    }
+    stage.querySelectorAll('.su-num').forEach(b => b.addEventListener('click', () => setNum(+b.dataset.n)));
+    const onKey = (e) => { if (e.key >= '1' && e.key <= '9') setNum(+e.key); else if (e.key === 'Backspace' || e.key === '0') setNum(0); };
+    window.addEventListener('keydown', onKey); activeCleanup = () => window.removeEventListener('keydown', onKey);
+    activeHintFn = () => {
+      if (finished) return;
+      for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) if (grid[r][c] !== solution[r][c]) {
+        if (!spendCoinsForHint(20)) return; grid[r][c] = solution[r][c]; given[r][c] = true; render();
+        if (checkWin()) { finished = true; setTimeout(() => completeGame('sudoku'), 200); } return;
+      }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 6: СВЯЗИ (3 Lives)
+  // =========================================================================
+  function initConnectedGame(stage) {
+    const groups = pickPuzzle('cn', PUZZLES.connected);
+    let remainingWords = groups.flatMap(g => g.words).sort(() => Math.random() - 0.5);
+    const solvedGroups = []; let selected = [], finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-lg flex flex-col items-center">
+        <div id="cn-solved" class="w-full space-y-2 mb-2"></div>
+        <div id="cn-grid" class="grid grid-cols-4 gap-2 w-full mb-4"></div>
+        <div class="flex gap-2">
+          <button id="cn-shuffle" class="px-4 py-2 rounded-xl surface-pill border font-bold text-xs sm:text-sm">Перемешать</button>
+          <button id="cn-submit" class="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm disabled:opacity-40">Проверить (0/4)</button>
+        </div>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; selected = []; render(); };
+
+    function render() {
+      document.getElementById('cn-solved').innerHTML = solvedGroups.map(g => `<div class="${g.color} rounded-2xl p-3 text-center"><div class="font-black text-xs uppercase tracking-wider">${g.title}</div><div class="font-semibold text-xs mt-0.5">${g.words.join(' • ')}</div></div>`).join('');
+      const gEl = document.getElementById('cn-grid');
+      gEl.innerHTML = remainingWords.map(w => {
+        const isSel = selected.includes(w);
+        return `<button data-w="${w}" class="cn-word h-14 sm:h-16 rounded-2xl px-1 font-extrabold text-[11px] sm:text-xs flex items-center justify-center text-center transition border-2 ${isSel ? 'bg-amber-400 text-slate-950 border-amber-300 scale-95' : 'surface-pill border'}">${w}</button>`;
+      }).join('');
+      const subBtn = document.getElementById('cn-submit'); subBtn.textContent = `Проверить (${selected.length}/4)`; subBtn.disabled = selected.length !== 4 || finished;
+      gEl.querySelectorAll('.cn-word').forEach(b => b.addEventListener('click', () => {
+        if (finished) return; const w = b.dataset.w;
+        if (selected.includes(w)) selected = selected.filter(x => x !== w); else if (selected.length < 4) selected.push(w);
+        sfx.tap(); render();
+      }));
+    }
+
+    document.getElementById('cn-shuffle').addEventListener('click', () => { remainingWords.sort(() => Math.random() - 0.5); sfx.tap(); render(); });
+    document.getElementById('cn-submit').addEventListener('click', () => {
+      if (selected.length !== 4 || finished) return;
+      const match = groups.find(g => g.words.every(w => selected.includes(w)));
+      if (match) {
+        solvedGroups.push(match); remainingWords = remainingWords.filter(w => !match.words.includes(w)); selected = []; sfx.good(); render();
+        if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); }
+      } else {
+        const almost = groups.some(g => g.words.filter(w => selected.includes(w)).length === 3);
+        showToast(almost ? 'Почти! 3 из 4 совпадают' : 'Неверная комбинация');
+        if (loseLife('Неверная группа слов!')) finished = true;
+        render();
+      }
+    });
+    activeHintFn = () => {
+      if (finished) return; const next = groups.find(g => !solvedGroups.includes(g));
+      if (!next || !spendCoinsForHint(20)) return;
+      solvedGroups.push(next); remainingWords = remainingWords.filter(w => !next.words.includes(w)); selected = []; render();
+      if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); }
+    };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 7: ЛЕСЕНКА (3 Lives)
+  // =========================================================================
+  function initCladderGame(stage) {
+    const p = pickPuzzle('cl', PUZZLES.cladder); let stepIdx = 0, finished = false;
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div id="cl-history" class="w-full space-y-2 mb-4"></div>
+        <div id="cl-active" class="w-full bg-cyan-500/15 border border-cyan-400/30 rounded-2xl p-4 text-center mb-4"></div>
+        <form id="cl-form" class="flex gap-2 w-full">
+          <input id="cl-input" type="text" maxlength="${p.start.length}" placeholder="Слово (${p.start.length} б.)..." class="flex-1 px-4 py-3 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-black text-center text-lg uppercase tracking-widest" autocomplete="off" />
+          <button type="submit" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">ОК</button>
+        </form>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; render(); };
+    function render() {
+      const hist = document.getElementById('cl-history');
+      let html = `<div class="flex items-center justify-between px-4 py-2 rounded-xl surface-pill border font-black tracking-widest"><span>СТАРТ</span><span>${p.start}</span></div>`;
+      for (let i = 0; i < stepIdx; i++) html += `<div class="flex items-center justify-between px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 font-bold"><span>Шаг ${i + 1} ✓</span><span class="font-black tracking-widest">${p.steps[i].word}</span></div>`;
+      hist.innerHTML = html;
+      const curStep = p.steps[stepIdx];
+      if (curStep) document.getElementById('cl-active').innerHTML = `<div class="text-xs font-bold text-cyan-400 uppercase mb-1">Шаг ${stepIdx + 1} из ${p.steps.length} • Замените 1 букву</div><div class="text-base font-bold text-white-adaptive">${curStep.clue}</div>`;
+    }
+    document.getElementById('cl-form').addEventListener('submit', (e) => {
+      e.preventDefault(); if (finished) return;
+      const inp = document.getElementById('cl-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е');
+      if (val === p.steps[stepIdx].word) { sfx.good(); stepIdx += 1; inp.value = ''; render(); if (stepIdx >= p.steps.length) { finished = true; setTimeout(() => completeGame('cladder'), 200); } }
+      else { inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 350); if (loseLife('Неверное слово в Лесенке!')) finished = true; }
+    });
+    activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; const target = p.steps[stepIdx].word; document.getElementById('cl-input').value = target.slice(0, 2); showToast(`Первые 2 буквы: ${target.slice(0, 2)}...`); };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 8: АНАГРАММЫ (3 Lives)
+  // =========================================================================
+  function initAnygramGame(stage) {
+    const p = pickPuzzle('ag', PUZZLES.anygram); const found = new Set(); let pickedIndices = [], finished = false;
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div id="ag-targets" class="flex flex-wrap justify-center gap-2 mb-6 w-full"></div>
+        <div id="ag-current" class="h-12 min-w-[200px] px-4 rounded-2xl surface-pill border-2 flex items-center justify-center font-black text-2xl tracking-widest text-amber-400 mb-5"></div>
+        <div id="ag-letters" class="flex flex-wrap justify-center gap-2 mb-5"></div>
+        <div class="flex gap-2"><button id="ag-clear" class="px-4 py-2 rounded-xl surface-pill border font-bold text-sm">Сбросить</button><button id="ag-submit" class="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">Проверить</button></div>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; pickedIndices = []; render(); };
+    function render() {
+      document.getElementById('ag-targets').innerHTML = p.targets.map(w => `<div class="px-3 py-2 rounded-xl font-black text-sm tracking-widest border ${found.has(w) ? 'bg-emerald-500 text-white border-emerald-400' : 'surface-pill'}">${found.has(w) ? w : '• '.repeat(w.length).trim()}</div>`).join('');
+      document.getElementById('ag-current').textContent = pickedIndices.map(i => p.letters[i]).join('');
+      const lEl = document.getElementById('ag-letters');
+      lEl.innerHTML = p.letters.map((ch, idx) => { const used = pickedIndices.includes(idx); return `<button data-idx="${idx}" ${used ? 'disabled' : ''} class="ag-letter w-11 h-11 sm:w-12 sm:h-12 rounded-2xl font-black text-xl border-b-4 transition ${used ? 'opacity-25 surface-pill' : 'bg-fuchsia-500/25 hover:bg-fuchsia-500/40 text-fuchsia-300 border-fuchsia-500/40'}">${ch}</button>`; }).join('');
+      lEl.querySelectorAll('.ag-letter').forEach(b => b.addEventListener('click', () => { pickedIndices.push(+b.dataset.idx); sfx.tap(); render(); }));
+    }
+    document.getElementById('ag-clear').addEventListener('click', () => { pickedIndices = []; sfx.tap(); render(); });
+    document.getElementById('ag-submit').addEventListener('click', () => {
+      if (finished) return; const word = pickedIndices.map(i => p.letters[i]).join('');
+      if (p.targets.includes(word) && !found.has(word)) { found.add(word); pickedIndices = []; sfx.good(); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } }
+      else { pickedIndices = []; render(); if (loseLife(found.has(word) ? 'Это слово уже открыто!' : 'Такого слова нет в списке!')) finished = true; }
+    });
+    activeHintFn = () => { if (finished) return; const next = p.targets.find(w => !found.has(w)); if (!next || !spendCoinsForHint(20)) return; found.add(next); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 9: КРИПТОГРАММА (ЙЦУКЕН)
+  // =========================================================================
+  function initCryptogramGame(stage) {
+    const p = pickPuzzle('cg', PUZZLES.cryptogram);
+    const uniqueLetters = [...new Set(p.quote.replace(/\s+/g, '').split(''))];
+    const cipherMap = {}; uniqueLetters.forEach((ch, idx) => { cipherMap[ch] = idx + 1; });
+    const revealed = new Set(uniqueLetters.slice(0, state.hardMode ? 1 : 3)), userMap = {};
+    revealed.forEach(ch => { userMap[ch] = ch; });
+    let selectedChar = uniqueLetters.find(ch => !revealed.has(ch)) || uniqueLetters[0], finished = false;
+
+    stage.innerHTML = `
+      <div class="w-full max-w-2xl flex flex-col items-center">
+        <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Автор: ${p.author}</div>
+        <div id="cg-phrase" class="flex flex-wrap justify-center gap-x-4 gap-y-3 mb-6"></div>
+        <div id="cg-kb" class="w-full max-w-md flex flex-col gap-1"></div>
+      </div>
+    `;
+    const checkWin = () => uniqueLetters.every(ch => userMap[ch] === ch);
+
+    function render() {
+      document.getElementById('cg-phrase').innerHTML = p.quote.split(' ').map(word => `<div class="flex gap-1">${word.split('').map(ch => {
+        const guess = userMap[ch] || '', isSel = selectedChar === ch, isFixed = revealed.has(ch);
+        return `<button data-ch="${ch}" class="cg-cell flex flex-col items-center w-8 sm:w-9 py-1.5 rounded-lg border-2 transition ${isFixed ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-400' : (isSel ? 'bg-amber-400/25 border-amber-400 text-amber-300' : 'surface-pill border')}"><span class="font-black text-base h-6 leading-6">${guess}</span><span class="text-[10px] font-bold text-muted-adaptive border-t border-white/10 w-full text-center mt-0.5 pt-0.5">${cipherMap[ch]}</span></button>`;
+      }).join('')}</div>`).join('');
+      document.querySelectorAll('.cg-cell').forEach(b => b.addEventListener('click', () => { if (!revealed.has(b.dataset.ch)) { selectedChar = b.dataset.ch; sfx.tap(); render(); } }));
+      const kb = document.getElementById('cg-kb');
+      const cgRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['Я','Ч','С','М','И','Т','Ь','Б','Ю','⌫']];
+      kb.innerHTML = cgRows.map(row => `<div class="flex justify-center gap-1">${row.map(l => `<button class="cg-key ${l === '⌫' ? 'px-3 bg-rose-500/25 text-rose-400' : 'flex-1 min-w-[24px] max-w-[34px] surface-pill border'} h-10 rounded-lg font-bold text-xs flex items-center justify-center transition">${l}</button>`).join('')}</div>`).join('');
+      kb.querySelectorAll('.cg-key').forEach(b => b.addEventListener('click', () => inputLetter(b.textContent)));
+    }
+
+    function inputLetter(ch) {
+      if (finished || !selectedChar || revealed.has(selectedChar)) return;
+      if (ch === '⌫') { delete userMap[selectedChar]; sfx.tap(); render(); return; }
+      userMap[selectedChar] = ch; if (ch === selectedChar) sfx.good(); else sfx.tap();
+      const next = uniqueLetters.find(c => !revealed.has(c) && userMap[c] !== c); if (next) selectedChar = next;
+      render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram', `«${p.quote}» — ${p.author}`), 250); }
+    }
+    const onKey = (e) => { if (e.key === 'Backspace') inputLetter('⌫'); else { const up = e.key.toUpperCase().replace('Ё','Е'); if (/^[А-Я]$/.test(up)) inputLetter(up); } };
+    window.addEventListener('keydown', onKey); activeCleanup = () => window.removeEventListener('keydown', onKey);
+    activeHintFn = () => { if (finished) return; const missing = uniqueLetters.find(c => userMap[c] !== c); if (!missing || !spendCoinsForHint(20)) return; userMap[missing] = missing; revealed.add(missing); selectedChar = uniqueLetters.find(c => !revealed.has(c)) || missing; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram'), 250); } };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 10: ЦЕПОЧКА СЛОВ (3 Lives)
+  // =========================================================================
+  function initWordChainGame(stage) {
+    const p = pickPuzzle('wc', PUZZLES.wordchain); let idx = 1, revealedCount = 1, finished = false;
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 rounded-full mb-4">Тема: ${p.theme}</div>
+        <div id="wc-list" class="w-full space-y-2 mb-4"></div>
+        <form id="wc-form" class="flex gap-2 w-full"><input id="wc-input" type="text" placeholder="Следующее слово..." class="flex-1 px-4 py-3 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-black text-center text-base uppercase tracking-widest" autocomplete="off" /><button type="submit" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">ОК</button></form>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; render(); };
+    function render() {
+      document.getElementById('wc-list').innerHTML = p.words.map((w, i) => {
+        if (i < idx) return `<div class="px-4 py-2.5 rounded-xl bg-emerald-500/25 border border-emerald-400/40 text-emerald-400 font-black tracking-widest flex justify-between"><span>${i + 1}.</span><span>${w}</span><span>✓</span></div>`;
+        if (i === idx) { const hint = w.slice(0, revealedCount) + ' •'.repeat(w.length - revealedCount); return `<div class="px-4 py-2.5 rounded-xl bg-amber-400/15 border-2 border-amber-400 text-amber-400 font-black tracking-widest flex justify-between"><span>${i + 1}.</span><span>${hint}</span><span class="text-xs font-bold">${w.length} б.</span></div>`; }
+        return `<div class="px-4 py-2.5 rounded-xl surface-pill border opacity-50 font-bold tracking-widest flex justify-between"><span>${i + 1}.</span><span>${'• '.repeat(w.length).trim()}</span><span class="text-xs">${w.length} б.</span></div>`;
+      }).join('');
+    }
+    document.getElementById('wc-form').addEventListener('submit', (e) => {
+      e.preventDefault(); if (finished) return;
+      const inp = document.getElementById('wc-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е'), target = p.words[idx];
+      if (val === target) { sfx.good(); idx += 1; revealedCount = 1; inp.value = ''; render(); if (idx >= p.words.length) { finished = true; setTimeout(() => completeGame('wordchain'), 200); } }
+      else { if (revealedCount < target.length - 1) revealedCount += 1; inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 350); render(); if (loseLife('Неверное слово в цепочке!')) finished = true; }
+    });
+    activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; if (revealedCount < p.words[idx].length) revealedCount += 1; render(); };
+    render();
+  }
+
+  // =========================================================================
+  // GAME 11: СТОП-ИГРА! (3 Lives)
+  // =========================================================================
+  function initStopGame(stage) {
+    const p = pickPuzzle('sg', PUZZLES.stopgame);
+    const samples = { 'К':['Киев','Ксерокс','Криминальное чтиво','Консультант','Карбонара'],'М':['Мадрид','Майкрософт','Матрица','Маркетолог','Мохито'],'С':['Сингапур','Спотифай','Сопрано','Сценарист','Стейк'],'П':['Прага','Порше','Побег','Продюсер','Паста'],'А':['Амстердам','Адидас','Аватар','Архитектор','Апероль'],'В':['Вена','Вольво','Во все тяжкие','Венчурный инвестор','Виски'],'Б':['Берлин','БМВ','Бойцовский клуб','Брокер','Бургер'],'Р':['Рим','Ролекс','Рокки','Режиссёр','Ризотто'] };
+    let finished = false;
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-white font-black text-3xl flex items-center justify-center shadow-lg mb-2">${p.letter}</div>
+        <p class="text-xs text-muted-adaptive mb-4 text-center">Подберите слова 20+ на букву «<strong class="text-amber-400">${p.letter}</strong>»:</p>
+        <form id="sg-form" class="w-full space-y-3">
+          ${p.categories.map((cat, i) => `<div class="flex items-center gap-2"><label class="w-36 text-xs font-bold text-white-adaptive">${cat}</label><input data-i="${i}" type="text" placeholder="${p.letter}..." class="sg-inp flex-1 px-3 py-2.5 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-bold text-sm" autocomplete="off" /></div>`).join('')}
+          <button type="submit" class="w-full mt-2 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">СТОП! Проверить</button>
+        </form>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; };
+    document.getElementById('sg-form').addEventListener('submit', (e) => {
+      e.preventDefault(); if (finished) return;
+      const inputs = [...stage.querySelectorAll('.sg-inp')], vals = inputs.map(inp => inp.value.trim().toUpperCase().replace(/Ё/g, 'Е'));
+      const badIdx = vals.findIndex(v => v.length < 3 || v[0] !== p.letter);
+      if (badIdx !== -1 || new Set(vals).size < vals.length) {
+        if (badIdx !== -1) { inputs[badIdx].classList.add('shake'); setTimeout(() => inputs[badIdx].classList.remove('shake'), 350); }
+        if (loseLife('Проверьте первую букву и длину слов (от 3 букв)!')) finished = true;
+        return;
+      }
+      finished = true; completeGame('stopgame', `Отличная подборка на букву «${p.letter}»!`);
+    });
+    activeHintFn = () => { if (finished) return; const inputs = [...stage.querySelectorAll('.sg-inp')], empty = inputs.find(inp => inp.value.trim().length < 3); if (!empty || !spendCoinsForHint(20)) return; empty.value = (samples[p.letter] || [])[+empty.dataset.i] || `${p.letter}...`; sfx.good(); };
+  }
+
+  // =========================================================================
+  // GAME 12: КЛУБОК (3 Lives)
+  // =========================================================================
+  function initTangleGame(stage) {
+    const p = generateTanglePuzzle(), chain = [p.start]; let finished = false;
+    stage.innerHTML = `
+      <div class="w-full max-w-md flex flex-col items-center">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="px-4 py-2 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-400 font-black tracking-widest">${p.start}</span>
+          <span class="text-muted-adaptive font-bold">→</span>
+          <span class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 font-black tracking-widest">${p.target}</span>
+        </div>
+        <div id="tg-chain" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+        <form id="tg-form" class="flex gap-2 w-full"><input id="tg-input" type="text" maxlength="4" placeholder="Слово из 4 букв..." class="flex-1 px-4 py-3 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-black text-center text-lg uppercase tracking-widest" autocomplete="off" /><button type="submit" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">Ход</button></form>
+        <p class="text-xs text-muted-adaptive mt-3">Меняйте 1 букву за ход (ориентир: ${p.par} ходов)</p>
+      </div>
+    `;
+    onContinueCallback = () => { finished = false; render(); };
+    function render() { document.getElementById('tg-chain').innerHTML = chain.map((w, i) => `<span class="px-3 py-1.5 rounded-xl font-black text-sm tracking-widest ${i === chain.length - 1 ? 'bg-amber-400 text-slate-950' : 'surface-pill border'}">${w}</span>`).join(''); }
+    document.getElementById('tg-form').addEventListener('submit', (e) => {
+      e.preventDefault(); if (finished) return;
+      const inp = document.getElementById('tg-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е'), prev = chain[chain.length - 1];
+      if (!diff1(prev, val) || (!TANGLE_4_SET.has(val) && val !== p.target)) {
+        if (loseLife(!diff1(prev, val) ? 'Нужно изменить ровно ОДНУ букву!' : 'Слова нет в словаре!')) finished = true;
+        return;
+      }
+      chain.push(val); inp.value = ''; sfx.good(); render();
+      if (val === p.target) { finished = true; setTimeout(() => completeGame('tangle', `Маршрут пройден за ${chain.length - 1} ход(ов)!`), 200); }
+    });
+    activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; showToast(`Путь: ${p.path.join(' → ')}`); };
+    render();
+  }
+
+  // =========================================================================
+  // 6. GLOBAL EVENT WIRING
+  // =========================================================================
+  document.getElementById('btn-home').addEventListener('click', showHub);
+  document.getElementById('btn-back-hub').addEventListener('click', showHub);
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target.id === 'modal-overlay') closeModal(); });
+
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); applyTheme(btn.dataset.theme); }));
+
+  document.getElementById('btn-sound').addEventListener('click', (e) => { soundEnabled = !soundEnabled; e.currentTarget.textContent = soundEnabled ? '🔊' : '🔇'; if (soundEnabled) sfx.tap(); });
+  document.getElementById('btn-toggle-hard').addEventListener('click', () => { sfx.tap(); state.hardMode = !state.hardMode; renderHub(); showToast(state.hardMode ? 'Сложность Pro ⚡' : 'Стандарт 20+'); });
+  document.getElementById('btn-endless-mode').addEventListener('click', () => { sfx.tap(); state.endless = !state.endless; renderHub(); });
+  document.getElementById('btn-start-blitz').addEventListener('click', () => { sfx.tap(); startBlitz(); });
+  document.getElementById('btn-start-chess').addEventListener('click', () => { sfx.tap(); launchGame('chess'); });
+  document.getElementById('btn-new-round').addEventListener('click', () => { if (!state.activeGame) return; sfx.tap(); state.endless = true; launchGame(state.activeGame); });
+  document.getElementById('btn-game-rules').addEventListener('click', () => { if (state.activeGame) showTutorial(state.activeGame, true); });
+  document.getElementById('btn-game-hint').addEventListener('click', () => { if (typeof activeHintFn === 'function') activeHintFn(); });
+
+  document.getElementById('btn-profile').addEventListener('click', () => {
+    const lvl = getLevel(state.xp);
+    const badgesHtml = BADGES.map(b => {
+      const unlocked = b.check(state);
+      return `<div class="flex items-center gap-3 p-2.5 rounded-xl border ${unlocked ? 'bg-amber-400/15 border-amber-400/40' : 'bg-white/5 border-white/10 opacity-50'}"><div class="text-2xl">${b.icon}</div><div><div class="font-bold text-white text-xs">${b.name} ${unlocked ? '✓' : ''}</div><div class="text-[11px] text-slate-400">${b.desc}</div></div></div>`;
+    }).join('');
+    openModal(
+      '🏆 Профиль borevichh quiz #7',
+      `<div class="grid grid-cols-4 gap-2 mb-4 text-center">
+        <div class="bg-white/10 rounded-xl p-2"><div class="text-base font-black text-white">${lvl}</div><div class="text-[10px] text-slate-400 font-bold">Уровень</div></div>
+        <div class="bg-orange-500/20 rounded-xl p-2"><div class="text-base font-black text-orange-300">${state.streak} 🔥</div><div class="text-[10px] text-orange-300 font-bold">Серия</div></div>
+        <div class="bg-emerald-500/20 rounded-xl p-2"><div class="text-base font-black text-emerald-300">${state.totalSolved}</div><div class="text-[10px] text-emerald-300 font-bold">Побед</div></div>
+        <div class="bg-amber-400/20 rounded-xl p-2"><div class="text-base font-black text-amber-300">${state.bestBlitz || 0} ⚡</div><div class="text-[10px] text-amber-300 font-bold">Блиц</div></div>
+      </div><div class="space-y-2">${badgesHtml}</div>`,
+      `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`
+    );
+    document.getElementById('prof-ok').addEventListener('click', closeModal);
+  });
+
+  loadState();
+  applyTheme(state.theme || 'dark');
+  renderHub();
+})();
+</script>
+</body>
+</html>
