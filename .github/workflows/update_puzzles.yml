@@ -1,0 +1,32 @@
+name: Auto-Update Quiz Dictionary
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-words:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Scrape & merge new words
+        run: python scripts/scrape_puzzles.py
+
+      - name: Commit updated extra_puzzles.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add extra_puzzles.json
+          git diff --staged --quiet || git commit -m "chore: auto-update quiz puzzles"
+          git push
