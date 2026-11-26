@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>borevichh quiz — 7 Edition</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     :root {
       --bg-body: radial-gradient(circle at top right, #1b1636 0%, #090b14 55%, #05060b 100%);
       --bg-header: rgba(11, 14, 26, 0.88);
@@ -86,8 +86,6 @@
     .shake { animation: shakeAnim 0.35s ease-in-out; }
     @keyframes shakeAnim { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
     .no-select { user-select: none; -webkit-user-select: none; }
-    .chess-white-piece { color: #ffffff; -webkit-text-stroke: 1.4px #0f172a; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.65)); }
-    .chess-black-piece { color: #0b0f19; -webkit-text-stroke: 0.9px rgba(255,255,255,0.55); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.45)); }
     @keyframes kingFall {
       0% { transform: rotate(0deg) scale(1); }
       40% { transform: rotate(25deg) scale(1.08); }
@@ -115,22 +113,28 @@
       </button>
 
       <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- Theme Switcher -->
         <div class="flex items-center rounded-xl p-0.5 surface-pill border" title="Тема оформления">
           <button data-theme="dark" class="theme-btn px-2 py-1 rounded-lg text-xs font-bold transition" title="Тёмная тема">🌙</button>
           <button data-theme="light" class="theme-btn px-2 py-1 rounded-lg text-xs font-bold transition" title="Светлая тема">☀️</button>
           <button data-theme="cr7" class="theme-btn px-2 py-1 rounded-lg text-xs font-black transition" title="Стиль Криштиану Роналду CR7">⚽7</button>
         </div>
 
-        <div class="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-orange-500/15 border border-orange-400/30 text-orange-400 font-bold text-xs sm:text-sm" title="Серия побед">
-          <span>🔥</span>
-          <span id="stat-streak">0</span>
+        <button id="btn-daily-bonus" class="relative flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-300 font-bold text-xs sm:text-sm transition" title="Ежедневный бонус">
+          <span>🎁</span>
+          <span class="hidden sm:inline">Бонус</span>
+          <span id="daily-dot" class="hidden w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        </button>
+
+        <div class="hidden md:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-300 font-bold text-xs" title="Рейтинг в шахматах">
+          <span>♟️</span>
+          <span id="stat-elo">1000</span>
         </div>
+
         <div class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-400 font-bold text-xs sm:text-sm" title="Монеты для подсказок">
           <span>🪙</span>
           <span id="stat-coins">140</span>
         </div>
-        <button id="btn-profile" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs sm:text-sm hover:bg-indigo-500/30 transition" title="Профиль">
+        <button id="btn-profile" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 font-bold text-xs sm:text-sm hover:bg-indigo-500/30 transition" title="Профиль, лидерборд и достижения">
           <span>🏆</span>
           <span class="hidden sm:inline">Ур.</span> <span id="stat-level">1</span>
         </button>
@@ -147,7 +151,6 @@
     <!-- ==================== HUB VIEW ==================== -->
     <section id="view-hub">
       <div class="hero-banner relative rounded-3xl p-5 sm:p-8 mb-7 overflow-hidden text-white shadow-2xl">
-        <!-- Giant #7 / CR7 Watermark -->
         <div class="absolute right-4 -bottom-10 text-[210px] sm:text-[260px] font-black leading-none text-amber-400/[0.08] select-none pointer-events-none">7</div>
         <div id="cr7-crest" class="hidden absolute right-8 top-4 text-right select-none pointer-events-none opacity-25">
           <div class="text-4xl font-black tracking-tighter text-amber-300">CR7</div>
@@ -161,32 +164,31 @@
               <button id="btn-toggle-hard" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition bg-white/10 hover:bg-white/20 border border-white/15 text-slate-100">
                 ⚡ <span id="hard-mode-label">Сложность: 20+ Стандарт</span>
               </button>
-              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[11px] font-black">⚽ CR7 #7</span>
+              <button id="btn-hero-bonus" class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-400/20 hover:bg-emerald-400/30 border border-emerald-400/40 text-emerald-300 text-xs font-black transition">
+                🎁 <span id="hero-bonus-text">Ежедневный бонус</span>
+              </button>
             </div>
             <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white mb-2">
               borevichh <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-orange-400">quiz</span>
             </h1>
             <p class="text-slate-200/85 text-sm sm:text-base max-w-xl">
-              13 интеллектуальных режимов для 20+: сотни слов, цитаты, бесконечные партии, Блиц 3:00 и <strong class="text-amber-300">Шахматы против ИИ</strong>.
+              13 интеллектуальных режимов с автосохранением прогресса, прокачанной Криптограммой и <strong class="text-amber-300">Шахматами с рейтингом ELO</strong>.
             </p>
           </div>
 
           <div class="flex flex-wrap sm:flex-nowrap items-stretch gap-3">
-            <!-- Chess vs AI Quick Card -->
             <button id="btn-start-chess" class="bg-white/10 hover:bg-white/20 border border-amber-400/40 text-white rounded-2xl p-4 min-w-[155px] text-left shadow-lg transition transform hover:-translate-y-0.5 flex flex-col justify-between">
-              <div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Новый режим</div>
+              <div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Рейтинг <span id="hub-chess-elo">1000</span></div>
               <div class="text-lg font-black leading-tight my-0.5">♟️ Шахматы</div>
               <div class="text-[11px] font-semibold text-slate-200">Против ИИ-бота →</div>
             </button>
 
-            <!-- Blitz Mode Card -->
             <button id="btn-start-blitz" class="bg-gradient-to-br from-amber-400 via-yellow-400 to-orange-500 hover:brightness-105 text-slate-950 rounded-2xl p-4 min-w-[155px] text-left shadow-xl shadow-amber-500/20 transition transform hover:-translate-y-0.5 flex flex-col justify-between">
               <div class="text-[11px] font-black uppercase tracking-wider opacity-80">Тайм-атака</div>
               <div class="text-lg font-black leading-tight my-0.5">⚡ Блиц 3:00</div>
               <div class="text-[11px] font-bold opacity-85">На скорость →</div>
             </button>
 
-            <!-- Progress Card -->
             <div class="bg-white/[0.08] backdrop-blur-md rounded-2xl p-4 min-w-[145px] border border-white/15">
               <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Матч дня</div>
               <div class="flex items-baseline gap-1.5">
@@ -200,7 +202,6 @@
           </div>
         </div>
 
-        <!-- Mode Tabs & Day Archive Selector -->
         <div class="relative z-10 mt-6 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2 overflow-x-auto pb-1" id="day-selector"></div>
           <button id="btn-endless-mode" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5">
@@ -210,7 +211,6 @@
         </div>
       </div>
 
-      <!-- Games Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="games-grid"></div>
     </section>
 
@@ -225,10 +225,12 @@
           <div id="active-game-sub" class="text-xs text-amber-400 font-medium">Режим</div>
         </div>
         <div class="flex items-center gap-1.5">
-          <!-- 3 Attempts / Lives Indicator -->
-          <div id="lives-indicator" class="px-2.5 py-1.5 rounded-xl bg-rose-500/15 border border-rose-400/30 text-xs sm:text-sm font-black flex items-center gap-1" title="Попытки в игре">
+          <div id="lives-indicator" class="px-2.5 py-1.5 rounded-xl bg-rose-500/15 border border-rose-400/30 text-xs sm:text-sm font-black flex items-center gap-1" title="Жизни в игре">
             ❤️❤️❤️
           </div>
+          <button id="btn-restart-same" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl surface-pill border font-bold text-xs transition" title="Начать текущую игру заново">
+            ↻ <span class="hidden md:inline">Сброс</span>
+          </button>
           <button id="btn-new-round" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/35 border border-indigo-400/30 text-indigo-400 font-bold text-xs sm:text-sm transition" title="Загрузить новое задание">
             🎲 <span class="hidden sm:inline">Следующее</span>
           </button>
@@ -239,29 +241,25 @@
         </div>
       </div>
 
-      <!-- Blitz Status Bar -->
       <div id="blitz-bar" class="hidden mb-4 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 rounded-2xl px-5 py-3 flex items-center justify-between shadow-lg">
         <div class="font-black text-sm sm:text-base">⚡ БЛИЦ-МАРАФОН • Решено: <span id="blitz-score">0</span></div>
         <div class="font-black text-lg sm:text-xl tabular-nums bg-white/80 px-3 py-1 rounded-xl" id="blitz-timer">03:00</div>
       </div>
 
-      <!-- Game Stage -->
       <div id="game-stage" class="glass-card rounded-3xl p-4 sm:p-6 shadow-xl min-h-[440px] flex flex-col items-center justify-center"></div>
     </section>
 
   </main>
 
-  <!-- TOAST -->
   <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-amber-400 text-slate-950 font-black text-sm shadow-2xl opacity-0 pointer-events-none transition-all duration-200"></div>
 
-  <!-- MODAL -->
   <div id="modal-overlay" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
     <div id="modal-box" class="bg-[#121626] border border-white/15 rounded-3xl max-w-md w-full p-6 shadow-2xl text-slate-100 transform transition-all">
       <div class="flex items-center justify-between mb-4">
         <h2 id="modal-title" class="text-xl font-black text-white">Заголовок</h2>
         <button id="modal-close" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 font-bold">✕</button>
       </div>
-      <div id="modal-body" class="text-slate-300 text-sm leading-relaxed"></div>
+      <div id="modal-body" class="text-slate-300 text-sm leading-relaxed max-h-[68vh] overflow-y-auto pr-1"></div>
       <div id="modal-footer" class="mt-6 flex flex-wrap gap-2 justify-end"></div>
     </div>
   </div>
@@ -269,9 +267,9 @@
 <script>
 (() => {
   // =========================================================================
-  // 1. AUDIO ENGINE
+  // 1. AUDIO ENGINE & TELEGRAM MINI APP
   // =========================================================================
-  let audioCtx = null, soundEnabled = true;
+  let audioCtx = null, soundEnabled = true, playerDisplayName = 'Вы (Игрок #7)';
   function initAudio() {
     if (!audioCtx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -288,19 +286,22 @@
       osc.start(); osc.stop(audioCtx.currentTime + dur);
     } catch (_) {}
   }
-  // Telegram Mini App integration (safe no-op outside Telegram)
+
   const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
   if (tg) {
     try {
       tg.ready();
       tg.expand();
+      if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
       const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
       if (u && u.first_name) {
+        playerDisplayName = u.first_name;
         const sub = document.getElementById('header-subtitle');
         if (sub) sub.textContent = `Игрок: ${u.first_name} • #7 Legacy`;
       }
     } catch (_) {}
   }
+
   function haptic(type = 'light') {
     try {
       if (!tg || !tg.HapticFeedback) return;
@@ -317,9 +318,10 @@
   };
 
   // =========================================================================
-  // 2. STATE, THEMES & META
+  // 2. STATE, DAILY BONUS, PERSISTENT SESSIONS & THEMES
   // =========================================================================
   const STORAGE_KEY = 'borevichh_quiz_v3';
+  const SESSIONS_KEY = 'borevichh_quiz_sessions_v1';
   const DAYS = [
     { id: 'day0', label: 'Сегодня', dateStr: '26 ноября' },
     { id: 'day1', label: 'Вчера', dateStr: '25 ноября' },
@@ -328,11 +330,29 @@
     { id: 'day4', label: '22 ноя', dateStr: '22 ноября' }
   ];
 
+  const DAILY_REWARDS = [
+    { day: 1, coins: 35, xp: 40, label: 'День 1' },
+    { day: 2, coins: 45, xp: 55, label: 'День 2' },
+    { day: 3, coins: 60, xp: 75, label: 'День 3' },
+    { day: 4, coins: 75, xp: 95, label: 'День 4' },
+    { day: 5, coins: 90, xp: 115, label: 'День 5' },
+    { day: 6, coins: 110, xp: 140, label: 'День 6' },
+    { day: 7, coins: 177, xp: 250, label: 'День 7 • CR7' }
+  ];
+
+  const LEADERBOARD_BOTS = [
+    { name: 'Мадридский Экспресс', xp: 1250, elo: 1620, blitz: 9, tag: 'CR7 Club' },
+    { name: 'Гроссмейстер Невы', xp: 940, elo: 1480, blitz: 7, tag: 'Chess Pro' },
+    { name: 'Спринтер 03:00', xp: 680, elo: 1290, blitz: 8, tag: 'Blitz King' },
+    { name: 'Крипто-Аналитик', xp: 420, elo: 1140, blitz: 5, tag: '20+ Mind' },
+    { name: 'Дебютант Лиги', xp: 180, elo: 1020, blitz: 3, tag: 'Rookie' }
+  ];
+
   const GAMES_META = [
-    { id: 'chess', name: 'Шахматы vs ИИ', desc: 'Классические шахматы против умного ИИ-бота', icon: '♟️', color: 'from-amber-500 to-red-700', xp: 120, coins: 60,
-      rules: 'Играйте белыми против ИИ-бота. Доступны все правила: рокировка, превращение пешек, шах и мат. Выберите уровень сложности ИИ прямо над доской.' },
+    { id: 'chess', name: 'Шахматы vs ИИ', desc: 'Рейтинг ELO, 3 уровня ИИ и разбор партий', icon: '♟️', color: 'from-amber-500 to-red-700', xp: 120, coins: 60,
+      rules: 'Играйте белыми против ИИ-бота. За победы начисляется рейтинг ELO — чем сильнее бот, тем больше очков. Все ходы и таймер сохраняются при выходе.' },
     { id: 'password', name: 'Пароль', desc: 'Лексика 20+: угадайте слово из 5–6 букв', icon: '🔐', color: 'from-emerald-500 to-teal-600', xp: 55, coins: 25,
-      rules: 'Угадайте слово из 5–6 букв. Зелёная буква на месте, жёлтая есть в слове, серая отсутствует.' },
+      rules: 'Угадайте слово из 5–6 букв. Зелёная буква на месте, жёлтая есть в слове, серая отсутствует. Прогресс сохраняется автоматически.' },
     { id: 'hashtag', name: 'Хэштег', desc: 'Соберите 4 пересекающихся слова', icon: '#️⃣', color: 'from-violet-500 to-purple-600', xp: 65, coins: 30,
       rules: 'Меняйте плитки местами, чтобы собрать 4 слова (2 по горизонтали и 2 по вертикали) до окончания ходов.' },
     { id: 'crossword', name: 'Мини-кроссворд', desc: 'Интеллектуальный кроссворд 5×5', icon: '✏️', color: 'from-sky-500 to-blue-600', xp: 65, coins: 30,
@@ -340,15 +360,15 @@
     { id: 'wordsearch', name: 'Поиск слов', desc: 'Найдите термины (включая диагонали!)', icon: '🔎', color: 'from-amber-500 to-orange-600', xp: 50, coins: 25,
       rules: 'Проведите пальцем или мышью по горизонтали, вертикали или наискосок, чтобы выделить все слова.' },
     { id: 'sudoku', name: 'Судоку', desc: 'Классика 9×9 с чёткими блоками', icon: '🔢', color: 'from-indigo-500 to-blue-700', xp: 80, coins: 35,
-      rules: 'Заполните сетку 9×9 цифрами 1–9 без повторов в строках, столбцах и квадратах 3×3. У вас 3 попытки на ошибки!' },
+      rules: 'Заполните сетку 9×9 цифрами 1–9 без повторов в строках, столбцах и квадратах 3×3. У вас 3 жизни.' },
     { id: 'connected', name: 'Связи', desc: 'Объедините 16 понятий в 4 группы', icon: '🧩', color: 'from-pink-500 to-rose-600', xp: 70, coins: 30,
       rules: 'Найдите 4 группы по 4 слова. У вас ровно 3 жизни (ошибки).' },
     { id: 'cladder', name: 'Лесенка', desc: 'Меняйте по 1 букве в 4-буквенных словах', icon: '🪜', color: 'from-cyan-500 to-teal-600', xp: 60, coins: 25,
       rules: 'На каждом шаге замените ровно одну букву, чтобы ответить на вопрос.' },
     { id: 'anygram', name: 'Анаграммы', desc: 'Соберите все слова из сложных букв', icon: '🔤', color: 'from-fuchsia-500 to-purple-700', xp: 55, coins: 25,
       rules: 'Составляйте слова из предложенных букв, чтобы открыть весь список.' },
-    { id: 'cryptogram', name: 'Криптограмма', desc: 'Расшифруйте философские и дерзкие цитаты', icon: '🕵️', color: 'from-slate-600 to-slate-800', xp: 75, coins: 35,
-      rules: 'Каждая буква заменена числовым кодом. Подберите ключ и восстановите цитату.' },
+    { id: 'cryptogram', name: 'Криптограмма', desc: 'Ошибка = красная буква и −1 ❤️ + подсказка', icon: '🕵️', color: 'from-slate-600 to-slate-800', xp: 75, coins: 35,
+      rules: 'Каждая буква зашифрована числом. Неверная буква подсвечивается красным и отнимает 1 жизнь. Можно открыть букву подсказкой!' },
     { id: 'wordchain', name: 'Цепочка слов', desc: 'Ассоциации 20+: от экономики до кино', icon: '🔗', color: 'from-lime-500 to-emerald-600', xp: 60, coins: 25,
       rules: 'Отгадайте следующее слово в логической цепочке.' },
     { id: 'stopgame', name: 'Стоп-игра!', desc: 'Мегаполис, бренд, фильм, профессия и блюдо', icon: '✋', color: 'from-red-500 to-rose-600', xp: 65, coins: 30,
@@ -358,16 +378,16 @@
   ];
 
   const GAME_DEMOS = {
-    chess: `<div class="flex justify-center gap-2 my-3 text-3xl"><span>♖</span><span>♘</span><span>♗</span><span>♕</span><span>♔</span></div><p class="text-xs text-slate-400 text-center">Нажмите на белую фигуру, чтобы увидеть доступные ходы, и выберите клетку. ИИ ответит автоматически!</p>`,
+    chess: `<div class="flex justify-center gap-2 my-3 text-3xl"><span>♖</span><span>♘</span><span>♗</span><span>♕</span><span>♔</span></div><p class="text-xs text-slate-400 text-center">Нажмите на белую фигуру, чтобы увидеть ходы. Рейтинг ELO растёт сильнее за победу над более сильным ботом!</p>`,
     password: `<div class="flex gap-1.5 justify-center my-3"><span class="w-9 h-9 rounded-lg bg-emerald-500 text-white font-black flex items-center justify-center">Б</span><span class="w-9 h-9 rounded-lg bg-slate-700 text-slate-300 font-black flex items-center justify-center">О</span><span class="w-9 h-9 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center">Н</span><span class="w-9 h-9 rounded-lg bg-slate-700 text-slate-300 font-black flex items-center justify-center">У</span><span class="w-9 h-9 rounded-lg bg-emerald-500 text-white font-black flex items-center justify-center">С</span></div><p class="text-xs text-slate-400 text-center">Зелёная — на месте, жёлтая — есть в слове, серая — отсутствует.</p>`,
     hashtag: `<div class="flex items-center justify-center gap-2 my-3"><span class="w-10 h-10 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center ring-2 ring-white">К</span><span class="text-amber-300 font-black">⇄</span><span class="w-10 h-10 rounded-lg bg-slate-700 text-white font-black flex items-center justify-center">Р</span></div><p class="text-xs text-slate-400 text-center">Нажмите на две плитки по очереди, чтобы поменять их местами.</p>`,
-    crossword: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-9 h-9 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center">Л</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">О</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">Т</span></div><p class="text-xs text-slate-400 text-center">Кликните по клетке и вводите буквы с привычной клавиатуры ЙЦУКЕН.</p>`,
-    wordsearch: `<div class="grid grid-cols-3 gap-1 w-28 mx-auto my-3"><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">К</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">А</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">М</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Р</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">О</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">П</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Л</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Т</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">Д</span></div><p class="text-xs text-slate-400 text-center">Ведите пальцем/мышью по прямой или наискосок — линия сама выровняется по 45°!</p>`,
+    crossword: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-9 h-9 rounded-lg bg-amber-400 text-slate-950 font-black flex items-center justify-center">Л</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">О</span><span class="w-9 h-9 rounded-lg bg-white/20 text-white font-black flex items-center justify-center">Т</span></div><p class="text-xs text-slate-400 text-center">Кликните по клетке и вводите буквы с клавиатуры.</p>`,
+    wordsearch: `<div class="grid grid-cols-3 gap-1 w-28 mx-auto my-3"><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">К</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">А</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">М</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Р</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">О</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">П</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Л</span><span class="h-8 rounded bg-white/10 text-slate-300 font-bold flex items-center justify-center text-xs">Т</span><span class="h-8 rounded bg-emerald-500 text-white font-black flex items-center justify-center text-xs">Д</span></div><p class="text-xs text-slate-400 text-center">Ведите по прямой или наискосок — прогресс сохранится при выходе.</p>`,
     sudoku: `<div class="grid grid-cols-3 border-2 border-amber-400 w-28 mx-auto my-3 bg-slate-900"><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">5</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-amber-300">3</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">4</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-amber-300">6</span><span class="h-8 border border-white/15 bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-black">7</span><span class="h-8 border border-white/15 flex items-center justify-center text-xs font-black text-white">2</span></div><p class="text-xs text-slate-400 text-center">Заполняйте цифры 1–9. Осторожно: 3 ошибки — поражение!</p>`,
-    connected: `<div class="bg-amber-400/20 border border-amber-400/40 rounded-xl p-2 text-center my-3"><div class="text-[11px] font-black text-amber-300">ФИНАНСЫ</div><div class="text-xs text-white font-bold">МАРЖА • САЛЬДО • ДЕБЕТ • РЕНТА</div></div><p class="text-xs text-slate-400 text-center">Выберите 4 связанных слова и нажмите «Проверить». Доступно 3 попытки.</p>`,
+    connected: `<div class="bg-amber-400/20 border border-amber-400/40 rounded-xl p-2 text-center my-3"><div class="text-[11px] font-black text-amber-300">ФИНАНСЫ</div><div class="text-xs text-white font-bold">МАРЖА • САЛЬДО • ДЕБЕТ • РЕНТА</div></div><p class="text-xs text-slate-400 text-center">Выберите 4 связанных слова и нажмите «Проверить». Доступно 3 жизни.</p>`,
     cladder: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2.5 py-1 rounded bg-white/10 text-white">РАНГ</span><span>→</span><span class="px-2.5 py-1 rounded bg-emerald-500/25 text-emerald-300">РИНГ</span></div><p class="text-xs text-slate-400 text-center">Меняйте ровно 1 букву. Неверный ответ отнимает 1 жизнь.</p>`,
-    anygram: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">К</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">О</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">Д</span></div><p class="text-xs text-slate-400 text-center">Нажимайте на буквы и собирайте загаданные слова.</p>`,
-    cryptogram: `<div class="flex justify-center gap-1.5 my-3"><div class="px-2 py-1 rounded border border-amber-400 bg-amber-400/20 text-center"><div class="font-black text-sm text-white">У</div><div class="text-[10px] text-slate-400">1</div></div><div class="px-2 py-1 rounded border border-white/15 bg-white/5 text-center"><div class="font-black text-sm text-white">М</div><div class="text-[10px] text-slate-400">2</div></div></div><p class="text-xs text-slate-400 text-center">Одинаковым цифрам соответствует одна буква.</p>`,
+    anygram: `<div class="flex items-center justify-center gap-1.5 my-3"><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">К</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">О</span><span class="w-8 h-8 rounded-lg bg-fuchsia-500/30 text-fuchsia-200 font-black flex items-center justify-center">Д</span></div><p class="text-xs text-slate-400 text-center">Составляйте слова из предложенных букв.</p>`,
+    cryptogram: `<div class="flex justify-center gap-2 my-3"><div class="px-2.5 py-1.5 rounded-lg border-2 border-rose-400 bg-rose-500/25 text-center shake"><div class="font-black text-sm text-rose-200">Х</div><div class="text-[10px] text-rose-300">−1 ❤️</div></div><div class="px-2.5 py-1.5 rounded-lg border-2 border-emerald-400 bg-emerald-500/20 text-center"><div class="font-black text-sm text-emerald-300">У</div><div class="text-[10px] text-slate-400">№1</div></div></div><p class="text-xs text-slate-400 text-center">Неверная буква становится красной и забирает 1 жизнь. Кнопка подсказки открывает букву!</p>`,
     wordchain: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2.5 py-1 rounded bg-emerald-500/25 text-emerald-300">КАПИТАЛ</span><span>→</span><span class="px-2.5 py-1 rounded bg-amber-400/20 text-amber-200">П • • • • • • •</span></div><p class="text-xs text-slate-400 text-center">Угадайте следующее по смыслу слово.</p>`,
     stopgame: `<div class="flex items-center justify-center gap-2 my-3"><span class="w-8 h-8 rounded-lg bg-rose-500 text-white font-black flex items-center justify-center">М</span><span class="text-xs font-bold text-slate-200">→ Мадрид, Майкрософт...</span></div><p class="text-xs text-slate-400 text-center">Заполните все 5 категорий словами на заданную букву.</p>`,
     tangle: `<div class="flex items-center justify-center gap-2 my-3 text-xs font-black"><span class="px-2 py-1 rounded bg-amber-400/20 text-amber-300">ФОНД</span><span>→</span><span class="px-2 py-1 rounded bg-white/10 text-white">ФОНТ</span><span>→</span><span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">ФОРТ</span></div><p class="text-xs text-slate-400 text-center">Меняйте 1 букву за ход по словарю.</p>`
@@ -375,7 +395,8 @@
 
   const BADGES = [
     { id: 'first_win', name: 'Дебют', desc: 'Решить первую головоломку', icon: '🌟', check: s => s.totalSolved >= 1 },
-    { id: 'streak_3', name: 'В форме', desc: 'Поддержать серию побед', icon: '🔥', check: s => s.streak >= 1 },
+    { id: 'daily_3', name: 'Дисциплина CR7', desc: 'Забрать ежедневный бонус 3 дня подряд', icon: '🎁', check: s => (s.dailyStreak || 0) >= 3 },
+    { id: 'elo_1200', name: 'Гроссмейстер #7', desc: 'Достичь 1200+ ELO в шахматах', icon: '♟️', check: s => (s.chessElo || 1000) >= 1200 },
     { id: 'level_3', name: 'Эрудит', desc: 'Достичь 3-го уровня XP', icon: '🎓', check: s => getLevel(s.xp) >= 3 },
     { id: 'cr7_seven', name: 'Легенда #7', desc: 'Набрать 7+ побед всего (бонус CR7!)', icon: '⚽', check: s => s.totalSolved >= 7 },
     { id: 'day_sweep', name: 'Хет-трик+', desc: 'Решить 6+ игр за один день', icon: '👑', check: s => DAYS.some(d => Object.keys(s.solved[d.id] || {}).length >= 6) },
@@ -384,17 +405,82 @@
   ];
 
   let state = {
-    xp: 0, coins: 140, streak: 1, totalSolved: 0, bestBlitz: 0,
+    xp: 0, coins: 140, streak: 1, totalSolved: 0, bestBlitz: 0, chessElo: 1000,
+    dailyStreak: 0, lastClaimDay: null,
     solved: {}, currentDay: 'day0', endless: true, hardMode: false,
     theme: 'dark', activeGame: null, lastIndices: {}, hideTutorial: {}
   };
 
+  let gameSessions = {};
+  let sessionSaveTimer = null;
+
+  function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  }
+
+  function getYesterdayKey() {
+    const d = new Date(Date.now() - 86400000);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function canClaimDailyBonus() {
+    return state.lastClaimDay !== getTodayKey();
+  }
+
+  function getNextDailyReward() {
+    const idx = canClaimDailyBonus()
+      ? (state.lastClaimDay === getYesterdayKey() ? (state.dailyStreak || 0) : 0) % DAILY_REWARDS.length
+      : Math.max(0, ((state.dailyStreak || 1) - 1) % DAILY_REWARDS.length);
+    return DAILY_REWARDS[idx];
+  }
+
+  function loadSessions() {
+    try {
+      const raw = localStorage.getItem(SESSIONS_KEY);
+      if (raw) gameSessions = JSON.parse(raw) || {};
+    } catch (_) { gameSessions = {}; }
+  }
+
+  function flushSessionsNow() {
+    clearTimeout(sessionSaveTimer);
+    sessionSaveTimer = null;
+    try { localStorage.setItem(SESSIONS_KEY, JSON.stringify(gameSessions)); } catch (_) {}
+  }
+
+  function saveGameSession(gameId, data) {
+    if (!gameId || blitz.active) return;
+    gameSessions[gameId] = { ...data, updatedAt: Date.now() };
+    clearTimeout(sessionSaveTimer);
+    sessionSaveTimer = setTimeout(flushSessionsNow, 120);
+  }
+
+  function getGameSession(gameId) {
+    if (!gameId || blitz.active) return null;
+    return gameSessions[gameId] || null;
+  }
+
+  function clearGameSession(gameId) {
+    if (!gameId || !gameSessions[gameId]) return;
+    delete gameSessions[gameId];
+    flushSessionsNow();
+  }
+
   function loadState() {
+    loadSessions();
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        state = { ...state, ...parsed, solved: parsed.solved || {}, hideTutorial: parsed.hideTutorial || {} };
+        state = {
+          ...state,
+          ...parsed,
+          chessElo: typeof parsed.chessElo === 'number' ? parsed.chessElo : 1000,
+          dailyStreak: typeof parsed.dailyStreak === 'number' ? parsed.dailyStreak : 0,
+          lastClaimDay: parsed.lastClaimDay || null,
+          solved: parsed.solved || {},
+          hideTutorial: parsed.hideTutorial || {}
+        };
       }
     } catch (_) {}
   }
@@ -404,6 +490,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         xp: state.xp, coins: state.coins, streak: state.streak,
         totalSolved: state.totalSolved, bestBlitz: state.bestBlitz,
+        chessElo: state.chessElo, dailyStreak: state.dailyStreak, lastClaimDay: state.lastClaimDay,
         solved: state.solved, hideTutorial: state.hideTutorial, theme: state.theme
       }));
     } catch (_) {}
@@ -427,16 +514,73 @@
   function getLevel(xp) { return Math.floor(xp / 150) + 1; }
   function isSolved(dayId, gameId) { return !!(state.solved[dayId] && state.solved[dayId][gameId]); }
 
+  function openDailyBonusModal() {
+    const available = canClaimDailyBonus();
+    const currentDayNum = available
+      ? (state.lastClaimDay === getYesterdayKey() ? (state.dailyStreak || 0) : 0) % DAILY_REWARDS.length
+      : Math.max(0, ((state.dailyStreak || 1) - 1) % DAILY_REWARDS.length);
+
+    const cardsHtml = DAILY_REWARDS.map((r, i) => {
+      const isToday = i === currentDayNum;
+      const isPast = !available ? i <= currentDayNum : i < currentDayNum;
+      return `
+        <div class="p-2.5 rounded-xl border text-center ${
+          isToday && available
+            ? 'bg-emerald-500/20 border-emerald-400 text-white ring-2 ring-emerald-400/40'
+            : (isPast ? 'bg-amber-400/15 border-amber-400/35 text-amber-200' : 'bg-white/5 border-white/10 text-slate-400')
+        }">
+          <div class="text-[10px] font-black uppercase">${r.label}</div>
+          <div class="text-xs font-black text-amber-300 mt-1">+${r.coins} 🪙</div>
+          <div class="text-[10px] font-bold text-indigo-300">+${r.xp} XP</div>
+        </div>
+      `;
+    }).join('');
+
+    openModal(
+      '🎁 Ежедневный бонус #7',
+      `<p class="text-xs text-slate-300 mb-3">Заходите каждый день, чтобы растить серию входа и получать больше монет и опыта.</p>
+       <div class="grid grid-cols-4 gap-2 mb-3">${cardsHtml}</div>
+       <div class="text-xs text-slate-400">Текущая серия входа: <strong class="text-amber-300">${state.dailyStreak || 0} дн.</strong></div>`,
+      available
+        ? `<button id="claim-daily-btn" class="px-4 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black text-sm transition">Забрать +${DAILY_REWARDS[currentDayNum].coins} 🪙 и +${DAILY_REWARDS[currentDayNum].xp} XP</button>`
+        : `<button id="daily-ok-btn" class="px-4 py-2 rounded-xl bg-white/15 text-white font-bold text-sm">Бонус сегодня уже получен ✓</button>`
+    );
+
+    const claimBtn = document.getElementById('claim-daily-btn');
+    if (claimBtn) {
+      claimBtn.addEventListener('click', () => {
+        if (!canClaimDailyBonus()) return;
+        const rewardIdx = (state.lastClaimDay === getYesterdayKey() ? (state.dailyStreak || 0) : 0) % DAILY_REWARDS.length;
+        const reward = DAILY_REWARDS[rewardIdx];
+        state.dailyStreak = (state.lastClaimDay === getYesterdayKey() ? (state.dailyStreak || 0) : 0) + 1;
+        state.lastClaimDay = getTodayKey();
+        state.coins += reward.coins;
+        state.xp += reward.xp;
+        saveState();
+        updateHeader();
+        renderHub();
+        sfx.win();
+        try { if (typeof confetti === 'function') confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } }); } catch (_) {}
+        closeModal();
+        showToast(`🎁 Получено: +${reward.coins} 🪙 и +${reward.xp} XP!`);
+      });
+    }
+    const okBtn = document.getElementById('daily-ok-btn');
+    if (okBtn) okBtn.addEventListener('click', closeModal);
+  }
+
   // =========================================================================
   // 3. 3-ATTEMPT (LIVES) SYSTEM + LOSE MODAL
   // =========================================================================
   let gameLives = 3;
   let onContinueCallback = null;
+  let onSyncLivesCallback = null;
 
   function setLives(n) {
     gameLives = Math.max(0, Math.min(3, n));
     const el = document.getElementById('lives-indicator');
     if (el) el.textContent = '❤️'.repeat(gameLives) + '🖤'.repeat(3 - gameLives);
+    if (typeof onSyncLivesCallback === 'function') onSyncLivesCallback(gameLives);
   }
 
   function loseLife(reason = '') {
@@ -465,7 +609,7 @@
   }
 
   // =========================================================================
-  // 4. DATASETS (20+ ADULT VOCABULARY)
+  // 4. DATASETS (EXPANDED 20+ CONTENT FOR ALL MODES)
   // =========================================================================
   const RAW_WORDS = [
     'АБЗАЦ','АВАНС','АЗАРТ','АКТИВ','АЛИБИ','АМПИР','АНФАС','АРЕАЛ','АСКЕТ','АУДИТ',
@@ -485,6 +629,7 @@
     'ЦЕЛЬ','ЦЕНЗ','ЦИКЛ','ШАНС','ШАРМ','ШИФР','ШТАБ','ШТРАФ','ШТУРМ','ЭКРАН',
     'ЭЛИТА','ЭПОС','ЭПОХА','ЭТИКА','ЮМОР','ЮРИСТ','ВИХРЬ','КВАРЦ','СМЕРЧ','ФЬОРД',
     'ТЕМБР','ДРОЖЬ','ПОРОХ','ФАКЕЛ','СПЛАВ','ОБРЫВ','ПЕПЕЛ','ПЛАМЯ','ИЗГИБ','НЕДРА',
+    'АКЦЕНТ','АЛГОРИТМ','АРГУМЕНТ','АТМОСФЕРА',
     'БАЛАНС','ВАКУУМ','ВАНДАЛ','ГЛЯНЕЦ','ГРАНИТ','ДИЗАЙН','ЖАРГОН','ЖЕМЧУГ','ЗАПРОС',
     'ИНДЕКС','ИНСАЙД','ИРОНИЯ','КАПРИЗ','КОДЕКС','КОЗЫРЬ','КОНТУР','КОРПУС','КРИЗИС',
     'КРИПТА','ЛАЗУРЬ','ЛИЗИНГ','ЛОГИКА','ЛОЗУНГ','МАНЕВР','МЕТЕЛЬ','ОРБИТА','ОФЕРТА',
@@ -494,7 +639,8 @@
     'УЩЕЛЬЕ','ФАБУЛА','ФАКТОР','ФАНТОМ','ФИАСКО','ФИЛЬТР','ФОРСАЖ','ФУТБОЛ','ХРОНОС',
     'ЦИКЛОН','ЦИНИЗМ','ЦИТАТА','ШЕДЕВР','ЭМОЦИЯ','ЭФФЕКТ','ЮБИЛЕЙ','ЯНТАРЬ','БАРЬЕР',
     'ВИТРАЖ','ГЕЙЗЕР','ДИАЛОГ','ЗАТВОР','КАСКАД','КОМПАС','МАГНИТ','НЕКТАР','ОСТРОВ',
-    'РАКЕТА','ТАЙФУН','ЭКСПЕРТ'
+    'РАКЕТА','ТАЙФУН','ЭКСПЕРТ','АКТИВНОСТЬ','АВТОРИТЕТ','ДИНАМИКА','ИНТРИГА','КАПИТАЛ',
+    'КОМФОРТ','КОНТРАСТ','МАСТЕРСТВО','МОНОПОЛИЯ','ПЕРСПЕКТИВА','РЕПУТАЦИЯ','СИСТЕМА'
   ];
 
   const PUZZLES = {
@@ -510,7 +656,9 @@
       { h1: 'САХАР', h2: 'МОДЕМ', v1: 'БАТОН', v2: 'ЛАЗЕР' },
       { h1: 'МОРОЗ', h2: 'КАНАЛ', v1: 'ПОЖАР', v2: 'БОКАЛ' },
       { h1: 'ПЕСОК', h2: 'ЧЕХОЛ', v1: 'ВЕТЕР', v2: 'ГОРОД' },
-      { h1: 'МАРКА', h2: 'МОЛОТ', v1: 'ЗАБОР', v2: 'СКЛОН' }
+      { h1: 'МАРКА', h2: 'МОЛОТ', v1: 'ЗАБОР', v2: 'СКЛОН' },
+      { h1: 'ГРАНТ', h2: 'РЫНОК', v1: 'АРЕНД', v2: 'ТРОПА' },
+      { h1: 'СИГНАЛ', h2: 'ТЕЗИС', v1: 'ГИМН', v2: 'ЛАЗЕР' }
     ],
     crossword: [
       {
@@ -546,6 +694,23 @@
           { r:2, c:3, clue: 'Российская река' },
           { r:2, c:4, clue: 'Движение электрических зарядов' }
         ]
+      },
+      {
+        grid: [['Д','О','М','.','.'],['О','С','А','.','.'],['М','А','Р','К','А'],['.','.','К','О','Т'],['.','.','А','Р','К']],
+        across: [
+          { r:0, c:0, clue: 'Жилище или здание' },
+          { r:1, c:0, clue: 'Насекомое с болезненным укусом' },
+          { r:2, c:0, clue: 'Знак почтовой оплаты или бренд' },
+          { r:3, c:2, clue: 'Домашний хищник' },
+          { r:4, c:2, clue: 'Дуга в архитектуре' }
+        ],
+        down: [
+          { r:0, c:0, clue: 'Свод законов или дом' },
+          { r:0, c:1, clue: 'Восьмая буква алфавита' },
+          { r:0, c:2, clue: 'Созвездие или животное' },
+          { r:2, c:3, clue: 'Единица измерения угла' },
+          { r:2, c:4, clue: 'Часть речи или слово' }
+        ]
       }
     ],
     wordsearch: [
@@ -554,7 +719,9 @@
       { theme: 'Психология', words: ['ИНСАЙТ','ТРИГГЕР','ЭМПАТИЯ','ГЕШТАЛЬТ','ФОБИЯ','СКЕПСИС','ХАРИЗМА','ЭГОИЗМ','АПАТИЯ','МОТИВ'] },
       { theme: 'IT и Бизнес', words: ['ДЕПЛОЙ','СЕРВЕР','ПИКСЕЛЬ','РЕЛИЗ','ТЕНДЕР','СТАРТАП','КОНТРАКТ','АПГРЕЙД','ТРАФИК','БРЕНД'] },
       { theme: 'Кинематограф', words: ['СЦЕНАРИЙ','МОНТАЖ','КАСТИНГ','РАКУРС','СИКВЕЛ','РЕМЕЙК','ТИТРЫ','ФИАСКО','ШЕДЕВР','ФАБУЛА'] },
-      { theme: 'Наука и Космос', words: ['КВАЗАР','СПЕКТР','ГЕНОМ','ПРИЗМА','ВАКУУМ','КАТАЛИЗ','ТЕОРЕМА','ОРБИТА','ВЕКТОР','МАГНИТ'] }
+      { theme: 'Наука и Космос', words: ['КВАЗАР','СПЕКТР','ГЕНОМ','ПРИЗМА','ВАКУУМ','КАТАЛИЗ','ТЕОРЕМА','ОРБИТА','ВЕКТОР','МАГНИТ'] },
+      { theme: 'Стратегия и Шахматы', words: ['ДЕБЮТ','ГАМБИТ','ЭНДШПИЛЬ','ЦУГЦВАНГ','РОКИРОВКА','ТЕМП','ФЛАНГ','РЕВАНШ','МАТЧ','ТАКТИКА'] },
+      { theme: 'Стиль и Культура', words: ['АМПИР','ВИТРАЖ','ГЛЯНЕЦ','КОНТУР','ПАФОС','РАКУРС','ТЕМБР','ЭПОХА','ШЕДЕВР','ФАБУЛА'] }
     ],
     connected: [
       [
@@ -586,6 +753,12 @@
         { title: 'Журналистика', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['ЭКСКЛЮЗИВ','ТИРАЖ','ПРЕССА','ОЧЕРК'] },
         { title: 'Макроэкономика', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ИНФЛЯЦИЯ','КРИЗИС','САНКЦИЯ','ТАРИФ'] },
         { title: 'Связаны с числом 7', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['РОНАЛДУ','ЧУДЕС','НОТ','ДНЕЙ'] }
+      ],
+      [
+        { title: 'Шахматные понятия', color: 'bg-amber-400/25 text-amber-200 border border-amber-400/40', words: ['ДЕБЮТ','ГАМБИТ','ЭНДШПИЛЬ','РОКИРОВКА'] },
+        { title: 'Сильные качества лидера', color: 'bg-emerald-400/25 text-emerald-200 border border-emerald-400/40', words: ['КУРАЖ','ХАРИЗМА','ВЫДЕРЖКА','АМБИЦИЯ'] },
+        { title: 'Стихии природы', color: 'bg-sky-400/25 text-sky-200 border border-sky-400/40', words: ['ВИХРЬ','СМЕРЧ','МЕТЕЛЬ','ТАЙФУН'] },
+        { title: 'Переговоры и сделки', color: 'bg-purple-400/25 text-purple-200 border border-purple-400/40', words: ['ЛИМИТ','КВОТА','ТАРИФ','КОНТРАКТ'] }
       ]
     ],
     cladder: [
@@ -618,6 +791,12 @@
         { word: 'УРОН', clue: 'Ущерб, потери' },
         { word: 'ТРОН', clue: 'Кресло монарха' },
         { word: 'ТРОС', clue: 'Стальной канат' }
+      ]},
+      { start: 'ПЛАН', steps: [
+        { word: 'КЛАН', clue: 'Закрытый семейный или деловой круг' },
+        { word: 'КРАН', clue: 'Подъёмная машина или смеситель' },
+        { word: 'КРАЙ', clue: 'Граница или регион' },
+        { word: 'КРОЙ', clue: 'Построение деталей одежды' }
       ]}
     ],
     anygram: [
@@ -626,7 +805,8 @@
       { letters: ['П','А','Р','А','Д','О','К','С'], targets: ['ПАРАДОКС','ДОСКА','ДРАКА','КАДР','ПАРК','СПОР'] },
       { letters: ['К','О','Н','Ф','Л','И','К','Т'], targets: ['КОНФЛИКТ','ЛИФТ','КИНО','КЛИН','ФОН','ТОК'] },
       { letters: ['М','Е','Т','А','Ф','О','Р','А'], targets: ['МЕТАФОРА','ФОРМАТ','АТОМ','ТЕМА','МАРТ','РОТА','ФАРА'] },
-      { letters: ['К','А','П','И','Т','А','Л'], targets: ['КАПИТАЛ','ПЛИТА','ЛАПА','ПАКТ','ТИП','ПИК'] }
+      { letters: ['К','А','П','И','Т','А','Л'], targets: ['КАПИТАЛ','ПЛИТА','ЛАПА','ПАКТ','ТИП','ПИК'] },
+      { letters: ['Э','К','С','П','Е','Р','Т'], targets: ['ЭКСПЕРТ','СЕКТ','ТЕМП','ТРЕК','ПЕРС','РЕПС'] }
     ],
     cryptogram: [
       { quote: 'ЧЕМ БОЛЬШЕ ТРУДИШЬСЯ ТЕМ БОЛЬШЕ ВЕЗЕТ', author: 'Криштиану Роналду' },
@@ -638,7 +818,9 @@
       { quote: 'ПЕССИМИСТ ВИДИТ ТРУДНОСТЬ В КАЖДОЙ ВОЗМОЖНОСТИ', author: 'Уинстон Черчилль' },
       { quote: 'ТАЛАНТ БЕЗ ТРУДА НИЧТО', author: 'Криштиану Роналду' },
       { quote: 'ХОРОШИЙ ВКУС ЭТО ЗАЩИТА ОТ БАНАЛЬНОСТИ', author: 'Иосиф Бродский' },
-      { quote: 'САМЫЙ БЫСТРЫЙ СПОСОБ ПОТЕРЯТЬ ДЕНЬГИ СЛУШАТЬ ВСЕХ ПОДРЯД', author: 'Нассим Талеб' }
+      { quote: 'САМЫЙ БЫСТРЫЙ СПОСОБ ПОТЕРЯТЬ ДЕНЬГИ СЛУШАТЬ ВСЕХ ПОДРЯД', author: 'Нассим Талеб' },
+      { quote: 'ПОБЕДА ЛЮБИТ ТИШИНУ А РЕЗУЛЬТАТ ГОВОРИТ САМ ЗА СЕБЯ', author: 'Клуб #7' },
+      { quote: 'СИЛЬНЫЙ ИГРОК ДУМАЕТ НА ТРИ ХОДА ВПЕРЕД', author: 'Гроссмейстер' }
     ],
     wordchain: [
       { theme: 'Инвестиции', words: ['КАПИТАЛ','ПОРТФЕЛЬ','АКЦИЯ','ДИВИДЕНД','ДОХОДНОСТЬ'] },
@@ -646,7 +828,8 @@
       { theme: 'Психология', words: ['ТРИГГЕР','ЭМОЦИЯ','РЕАКЦИЯ','ОСОЗНАННОСТЬ','ИНСАЙТ'] },
       { theme: 'Кинопроизводство', words: ['ПИТЧИНГ','СЦЕНАРИЙ','КАСТИНГ','МОНТАЖ','ПРЕМЬЕРА'] },
       { theme: 'IT-продукт', words: ['ГИПОТЕЗА','ПРОТОТИП','ТЕСТИРОВАНИЕ','РЕЛИЗ','МЕТРИКА'] },
-      { theme: 'Криминалистика', words: ['МОТИВ','УЛИКА','ЭКСПЕРТИЗА','АЛИБИ','ВЕРДИКТ'] }
+      { theme: 'Криминалистика', words: ['МОТИВ','УЛИКА','ЭКСПЕРТИЗА','АЛИБИ','ВЕРДИКТ'] },
+      { theme: 'Шахматная партия', words: ['ДЕБЮТ','ГАМБИТ','КОМБИНАЦИЯ','ЭНДШПИЛЬ','МАТ'] }
     ],
     stopgame: [
       { letter: 'К', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
@@ -656,7 +839,9 @@
       { letter: 'А', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
       { letter: 'В', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
       { letter: 'Б', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
-      { letter: 'Р', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] }
+      { letter: 'Р', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'Т', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] },
+      { letter: 'Д', categories: ['Страна / Мегаполис','Бренд / Компания','Фильм / Сериал','Профессия / Роль','Напиток / Блюдо'] }
     ]
   };
 
@@ -668,7 +853,7 @@
     'СРОК','УРОК','УРОН','ТРОН','ТРОС','КРОС','БРОС','ПЛЮС','ШЛЮЗ',
     'ФАКТ','ТАКТ','ПАКТ','ПАРК','ПАРИ','МАРИ','МАРС','ФАРС',
     'БРАТ','БРАК','МРАК','ЗРАК','ФРАК','КРАБ','ГРАБ','ГРИБ','ГРОБ','СНОБ','ЗНОБ',
-    'РИСК','ДИСК','ПИСК','ВИСК','ТИСК','БЛЕФ','РИНГ','РАНГ','ТАНК','ПАНК','РАНК'
+    'РИСК','ДИСК','ПИСК','ВИСК','ТИСК','БЛЕФ','РИНГ','РАНГ','ТАНК','ПАНК'
   ].filter(w => w.length === 4);
   const TANGLE_4_SET = new Set(TANGLE_4_WORDS);
 
@@ -752,9 +937,21 @@
   }
 
   function updateHeader() {
-    document.getElementById('stat-streak').textContent = state.streak;
     document.getElementById('stat-coins').textContent = state.coins;
     document.getElementById('stat-level').textContent = getLevel(state.xp);
+    const eloEl = document.getElementById('stat-elo');
+    if (eloEl) eloEl.textContent = state.chessElo || 1000;
+    const hubElo = document.getElementById('hub-chess-elo');
+    if (hubElo) hubElo.textContent = state.chessElo || 1000;
+
+    const bonusAvail = canClaimDailyBonus();
+    const dot = document.getElementById('daily-dot');
+    if (dot) dot.classList.toggle('hidden', !bonusAvail);
+    const heroBonus = document.getElementById('hero-bonus-text');
+    if (heroBonus) {
+      const nextR = getNextDailyReward();
+      heroBonus.textContent = bonusAvail ? `Бонус +${nextR.coins} 🪙` : `Бонус получен ✓ (Д${state.dailyStreak || 1})`;
+    }
   }
 
   let blitz = { active: false, timeLeft: 180, score: 0, timerId: null };
@@ -781,7 +978,7 @@
         document.getElementById('blitz-home').addEventListener('click', () => { closeModal(); showHub(); });
       }
     }, 1000);
-    launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)]);
+    launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)], true);
   }
 
   function updateBlitzTimerUI() {
@@ -821,47 +1018,59 @@
     const grid = document.getElementById('games-grid');
     grid.innerHTML = GAMES_META.map(g => {
       const done = !state.endless && isSolved(state.currentDay, g.id);
+      const hasSaved = !!gameSessions[g.id];
       return `
-        <button data-game="${g.id}" class="game-card glass-card text-left rounded-3xl p-5 ${done ? 'border-emerald-400/50' : ''} flex flex-col justify-between h-full">
+        <button data-game="${g.id}" class="game-card glass-card text-left rounded-3xl p-5 ${done ? 'border-emerald-400/50' : (hasSaved ? 'border-amber-400/40' : '')} flex flex-col justify-between h-full">
           <div>
             <div class="flex items-start justify-between gap-2 mb-3">
               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${g.color} flex items-center justify-center text-2xl shadow-lg">${g.icon}</div>
-              ${done
-                ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 font-bold text-xs">Решено ✓</span>'
-                : `<span class="px-2.5 py-1 rounded-full surface-pill border font-semibold text-xs">+${g.xp} XP</span>`
+              ${hasSaved
+                ? '<span class="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/35 font-bold text-xs">💾 Продолжить</span>'
+                : (done
+                  ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 font-bold text-xs">Решено ✓</span>'
+                  : `<span class="px-2.5 py-1 rounded-full surface-pill border font-semibold text-xs">+${g.xp} XP</span>`)
               }
             </div>
             <h3 class="font-extrabold text-lg text-white-adaptive mb-1">${g.name}</h3>
             <p class="text-xs text-muted-adaptive leading-relaxed mb-4">${g.desc}</p>
           </div>
           <div class="flex items-center justify-between pt-3 border-t border-white/10 w-full">
-            <span class="text-xs font-bold text-amber-400">+${g.coins} 🪙</span>
-            <span class="text-xs font-bold ${done ? 'text-emerald-400' : 'text-amber-400'}">${g.id === 'chess' ? 'Сыграть с ИИ →' : (state.endless ? 'Бесконечно ♾️ →' : (done ? 'Ещё раз →' : 'Играть →'))}</span>
+            <span class="text-xs font-bold text-amber-400">${g.id === 'chess' ? `ELO: ${state.chessElo || 1000}` : `+${g.coins} 🪙`}</span>
+            <span class="text-xs font-bold ${hasSaved ? 'text-amber-300' : (done ? 'text-emerald-400' : 'text-amber-400')}">${hasSaved ? 'Открыть партию →' : (g.id === 'chess' ? 'Сыграть с ИИ →' : (state.endless ? 'Бесконечно ♾️ →' : (done ? 'Ещё раз →' : 'Играть →')))}</span>
           </div>
         </button>
       `;
     }).join('');
-    grid.querySelectorAll('[data-game]').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); launchGame(btn.dataset.game); }));
+    grid.querySelectorAll('[data-game]').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); launchGame(btn.dataset.game, false); }));
   }
 
   function showHub() {
+    flushSessionsNow();
     cleanupActiveGame(); stopBlitz(); state.activeGame = null;
     document.getElementById('view-game').classList.add('hidden');
     document.getElementById('view-hub').classList.remove('hidden');
     renderHub();
   }
 
-  let activeCleanup = null, activeHintFn = null;
-  function cleanupActiveGame() { if (typeof activeCleanup === 'function') { activeCleanup(); activeCleanup = null; } activeHintFn = null; onContinueCallback = null; }
+  let activeCleanup = null, activeHintFn = null, activeForceNewFn = null;
+  function cleanupActiveGame() {
+    if (typeof activeCleanup === 'function') { activeCleanup(); activeCleanup = null; }
+    activeHintFn = null; activeForceNewFn = null; onContinueCallback = null; onSyncLivesCallback = null;
+  }
 
-  function launchGame(gameId) {
-    cleanupActiveGame(); state.activeGame = gameId; setLives(3);
+  function launchGame(gameId, forceFresh = false) {
+    if (forceFresh) clearGameSession(gameId);
+    cleanupActiveGame();
+    state.activeGame = gameId;
+    const saved = !blitz.active ? getGameSession(gameId) : null;
+    setLives(saved && typeof saved.lives === 'number' ? saved.lives : 3);
+
     const meta = GAMES_META.find(g => g.id === gameId);
     const dayObj = DAYS.find(d => d.id === state.currentDay);
     document.getElementById('active-game-title').textContent = `${meta.icon} ${meta.name}`;
     document.getElementById('active-game-sub').textContent = gameId === 'chess'
-      ? 'Интеллектуальный бот • Белые начинают'
-      : (blitz.active ? '⚡ Блиц-режим' : (state.endless ? `♾️ Бесконечная партия • ${state.hardMode ? 'Pro' : '20+'}` : `${dayObj.label} • ${dayObj.dateStr}`));
+      ? `Ваш рейтинг: ${state.chessElo || 1000} ELO • Белые начинают`
+      : (blitz.active ? '⚡ Блиц-режим' : (saved ? '💾 Сохранённый прогресс восстановлен' : (state.endless ? `♾️ Бесконечная партия • ${state.hardMode ? 'Pro' : '20+'}` : `${dayObj.label} • ${dayObj.dateStr}`)));
     document.getElementById('view-hub').classList.add('hidden');
     document.getElementById('view-game').classList.remove('hidden');
 
@@ -872,24 +1081,25 @@
       cladder: initCladderGame, anygram: initAnygramGame, cryptogram: initCryptogramGame,
       wordchain: initWordChainGame, stopgame: initStopGame, tangle: initTangleGame
     };
-    if (runners[gameId]) runners[gameId](stage);
+    if (runners[gameId]) runners[gameId](stage, saved);
     showTutorial(gameId, false);
   }
 
-  function completeGame(gameId, extraNote = '') {
+  function completeGame(gameId, extraNote = '', customStats = null) {
+    clearGameSession(gameId);
     sfx.win();
     try { if (typeof confetti === 'function') confetti({ particleCount: 75, spread: 70, origin: { y: 0.6 } }); } catch (_) {}
     const meta = GAMES_META.find(g => g.id === gameId);
     const bonusMult = state.hardMode ? 1.5 : 1;
     const isSevenBonus = ((state.totalSolved + 1) % 7 === 0);
-    const xpGain = Math.round(meta.xp * bonusMult) + (isSevenBonus ? 77 : 0);
-    const coinGain = Math.round(meta.coins * bonusMult) + (isSevenBonus ? 70 : 0);
+    const xpGain = customStats?.xpGain ?? (Math.round(meta.xp * bonusMult) + (isSevenBonus ? 77 : 0));
+    const coinGain = customStats?.coinGain ?? (Math.round(meta.coins * bonusMult) + (isSevenBonus ? 70 : 0));
 
     if (blitz.active) {
       blitz.score += 1; document.getElementById('blitz-score').textContent = blitz.score;
       state.xp += xpGain; state.coins += coinGain; state.totalSolved += 1;
       saveState(); updateHeader(); showToast(`⚡ +1 в Блице! (+${xpGain} XP)`);
-      setTimeout(() => { if (blitz.active) launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)]); }, 600);
+      setTimeout(() => { if (blitz.active) launchGame(BLITZ_POOL[Math.floor(Math.random() * BLITZ_POOL.length)], true); }, 600);
       return;
     }
 
@@ -915,7 +1125,7 @@
       `<button id="win-next-btn" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">🎲 Следующее</button>
        <button id="win-hub-btn" class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm transition">В меню</button>`
     );
-    document.getElementById('win-next-btn').addEventListener('click', () => { closeModal(); state.endless = true; launchGame(gameId); });
+    document.getElementById('win-next-btn').addEventListener('click', () => { closeModal(); state.endless = true; launchGame(gameId, true); });
     document.getElementById('win-hub-btn').addEventListener('click', () => { closeModal(); showHub(); });
   }
 
@@ -925,10 +1135,12 @@
   }
 
   // =========================================================================
-  // GAME 0: ШАХМАТЫ ПРОТИВ ИИ (Chess.com Layout + 10-Min Clocks + Smooth 60FPS)
+  // GAME 0: ШАХМАТЫ ПРОТИВ ИИ (ELO Rating + Smooth Async AI + Save/Restore)
   // =========================================================================
-  function initChessGame(stage) {
+  function initChessGame(stage, saved) {
     const VAL = { p:100, n:320, b:330, r:500, q:900, k:20000 };
+    const GLYPH = { p:'♟', n:'♞', b:'♝', r:'♜', q:'♛', k:'♚', P:'♙', N:'♘', B:'♗', R:'♖', Q:'♕', K:'♔' };
+    const BOT_ELO = { 1: 600, 2: 1400, 3: 1900 };
     const isWhite = p => p && p === p.toUpperCase();
     const isBlack = p => p && p === p.toLowerCase();
     const colorOf = p => !p ? null : (isWhite(p) ? 'w' : 'b');
@@ -961,9 +1173,11 @@
 
     let board, turn, selected, legalForSel, lastMove, aiDepth = 2, gameOver = false, winner = null, castling, epSquare = null;
     let history = [], moveLog = [], reviewIdx = -1, reviewData = null;
-    let timeW = 600, timeB = 600, clockInterval = null, clockStarted = false, aiTimeout = null;
+    let timeW = 600, timeB = 600, clockInterval = null, clockStarted = false, aiTimeout = null, eloApplied = false;
 
-    function resetBoard() {
+    function cloneBoard(b) { return b.map(r => r.slice()); }
+
+    function resetBoard(keepDiff = true) {
       board = [
         ['r','n','b','q','k','b','n','r'],
         ['p','p','p','p','p','p','p','p'],
@@ -974,24 +1188,51 @@
         ['P','P','P','P','P','P','P','P'],
         ['R','N','B','Q','K','B','N','R']
       ];
-      turn = 'w'; selected = null; legalForSel = []; lastMove = null; gameOver = false; winner = null;
+      turn = 'w'; selected = null; legalForSel = []; lastMove = null; gameOver = false; winner = null; eloApplied = false;
+      if (!keepDiff) aiDepth = 2;
       castling = { wK: true, wQ: true, bK: true, bQ: true }; epSquare = null;
       history = []; moveLog = []; reviewIdx = -1; reviewData = null;
       timeW = 600; timeB = 600; clockStarted = false;
       clearInterval(clockInterval); clearTimeout(aiTimeout); clockInterval = null;
+      clearGameSession('chess');
     }
-    resetBoard();
+
+    if (saved && saved.board) {
+      board = cloneBoard(saved.board);
+      turn = saved.turn || 'w';
+      lastMove = saved.lastMove || null;
+      aiDepth = saved.aiDepth || 2;
+      gameOver = !!saved.gameOver;
+      winner = saved.winner || null;
+      eloApplied = !!saved.eloApplied;
+      castling = saved.castling ? { ...saved.castling } : { wK: true, wQ: true, bK: true, bQ: true };
+      epSquare = saved.epSquare || null;
+      history = saved.history || [];
+      moveLog = saved.moveLog || [];
+      timeW = typeof saved.timeW === 'number' ? saved.timeW : 600;
+      timeB = typeof saved.timeB === 'number' ? saved.timeB : 600;
+      clockStarted = !!saved.clockStarted;
+    } else {
+      resetBoard(true);
+    }
+
+    function persistChess() {
+      if (gameOver) return;
+      saveGameSession('chess', {
+        board: cloneBoard(board), turn, lastMove, aiDepth, gameOver, winner, eloApplied,
+        castling: { ...castling }, epSquare, history, moveLog, timeW, timeB, clockStarted, lives: gameLives
+      });
+    }
 
     stage.innerHTML = `
       <div class="w-full max-w-xl flex flex-col items-center relative">
-        <!-- Controls Bar -->
         <div class="flex flex-wrap items-center justify-between gap-2 w-full mb-3">
           <div id="ch-status" class="text-xs font-black px-3 py-1.5 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/30">Ваш ход • 10:00</div>
           <div class="flex flex-wrap items-center gap-1.5">
             <select id="ch-diff" class="px-2.5 py-1.5 rounded-xl bg-slate-800 border border-white/15 text-xs font-bold text-white focus:outline-none">
-              <option value="1">ИИ: Новичок</option>
-              <option value="2" selected>ИИ: Любитель</option>
-              <option value="3">ИИ: Мастер</option>
+              <option value="1">ИИ: Новичок (600)</option>
+              <option value="2">ИИ: Любитель (1400)</option>
+              <option value="3">ИИ: Мастер (1900)</option>
             </select>
             <button id="ch-undo" class="px-2.5 py-1.5 rounded-xl surface-pill border text-xs font-bold">↩ Ход</button>
             <button id="ch-resign" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-400/30 text-xs font-bold">Сдаться</button>
@@ -999,34 +1240,30 @@
           </div>
         </div>
 
-        <!-- Opponent Bar (Chess.com Style) -->
         <div class="w-full max-w-[448px] flex items-center justify-between px-3 py-2 rounded-t-2xl bg-[#262421] border border-white/10">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-600 to-amber-500 flex items-center justify-center text-sm font-black text-white shadow">🤖</div>
             <div>
               <div class="text-xs font-black text-white leading-tight">Bot CR7 <span class="text-amber-400 font-bold" id="ch-bot-elo">(1400)</span></div>
-              <div id="ch-cap-b" class="text-[11px] text-slate-400 h-4 leading-4"></div>
+              <div id="ch-cap-b" class="text-[11px] text-amber-300/90 h-4 leading-4 tracking-wider"></div>
             </div>
           </div>
           <div id="ch-clock-b" class="px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums bg-[#1b1a17] text-slate-400 border border-white/10">10:00</div>
         </div>
 
-        <!-- Chess Board (Persistent 64 DOM cells, zero flicker!) -->
         <div id="ch-board" class="grid grid-cols-8 grid-rows-8 border-x-2 border-slate-700 shadow-2xl no-select relative" style="width: min(100%, 448px); aspect-ratio: 1 / 1;"></div>
 
-        <!-- Player Bar (Chess.com Style) -->
         <div class="w-full max-w-[448px] flex items-center justify-between px-3 py-2 rounded-b-2xl bg-[#262421] border border-white/10">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-sm font-black text-slate-950 shadow">7</div>
             <div>
-              <div class="text-xs font-black text-white leading-tight">Вы (Белые)</div>
-              <div id="ch-cap-w" class="text-[11px] text-slate-400 h-4 leading-4"></div>
+              <div class="text-xs font-black text-white leading-tight">Вы (Белые) • <span id="ch-player-elo" class="text-amber-300">${state.chessElo || 1000} ELO</span></div>
+              <div id="ch-cap-w" class="text-[11px] text-emerald-300/90 h-4 leading-4 tracking-wider"></div>
             </div>
           </div>
           <div id="ch-clock-w" class="px-3 py-1.5 rounded-lg font-mono font-black text-base sm:text-lg tabular-nums bg-white text-slate-950 shadow">10:00</div>
         </div>
 
-        <!-- AI Post-Game Review Panel -->
         <div id="ch-review" class="hidden w-full mt-4 bg-black/35 border border-amber-400/30 rounded-2xl p-4">
           <div class="flex items-center justify-between gap-2 mb-3">
             <div class="font-black text-sm text-amber-300">🔍 Анализ партии с ИИ</div>
@@ -1040,12 +1277,12 @@
         </div>
       </div>
 
-      <!-- Fullscreen Checkmate / Timeout Banner -->
       <div id="ch-mate-overlay" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
         <div class="text-center max-w-md w-full bg-[#121626] border-2 border-amber-400/60 rounded-3xl p-7 shadow-2xl">
           <div id="mate-emoji" class="text-6xl mb-3">👑</div>
           <h2 id="mate-title" class="text-4xl sm:text-5xl font-black tracking-tight text-amber-400 mb-2">МАТ!</h2>
-          <p id="mate-sub" class="text-slate-200 text-sm sm:text-base mb-6"></p>
+          <p id="mate-sub" class="text-slate-200 text-sm sm:text-base mb-2"></p>
+          <div id="mate-elo-badge" class="inline-block px-3.5 py-1.5 rounded-xl bg-amber-400/15 border border-amber-400/35 text-amber-300 font-black text-sm mb-6"></div>
           <div class="flex flex-col sm:flex-row gap-2.5 justify-center">
             <button id="mate-analyze" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">🔍 Анализ партии ИИ</button>
             <button id="mate-retry" class="px-5 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm transition">Новая партия</button>
@@ -1055,7 +1292,55 @@
       </div>
     `;
 
-    // Build 64 persistent DOM cells ONCE for ultra-smooth 60fps updates
+    const diffSelect = document.getElementById('ch-diff');
+    diffSelect.value = String(aiDepth);
+    document.getElementById('ch-bot-elo').textContent = `(${BOT_ELO[aiDepth] || 1400})`;
+
+    function updateCapturedUI() {
+      const startCounts = { p:8, n:2, b:2, r:2, q:1, P:8, N:2, B:2, R:2, Q:1 };
+      const curCounts = {};
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const p = board[r][c];
+        if (p) curCounts[p] = (curCounts[p] || 0) + 1;
+      }
+      const lostByBlack = [];
+      const lostByWhite = [];
+      ['q','r','b','n','p'].forEach(t => {
+        const diff = (startCounts[t] || 0) - (curCounts[t] || 0);
+        for (let i = 0; i < diff; i++) lostByBlack.push(GLYPH[t]);
+      });
+      ['Q','R','B','N','P'].forEach(t => {
+        const diff = (startCounts[t] || 0) - (curCounts[t] || 0);
+        for (let i = 0; i < diff; i++) lostByWhite.push(GLYPH[t]);
+      });
+      const capW = document.getElementById('ch-cap-w');
+      const capB = document.getElementById('ch-cap-b');
+      if (capW) capW.textContent = lostByBlack.length ? `Взято: ${lostByBlack.join('')}` : '';
+      if (capB) capB.textContent = lostByWhite.length ? `Взято: ${lostByWhite.join('')}` : '';
+    }
+
+    function applyEloChange(outcome) {
+      if (eloApplied) return 0;
+      eloApplied = true;
+      const oppElo = BOT_ELO[aiDepth] || 1400;
+      const myElo = state.chessElo || 1000;
+      const expected = 1 / (1 + Math.pow(10, (oppElo - myElo) / 400));
+      const scoreVal = outcome === 'w' ? 1 : (outcome === 'draw' ? 0.5 : 0);
+      const kFactor = aiDepth === 3 ? 44 : (aiDepth === 2 ? 32 : 20);
+      let delta = Math.round(kFactor * (scoreVal - expected));
+      if (outcome === 'w' && delta < 8) delta = 8;
+      if (outcome === 'b' && delta > -6) delta = -6;
+      state.chessElo = Math.max(400, myElo + delta);
+      state.xp += outcome === 'w' ? (aiDepth * 45) : 15;
+      state.coins += outcome === 'w' ? (aiDepth * 25) : 5;
+      if (outcome === 'w') state.totalSolved += 1;
+      saveState();
+      updateHeader();
+      const pEloEl = document.getElementById('ch-player-elo');
+      if (pEloEl) pEloEl.textContent = `${state.chessElo} ELO`;
+      return delta;
+    }
+
     const bEl = document.getElementById('ch-board');
     const sqEls = [];
     for (let r = 0; r < 8; r++) {
@@ -1110,29 +1395,33 @@
       }`;
     }
 
+    let clockTickCount = 0;
     function ensureClockRunning() {
-      if (clockStarted || gameOver) return;
+      if (clockInterval) return;
       clockStarted = true;
       clockInterval = setInterval(() => {
         if (gameOver || reviewData) return;
         if (turn === 'w') {
           timeW = Math.max(0, timeW - 1);
           if (timeW === 0) {
-            gameOver = true; winner = 'b'; clearInterval(clockInterval);
-            sfx.bad(); render(); showMateBanner('ВРЕМЯ ВЫШЛО!', 'У вас закончились 10 минут. ИИ победил по времени.', '⏱️');
+            gameOver = true; winner = 'b'; clearInterval(clockInterval); clearGameSession('chess');
+            const delta = applyEloChange('b');
+            sfx.bad(); render(); showMateBanner('ВРЕМЯ ВЫШЛО!', 'У вас закончились 10 минут. ИИ победил по времени.', '⏱️', `${delta} ELO • Теперь ${state.chessElo}`);
           }
         } else {
           timeB = Math.max(0, timeB - 1);
           if (timeB === 0) {
-            gameOver = true; winner = 'w'; clearInterval(clockInterval);
-            sfx.win(); render(); showMateBanner('ВРЕМЯ ВЫШЛО! ПОБЕДА!', 'У ИИ закончилось время — вы победили!', '⏱️');
+            gameOver = true; winner = 'w'; clearInterval(clockInterval); clearGameSession('chess');
+            const delta = applyEloChange('w');
+            sfx.win(); render(); showMateBanner('ВРЕМЯ ВЫШЛО! ПОБЕДА!', 'У ИИ закончилось время — вы победили!', '⏱️', `+${delta} ELO • Теперь ${state.chessElo}`);
           }
         }
+        clockTickCount += 1;
+        if (clockTickCount % 5 === 0) persistChess();
         updateClocksUI();
       }, 1000);
     }
 
-    function cloneBoard(b) { return b.map(r => r.slice()); }
     function sqName(r, c) { return String.fromCharCode(97 + c) + (8 - r); }
 
     function pseudoMoves(b, r, c, cas, ep) {
@@ -1226,7 +1515,6 @@
           }
         }
       }
-      // MVV-LVA move ordering for 10x faster Alpha-Beta pruning!
       res.sort((a, bMove) => {
         const capA = b[a[2]][a[3]] ? VAL[b[a[2]][a[3]].toLowerCase()] : 0;
         const capB = b[bMove[2]][bMove[3]] ? VAL[b[bMove[2]][bMove[3]].toLowerCase()] : 0;
@@ -1272,10 +1560,15 @@
       }
     }
 
-    function showMateBanner(title, sub, emoji) {
+    function showMateBanner(title, sub, emoji, eloText = '') {
       document.getElementById('mate-emoji').textContent = emoji;
       document.getElementById('mate-title').textContent = title;
       document.getElementById('mate-sub').textContent = sub;
+      const badge = document.getElementById('mate-elo-badge');
+      if (badge) {
+        badge.textContent = eloText || `Рейтинг: ${state.chessElo || 1000} ELO`;
+        badge.classList.toggle('hidden', !eloText && !(state.chessElo));
+      }
       const ov = document.getElementById('ch-mate-overlay');
       ov.classList.remove('hidden'); ov.classList.add('flex');
     }
@@ -1284,19 +1577,24 @@
       const moves = legalMoves(board, turn, castling, epSquare), inChk = isInCheck(board, turn);
       const st = document.getElementById('ch-status');
       if (moves.length === 0) {
-        gameOver = true; clearInterval(clockInterval); updateClocksUI();
+        gameOver = true; clearInterval(clockInterval); clearGameSession('chess'); updateClocksUI();
         if (inChk) {
           winner = turn === 'b' ? 'w' : 'b'; render();
           if (winner === 'w') {
-            st.textContent = 'МАТ! Вы победили!'; sfx.win();
-            setTimeout(() => showMateBanner('МАТ! SIUUU!', 'Вы поставили мат ИИ-боту! Разберите партию или начните новую.', '👑'), 700);
+            st.textContent = 'МАТ! Вы победили!';
+            const delta = applyEloChange('w');
+            sfx.win();
+            setTimeout(() => showMateBanner('МАТ! SIUUU!', 'Вы поставили мат ИИ-боту!', '👑', `+${delta} ELO • Новый рейтинг: ${state.chessElo}`), 650);
           } else {
-            st.textContent = 'МАТ! ИИ победил'; sfx.bad();
-            setTimeout(() => showMateBanner('МАТ! Вы проиграли', 'Король пал! Запустите «Анализ партии ИИ», чтобы увидеть ошибки.', '💀'), 700);
+            st.textContent = 'МАТ! ИИ победил';
+            const delta = applyEloChange('b');
+            sfx.bad();
+            setTimeout(() => showMateBanner('МАТ! Вы проиграли', 'Король пал! Разберите партию и возьмите реванш.', '💀', `${delta} ELO • Текущий рейтинг: ${state.chessElo}`), 650);
           }
         } else {
           winner = 'draw'; st.textContent = 'Пат — ничья!';
-          setTimeout(() => showMateBanner('ПАТ — НИЧЬЯ', 'У сторон больше нет легальных ходов.', '🤝'), 400);
+          const delta = applyEloChange('draw');
+          setTimeout(() => showMateBanner('ПАТ — НИЧЬЯ', 'У сторон больше нет легальных ходов.', '🤝', `${delta >= 0 ? '+' : ''}${delta} ELO • Рейтинг: ${state.chessElo}`), 400);
         }
         return true;
       }
@@ -1309,15 +1607,13 @@
       const moves = legalMoves(board, 'b', castling, epSquare);
       if (moves.length === 0) return null;
       if (aiDepth === 1) {
-        // Новичок (~600): играет как человек с опытом 1 месяц
         const scored = moves.map(m => {
           const { nb } = applyMove(board, m, castling, epSquare);
-          return { m, s: evaluate(nb) + (Math.random() * 160 - 80) };
+          return { m, s: evaluate(nb) + (Math.random() * 170 - 85) };
         }).sort((a, b) => b.s - a.s);
         const pool = scored.slice(0, Math.min(4, scored.length));
         return pool[Math.floor(Math.random() * pool.length)].m;
       }
-      // Любитель (Depth 2 ~1400) & Мастер (Depth 3 ~1900)
       return minimax(board, castling, epSquare, aiDepth, -Infinity, Infinity, true).move;
     }
 
@@ -1330,9 +1626,10 @@
           const { nb, ncas, nep } = applyMove(board, chosen, castling, epSquare);
           moveLog.push({ who: 'b', move: chosen, boardBefore: bBefore, casBefore, epBefore, boardAfter: cloneBoard(nb) });
           board = nb; castling = ncas; epSquare = nep; lastMove = chosen; turn = 'w';
-          sfx.tap(); render(); checkEnd();
+          sfx.tap(); render();
+          if (!checkEnd()) persistChess();
         }
-      }, 340);
+      }, 150);
     }
 
     function startReview() {
@@ -1342,8 +1639,8 @@
       reviewData = moveLog.map(entry => {
         const isW = entry.who === 'w';
         const bestRes = minimax(entry.boardBefore, entry.casBefore, entry.epBefore, 2, -Infinity, Infinity, !isW);
-        const { nb, ncas, nep } = applyMove(entry.boardBefore, entry.move, entry.casBefore, entry.epBefore);
-        const playedEval = minimax(nb, ncas, nep, 1, -Infinity, Infinity, isW).score;
+        const { nb } = applyMove(entry.boardBefore, entry.move, entry.casBefore, entry.epBefore);
+        const playedEval = minimax(nb, entry.casBefore, entry.epBefore, 1, -Infinity, Infinity, isW).score;
         const diff = isW ? (playedEval - bestRes.score) : (bestRes.score - playedEval);
         let tag = '🌟 Лучший ход', cls = 'text-emerald-400';
         if (diff > 220) { tag = '💥 Зевок!'; cls = 'text-rose-400'; }
@@ -1385,7 +1682,7 @@
         moveLog.push({ who: 'w', move: matchMove, boardBefore: bBefore, casBefore, epBefore, boardAfter: cloneBoard(nb) });
         board = nb; castling = ncas; epSquare = nep; lastMove = matchMove; selected = null; legalForSel = []; turn = 'b';
         sfx.good(); render();
-        if (!checkEnd()) aiTurn();
+        if (!checkEnd()) { persistChess(); aiTurn(); }
         return;
       }
       if (isWhite(board[r][c])) {
@@ -1414,7 +1711,6 @@
         if (isKingChk) bg = '#dc2626';
         cell.btn.style.background = bg;
 
-        // Only update innerHTML if the piece on this square actually changed -> ZERO flicker!
         if (cell.lastPiece !== p) {
           cell.pieceWrap.innerHTML = p ? pieceSVG(p) : '';
           cell.lastPiece = p;
@@ -1426,9 +1722,9 @@
             cell.pieceWrap.style.transform = `translate3d(${dx}%, ${dy}%, 0) scale(1.06)`;
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
-                cell.pieceWrap.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+                cell.pieceWrap.style.transition = 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1)';
                 cell.pieceWrap.style.transform = 'translate3d(0, 0, 0) scale(1)';
-                setTimeout(() => { cell.pieceWrap.style.zIndex = '1'; }, 250);
+                setTimeout(() => { cell.pieceWrap.style.zIndex = '1'; }, 230);
               });
             });
           } else {
@@ -1451,35 +1747,38 @@
           cell.dot.className = 'legal-dot hidden';
         }
       }
+      updateCapturedUI();
       updateClocksUI();
     }
 
-    document.getElementById('ch-diff').addEventListener('change', (e) => {
+    diffSelect.addEventListener('change', (e) => {
       aiDepth = +e.target.value;
-      const elos = { 1: '(600)', 2: '(1400)', 3: '(1900)' };
-      document.getElementById('ch-bot-elo').textContent = elos[aiDepth] || '(1400)';
+      document.getElementById('ch-bot-elo').textContent = `(${BOT_ELO[aiDepth] || 1400})`;
+      persistChess();
     });
     document.getElementById('ch-undo').addEventListener('click', () => {
       if (history.length > 0 && !gameOver && !reviewData) {
         clearTimeout(aiTimeout);
         const prev = history.pop(); board = prev.board; castling = prev.castling; epSquare = prev.epSquare; lastMove = prev.lastMove;
         if (moveLog.length >= 2) moveLog.splice(-2, 2); else moveLog.pop();
-        turn = 'w'; selected = null; legalForSel = []; render(); checkEnd();
+        turn = 'w'; selected = null; legalForSel = []; render(); checkEnd(); persistChess();
       }
     });
     document.getElementById('ch-resign').addEventListener('click', () => {
       if (gameOver) return;
-      gameOver = true; winner = 'b'; clearInterval(clockInterval); render();
-      showMateBanner('СДАЧА', 'Вы сдались. Запустите «Анализ партии ИИ», чтобы разобрать ходы!', '🏳️');
+      gameOver = true; winner = 'b'; clearInterval(clockInterval); clearGameSession('chess'); render();
+      const delta = applyEloChange('b');
+      showMateBanner('СДАЧА', 'Вы сдались. Разберите партию и возьмите реванш!', '🏳️', `${delta} ELO • Текущий рейтинг: ${state.chessElo}`);
     });
-    document.getElementById('ch-reset').addEventListener('click', () => {
+    const doReset = () => {
       document.getElementById('ch-review').classList.add('hidden');
-      resetBoard(); setLives(3); render(); checkEnd();
-    });
+      resetBoard(true); setLives(3); render(); checkEnd(); showToast('Новая шахматная партия!');
+    };
+    document.getElementById('ch-reset').addEventListener('click', doReset);
     document.getElementById('mate-analyze').addEventListener('click', startReview);
     document.getElementById('mate-retry').addEventListener('click', () => {
       document.getElementById('ch-mate-overlay').classList.add('hidden'); document.getElementById('ch-mate-overlay').classList.remove('flex');
-      document.getElementById('ch-review').classList.add('hidden'); resetBoard(); setLives(3); render(); checkEnd();
+      doReset();
     });
     document.getElementById('mate-home').addEventListener('click', () => {
       document.getElementById('ch-mate-overlay').classList.add('hidden'); document.getElementById('ch-mate-overlay').classList.remove('flex');
@@ -1488,30 +1787,41 @@
     document.getElementById('rev-prev').addEventListener('click', () => { if (reviewData && reviewIdx > 0) { reviewIdx -= 1; sfx.tap(); renderReviewStep(); } });
     document.getElementById('rev-next').addEventListener('click', () => { if (reviewData && reviewIdx < reviewData.length - 1) { reviewIdx += 1; sfx.tap(); renderReviewStep(); } });
 
+    if (clockStarted && !gameOver) ensureClockRunning();
+    if (!gameOver && turn === 'b' && !reviewData) aiTurn();
+
     activeCleanup = () => { clearInterval(clockInterval); clearTimeout(aiTimeout); };
-    onContinueCallback = () => { resetBoard(); render(); checkEnd(); };
+    activeForceNewFn = doReset;
+    onContinueCallback = () => { resetBoard(true); render(); checkEnd(); };
     activeHintFn = () => {
       if (gameOver || turn !== 'w' || !spendCoinsForHint(20)) return;
       const res = minimax(board, castling, epSquare, 2, -Infinity, Infinity, false);
       if (res.move) { const [fr, fc, tr, tc] = res.move; selected = [fr, fc]; legalForSel = [res.move]; render(); showToast(`ИИ советует: ${sqName(fr,fc)} → ${sqName(tr,tc)}`); }
     };
     render();
+    checkEnd();
   }
 
   // =========================================================================
-  // GAME 1: ПАРОЛЬ
+  // GAME 1: ПАРОЛЬ (With Save/Restore)
   // =========================================================================
-  function initPasswordGame(stage) {
+  function initPasswordGame(stage, saved) {
     const pool = state.hardMode ? PUZZLES.password6 : PUZZLES.password5;
-    const target = pickPuzzle('pw_' + (state.hardMode ? 6 : 5), pool);
+    const target = saved?.target || pickPuzzle('pw_' + (state.hardMode ? 6 : 5), pool);
     const len = target.length, maxRows = 6;
-    let guesses = [], current = '', finished = false;
-    const keyStates = {};
+    let guesses = saved?.guesses ? [...saved.guesses] : [];
+    let current = saved?.current || '';
+    let finished = false;
+    const keyStates = saved?.keyStates ? { ...saved.keyStates } : {};
     const kbRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['ENTER','Я','Ч','С','М','И','Т','Ь','Б','Ю','DEL']];
+
+    function persist() {
+      if (!finished) saveGameSession('password', { target, guesses, current, keyStates, lives: gameLives });
+    }
 
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
-        <div class="text-xs font-bold text-amber-400 mb-2">Слово из ${len} букв • Словарь 20+</div>
+        <div class="text-xs font-bold text-amber-400 mb-2">Слово из ${len} букв • Попытка ${Math.min(guesses.length + 1, maxRows)}/${maxRows}</div>
         <div id="pw-board" class="grid grid-rows-6 gap-1.5 mb-5"></div>
         <div id="pw-kb" class="w-full flex flex-col gap-1.5"></div>
       </div>
@@ -1564,11 +1874,11 @@
       return res;
     }
 
-    onContinueCallback = () => { guesses = guesses.slice(0, -2); finished = false; render(); };
+    onContinueCallback = () => { guesses = guesses.slice(0, -2); finished = false; render(); persist(); };
 
     function handleKey(k) {
       if (finished) return;
-      if (k === 'DEL') { if (current.length > 0) { sfx.tap(); current = current.slice(0, -1); render(); } return; }
+      if (k === 'DEL') { if (current.length > 0) { sfx.tap(); current = current.slice(0, -1); render(); persist(); } return; }
       if (k === 'ENTER') {
         if (current.length < len) {
           sfx.bad(); const row = document.getElementById(`pw-row-${guesses.length}`); if (row) row.classList.add('shake');
@@ -1586,10 +1896,10 @@
         render();
         if (won) { finished = true; setTimeout(() => completeGame('password', `Слово «${target}» взято с ${guesses.length}-й попытки!`), 250); }
         else if (guesses.length >= maxRows) { finished = true; setLives(1); loseLife(`Загаданное слово было: ${target}`); }
-        else sfx.good();
+        else { sfx.good(); persist(); }
         return;
       }
-      if (/^[А-ЯЁ]$/.test(k) && current.length < len) { sfx.tap(); current += (k === 'Ё' ? 'Е' : k); render(); }
+      if (/^[А-ЯЁ]$/.test(k) && current.length < len) { sfx.tap(); current += (k === 'Ё' ? 'Е' : k); render(); persist(); }
     }
 
     const onKeyDown = (e) => { if (e.key === 'Backspace') handleKey('DEL'); else if (e.key === 'Enter') handleKey('ENTER'); else { const up = e.key.toUpperCase(); if (/^[А-ЯЁ]$/.test(up)) handleKey(up); } };
@@ -1605,17 +1915,29 @@
   }
 
   // =========================================================================
-  // GAME 2: ХЭШТЕГ
+  // GAME 2: ХЭШТЕГ (With Save/Restore)
   // =========================================================================
-  function initHashtagGame(stage) {
-    const p = pickPuzzle('ht', PUZZLES.hashtag);
-    const targetGrid = Array.from({ length: 5 }, () => Array(5).fill(null));
-    for (let i = 0; i < 5; i++) { targetGrid[1][i] = p.h1[i]; targetGrid[3][i] = p.h2[i]; targetGrid[i][1] = p.v1[i]; targetGrid[i][3] = p.v2[i]; }
-    const activeCoords = []; for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (targetGrid[r][c] !== null) activeCoords.push([r, c]);
-    const letters = activeCoords.map(([r, c]) => targetGrid[r][c]);
-    for (let i = letters.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [letters[i], letters[j]] = [letters[j], letters[i]]; }
-    const curGrid = Array.from({ length: 5 }, () => Array(5).fill(null)); activeCoords.forEach(([r, c], idx) => { curGrid[r][c] = letters[idx]; });
-    let movesLeft = state.hardMode ? 10 : 12, selected = null, finished = false;
+  function initHashtagGame(stage, saved) {
+    let targetGrid, activeCoords, curGrid, movesLeft, selected = null, finished = false;
+    if (saved && saved.curGrid && saved.targetGrid) {
+      targetGrid = saved.targetGrid;
+      activeCoords = saved.activeCoords;
+      curGrid = saved.curGrid;
+      movesLeft = saved.movesLeft;
+    } else {
+      const p = pickPuzzle('ht', PUZZLES.hashtag);
+      targetGrid = Array.from({ length: 5 }, () => Array(5).fill(null));
+      for (let i = 0; i < 5; i++) { targetGrid[1][i] = p.h1[i]; targetGrid[3][i] = p.h2[i]; targetGrid[i][1] = p.v1[i]; targetGrid[i][3] = p.v2[i]; }
+      activeCoords = []; for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (targetGrid[r][c] !== null) activeCoords.push([r, c]);
+      const letters = activeCoords.map(([r, c]) => targetGrid[r][c]);
+      for (let i = letters.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [letters[i], letters[j]] = [letters[j], letters[i]]; }
+      curGrid = Array.from({ length: 5 }, () => Array(5).fill(null)); activeCoords.forEach(([r, c], idx) => { curGrid[r][c] = letters[idx]; });
+      movesLeft = state.hardMode ? 10 : 12;
+    }
+
+    function persist() {
+      if (!finished) saveGameSession('hashtag', { targetGrid, activeCoords, curGrid, movesLeft, lives: gameLives });
+    }
 
     stage.innerHTML = `
       <div class="w-full max-w-sm flex flex-col items-center">
@@ -1629,7 +1951,7 @@
       return (inRow || inCol) ? 'present' : 'wrong';
     }
     const checkWin = () => activeCoords.every(([r, c]) => curGrid[r][c] === targetGrid[r][c]);
-    onContinueCallback = () => { movesLeft = 5; finished = false; render(); };
+    onContinueCallback = () => { movesLeft = 5; finished = false; render(); persist(); };
 
     function render() {
       document.getElementById('ht-moves').textContent = movesLeft;
@@ -1655,6 +1977,7 @@
           selected = null; movesLeft -= 1; sfx.good(); render();
           if (checkWin()) { finished = true; setTimeout(() => completeGame('hashtag'), 200); }
           else if (movesLeft <= 0) { finished = true; setLives(1); loseLife('Закончились ходы!'); }
+          else persist();
         }
       }));
     }
@@ -1663,18 +1986,22 @@
       const wrong = activeCoords.find(([r, c]) => curGrid[r][c] !== targetGrid[r][c]);
       if (!wrong || !spendCoinsForHint(20)) return;
       const [tr, tc] = wrong, needed = targetGrid[tr][tc], donor = activeCoords.find(([r, c]) => curGrid[r][c] === needed && curGrid[r][c] !== targetGrid[r][c]);
-      if (donor) { const [dr, dc] = donor; [curGrid[tr][tc], curGrid[dr][dc]] = [curGrid[dr][dc], curGrid[tr][tc]]; selected = null; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('hashtag'), 200); } }
+      if (donor) { const [dr, dc] = donor; [curGrid[tr][tc], curGrid[dr][dc]] = [curGrid[dr][dc], curGrid[tr][tc]]; selected = null; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('hashtag'), 200); } else persist(); }
     };
     render();
   }
 
   // =========================================================================
-  // GAME 3: МИНИ-КРОССВОРД (ЙЦУКЕН)
+  // GAME 3: МИНИ-КРОССВОРД (With Save/Restore)
   // =========================================================================
-  function initCrosswordGame(stage) {
-    const p = pickPuzzle('cw', PUZZLES.crossword);
-    const userGrid = p.grid.map(row => row.map(ch => ch === '.' ? '.' : ''));
-    let sel = [0, 0], dir = 'across', finished = false;
+  function initCrosswordGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('cw', PUZZLES.crossword);
+    const userGrid = saved?.userGrid ? saved.userGrid.map(r => r.slice()) : p.grid.map(row => row.map(ch => ch === '.' ? '.' : ''));
+    let sel = saved?.sel ? [...saved.sel] : [0, 0], dir = saved?.dir || 'across', finished = false;
+
+    function persist() {
+      if (!finished) saveGameSession('crossword', { puzzle: p, userGrid, sel, dir, lives: gameLives });
+    }
 
     stage.innerHTML = `
       <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -1708,72 +2035,86 @@
       document.getElementById('cw-dir-btn').textContent = dir === 'across' ? 'По горизонтали →' : 'По вертикали ↓';
       gridEl.querySelectorAll('.cw-cell').forEach(b => b.addEventListener('click', () => {
         const r = +b.dataset.r, c = +b.dataset.c; if (sel[0] === r && sel[1] === c) dir = dir === 'across' ? 'down' : 'across'; else sel = [r, c];
-        sfx.tap(); render();
+        sfx.tap(); render(); persist();
       }));
     }
     function moveNext(step = 1) { let [r, c] = sel; if (dir === 'across') c += step; else r += step; if (r >= 0 && r < 5 && c >= 0 && c < 5 && p.grid[r][c] !== '.') sel = [r, c]; }
     function inputLetter(ch) {
       if (finished) return; const [r, c] = sel; if (p.grid[r][c] === '.') return;
       userGrid[r][c] = ch === 'Ё' ? 'Е' : ch; sfx.tap(); moveNext(1); render();
-      if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); }
+      if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); } else persist();
     }
 
-    document.getElementById('cw-dir-btn').addEventListener('click', () => { dir = dir === 'across' ? 'down' : 'across'; render(); });
-    document.getElementById('cw-clear-btn').addEventListener('click', () => { userGrid[sel[0]][sel[1]] = ''; render(); });
-    stage.querySelectorAll('.cw-clue').forEach(b => b.addEventListener('click', () => { dir = b.dataset.dir; sel = [+b.dataset.r, +b.dataset.c]; render(); }));
+    document.getElementById('cw-dir-btn').addEventListener('click', () => { dir = dir === 'across' ? 'down' : 'across'; render(); persist(); });
+    document.getElementById('cw-clear-btn').addEventListener('click', () => { userGrid[sel[0]][sel[1]] = ''; render(); persist(); });
+    stage.querySelectorAll('.cw-clue').forEach(b => b.addEventListener('click', () => { dir = b.dataset.dir; sel = [+b.dataset.r, +b.dataset.c]; render(); persist(); }));
 
     const mobKb = document.getElementById('cw-mobile-kb');
     const cwRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['Я','Ч','С','М','И','Т','Ь','Б','Ю','⌫']];
     mobKb.innerHTML = cwRows.map(row => `<div class="flex justify-center gap-1">${row.map(l => `<button data-l="${l}" class="cw-mkey ${l === '⌫' ? 'px-3 bg-rose-500/25 text-rose-400' : 'flex-1 min-w-[24px] max-w-[34px] surface-pill border'} h-10 rounded-lg font-bold text-xs flex items-center justify-center transition">${l}</button>`).join('')}</div>`).join('');
-    mobKb.querySelectorAll('.cw-mkey').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === '⌫') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); } else inputLetter(b.dataset.l); }));
+    mobKb.querySelectorAll('.cw-mkey').forEach(b => b.addEventListener('click', () => { if (b.dataset.l === '⌫') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); persist(); } else inputLetter(b.dataset.l); }));
 
-    const onKey = (e) => { if (finished) return; if (e.key === 'Backspace') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); } else { const up = e.key.toUpperCase(); if (/^[А-ЯЁ]$/.test(up)) inputLetter(up); } };
+    const onKey = (e) => { if (finished) return; if (e.key === 'Backspace') { userGrid[sel[0]][sel[1]] = ''; moveNext(-1); render(); persist(); } else { const up = e.key.toUpperCase(); if (/^[А-ЯЁ]$/.test(up)) inputLetter(up); } };
     window.addEventListener('keydown', onKey); activeCleanup = () => window.removeEventListener('keydown', onKey);
     activeHintFn = () => {
       if (finished) return;
       for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (p.grid[r][c] !== '.' && userGrid[r][c] !== p.grid[r][c]) {
-        if (!spendCoinsForHint(20)) return; userGrid[r][c] = p.grid[r][c]; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); } return;
+        if (!spendCoinsForHint(20)) return; userGrid[r][c] = p.grid[r][c]; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); } else persist(); return;
       }
     };
     render();
   }
 
   // =========================================================================
-  // GAME 4: ПОИСК СЛОВ (Fixed 8-Direction Snap + Clean Diagonal Selection)
+  // GAME 4: ПОИСК СЛОВ (With Save/Restore & Live Progress)
   // =========================================================================
-  function initWordSearchGame(stage) {
-    const p = pickPuzzle('ws', PUZZLES.wordsearch);
-    const size = state.hardMode ? 10 : 9;
-    const targetWords = p.words.filter(w => w.length <= size).slice(0, state.hardMode ? 8 : 7);
-    const grid = Array.from({ length: size }, () => Array(size).fill(''));
-    const placed = [];
-    const dirs = [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
-    const alpha = 'АБВГДЕЖИКЛМНОПРСТУФХЦЧШЭЮЯ';
+  function initWordSearchGame(stage, saved) {
+    let size, theme, grid, placed, foundWords, foundCells;
+    if (saved && saved.grid && saved.placed) {
+      size = saved.size; theme = saved.theme; grid = saved.grid; placed = saved.placed;
+      foundWords = new Set(saved.foundWords || []); foundCells = new Set(saved.foundCells || []);
+    } else {
+      const p = pickPuzzle('ws', PUZZLES.wordsearch);
+      theme = p.theme;
+      size = state.hardMode ? 10 : 9;
+      const targetWords = p.words.filter(w => w.length <= size).slice(0, state.hardMode ? 8 : 7);
+      grid = Array.from({ length: size }, () => Array(size).fill(''));
+      placed = [];
+      const dirs = [[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+      const alpha = 'АБВГДЕЖИКЛМНОПРСТУФХЦЧШЭЮЯ';
 
-    targetWords.forEach((word) => {
-      let ok = false;
-      for (let attempt = 0; attempt < 250 && !ok; attempt++) {
-        const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
-        const r0 = Math.floor(Math.random() * size), c0 = Math.floor(Math.random() * size);
-        const rEnd = r0 + dr * (word.length - 1), cEnd = c0 + dc * (word.length - 1);
-        if (rEnd < 0 || rEnd >= size || cEnd < 0 || cEnd >= size) continue;
-        let fits = true; const cells = [];
-        for (let k = 0; k < word.length; k++) {
-          const r = r0 + dr * k, c = c0 + dc * k;
-          if (grid[r][c] !== '' && grid[r][c] !== word[k]) { fits = false; break; }
-          cells.push([r, c]);
+      targetWords.forEach((word) => {
+        let ok = false;
+        for (let attempt = 0; attempt < 250 && !ok; attempt++) {
+          const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)];
+          const r0 = Math.floor(Math.random() * size), c0 = Math.floor(Math.random() * size);
+          const rEnd = r0 + dr * (word.length - 1), cEnd = c0 + dc * (word.length - 1);
+          if (rEnd < 0 || rEnd >= size || cEnd < 0 || cEnd >= size) continue;
+          let fits = true; const cells = [];
+          for (let k = 0; k < word.length; k++) {
+            const r = r0 + dr * k, c = c0 + dc * k;
+            if (grid[r][c] !== '' && grid[r][c] !== word[k]) { fits = false; break; }
+            cells.push([r, c]);
+          }
+          if (fits) { cells.forEach(([r, c], k) => { grid[r][c] = word[k]; }); placed.push({ word, cells }); ok = true; }
         }
-        if (fits) { cells.forEach(([r, c], k) => { grid[r][c] = word[k]; }); placed.push({ word, cells }); ok = true; }
-      }
-    });
-    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (grid[r][c] === '') grid[r][c] = alpha[Math.floor(Math.random() * alpha.length)];
+      });
+      for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) if (grid[r][c] === '') grid[r][c] = alpha[Math.floor(Math.random() * alpha.length)];
+      foundWords = new Set(); foundCells = new Set();
+    }
 
-    const foundWords = new Set(), foundCells = new Set();
     let dragStart = null, dragCells = [], finished = false;
+    function persist() {
+      if (!finished) saveGameSession('wordsearch', { size, theme, grid, placed, foundWords: [...foundWords], foundCells: [...foundCells], lives: gameLives });
+    }
+    onSyncLivesCallback = persist;
 
     stage.innerHTML = `
       <div class="w-full max-w-lg flex flex-col items-center">
-        <div class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-400/30 px-3 py-1 rounded-full mb-3">Тема: ${p.theme} (${size}×${size})</div>
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-500/20 border border-amber-400/30 px-3 py-1 rounded-full">Тема: ${theme}</span>
+          <span id="ws-counter" class="text-xs font-black text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 px-2.5 py-1 rounded-full">0/${placed.length}</span>
+        </div>
         <div id="ws-words" class="flex flex-wrap justify-center gap-2 mb-4"></div>
         <div id="ws-grid" class="grid ${size === 10 ? 'grid-cols-10' : 'grid-cols-9'} gap-1 no-select touch-none bg-black/30 p-2 rounded-2xl border border-white/10"></div>
         <p class="text-[11px] text-muted-adaptive mt-3 text-center">Зажмите и ведите по буквам (прямо или наискосок — 8 направлений).</p>
@@ -1791,7 +2132,6 @@
       }
     }
 
-    // Snap drag vector smoothly to nearest 45-degree angle!
     function getSnappedLine(r1, c1, r2, c2) {
       const dr = r2 - r1, dc = c2 - c1;
       const steps = Math.max(Math.abs(dr), Math.abs(dc));
@@ -1809,6 +2149,8 @@
     }
 
     function render() {
+      const cntEl = document.getElementById('ws-counter');
+      if (cntEl) cntEl.textContent = `${foundWords.size}/${placed.length}`;
       document.getElementById('ws-words').innerHTML = placed.map(item =>
         `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${foundWords.has(item.word) ? 'bg-emerald-500 text-white line-through' : 'surface-pill border'}">${item.word}</span>`
       ).join('');
@@ -1850,6 +2192,7 @@
           foundWords.add(match.word); dragCells.forEach(([r, c]) => foundCells.add(`${r},${c}`));
           sfx.good(); showToast(`Найдено: ${match.word}!`);
           if (foundWords.size === placed.length) { finished = true; setTimeout(() => completeGame('wordsearch'), 200); }
+          else persist();
         } else if (dragCells.length >= 3) {
           if (loseLife('Такого слова нет в списке!')) finished = true;
         }
@@ -1857,7 +2200,7 @@
       dragStart = null; dragCells = []; render();
     };
 
-    onContinueCallback = () => { finished = false; dragStart = null; dragCells = []; render(); };
+    onContinueCallback = () => { finished = false; dragStart = null; dragCells = []; render(); persist(); };
     gEl.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
@@ -1872,26 +2215,36 @@
       const next = placed.find(item => !foundWords.has(item.word));
       if (!next || !spendCoinsForHint(20)) return;
       foundWords.add(next.word); next.cells.forEach(([r, c]) => foundCells.add(`${r},${c}`)); render();
-      if (foundWords.size === placed.length) { finished = true; setTimeout(() => completeGame('wordsearch'), 200); }
+      if (foundWords.size === placed.length) { finished = true; setTimeout(() => completeGame('wordsearch'), 200); } else persist();
     };
     render();
   }
 
   // =========================================================================
-  // GAME 5: СУДОКУ (Clear 3x3 Borders + 3 Lives)
+  // GAME 5: СУДОКУ (With Save/Restore)
   // =========================================================================
-  function initSudokuGame(stage) {
-    const base = [
-      [5,3,4,6,7,8,9,1,2],[6,7,2,1,9,5,3,4,8],[1,9,8,3,4,2,5,6,7],
-      [8,5,9,7,6,1,4,2,3],[4,2,6,8,5,3,7,9,1],[7,1,3,9,2,4,8,5,6],
-      [9,6,1,5,3,7,2,8,4],[2,8,7,4,1,9,6,3,5],[3,4,5,2,8,6,1,7,9]
-    ];
-    const digits = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
-    const solution = base.map(row => row.map(v => digits[v - 1]));
-    const given = Array.from({ length: 9 }, () => Array(9).fill(false));
-    const clueProb = state.hardMode ? 0.30 : 0.44;
-    const grid = solution.map((row, r) => row.map((v, c) => { if (Math.random() < clueProb) { given[r][c] = true; return v; } return 0; }));
-    let sel = [0, 0], finished = false;
+  function initSudokuGame(stage, saved) {
+    let solution, given, grid;
+    if (saved && saved.solution && saved.grid) {
+      solution = saved.solution; given = saved.given; grid = saved.grid;
+    } else {
+      const base = [
+        [5,3,4,6,7,8,9,1,2],[6,7,2,1,9,5,3,4,8],[1,9,8,3,4,2,5,6,7],
+        [8,5,9,7,6,1,4,2,3],[4,2,6,8,5,3,7,9,1],[7,1,3,9,2,4,8,5,6],
+        [9,6,1,5,3,7,2,8,4],[2,8,7,4,1,9,6,3,5],[3,4,5,2,8,6,1,7,9]
+      ];
+      const digits = [1,2,3,4,5,6,7,8,9].sort(() => Math.random() - 0.5);
+      solution = base.map(row => row.map(v => digits[v - 1]));
+      given = Array.from({ length: 9 }, () => Array(9).fill(false));
+      const clueProb = state.hardMode ? 0.30 : 0.44;
+      grid = solution.map((row, r) => row.map((v, c) => { if (Math.random() < clueProb) { given[r][c] = true; return v; } return 0; }));
+    }
+    let sel = saved?.sel ? [...saved.sel] : [0, 0], finished = false;
+
+    function persist() {
+      if (!finished) saveGameSession('sudoku', { solution, given, grid, sel, lives: gameLives });
+    }
+    onSyncLivesCallback = persist;
 
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
@@ -1903,7 +2256,7 @@
       </div>
     `;
     const checkWin = () => grid.every((row, r) => row.every((v, c) => v === solution[r][c]));
-    onContinueCallback = () => { finished = false; render(); };
+    onContinueCallback = () => { finished = false; render(); persist(); };
 
     function render() {
       const gEl = document.getElementById('su-grid'), [sr, sc] = sel, selBoxR = Math.floor(sr / 3), selBoxC = Math.floor(sc / 3);
@@ -1920,7 +2273,7 @@
         html += `<button data-r="${r}" data-c="${c}" class="su-cell w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm sm:text-base font-bold ${cls} ${br} ${bb}">${val || ''}</button>`;
       }
       gEl.innerHTML = html;
-      gEl.querySelectorAll('.su-cell').forEach(b => b.addEventListener('click', () => { sel = [+b.dataset.r, +b.dataset.c]; sfx.tap(); render(); }));
+      gEl.querySelectorAll('.su-cell').forEach(b => b.addEventListener('click', () => { sel = [+b.dataset.r, +b.dataset.c]; sfx.tap(); render(); persist(); }));
     }
 
     function setNum(n) {
@@ -1928,7 +2281,7 @@
       const [r, c] = sel; if (given[r][c]) return;
       grid[r][c] = n;
       if (n !== 0 && n !== solution[r][c]) { if (loseLife('Неверная цифра в Судоку!')) finished = true; }
-      else sfx.tap();
+      else { sfx.tap(); persist(); }
       render();
       if (!finished && checkWin()) { finished = true; setTimeout(() => completeGame('sudoku'), 200); }
     }
@@ -1939,19 +2292,25 @@
       if (finished) return;
       for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) if (grid[r][c] !== solution[r][c]) {
         if (!spendCoinsForHint(20)) return; grid[r][c] = solution[r][c]; given[r][c] = true; render();
-        if (checkWin()) { finished = true; setTimeout(() => completeGame('sudoku'), 200); } return;
+        if (checkWin()) { finished = true; setTimeout(() => completeGame('sudoku'), 200); } else persist(); return;
       }
     };
     render();
   }
 
   // =========================================================================
-  // GAME 6: СВЯЗИ (3 Lives)
+  // GAME 6: СВЯЗИ (With Save/Restore)
   // =========================================================================
-  function initConnectedGame(stage) {
-    const groups = pickPuzzle('cn', PUZZLES.connected);
-    let remainingWords = groups.flatMap(g => g.words).sort(() => Math.random() - 0.5);
-    const solvedGroups = []; let selected = [], finished = false;
+  function initConnectedGame(stage, saved) {
+    const groups = saved?.groups || pickPuzzle('cn', PUZZLES.connected);
+    let remainingWords = saved?.remainingWords ? [...saved.remainingWords] : groups.flatMap(g => g.words).sort(() => Math.random() - 0.5);
+    const solvedGroups = saved?.solvedGroups ? [...saved.solvedGroups] : [];
+    let selected = [], finished = false;
+
+    function persist() {
+      if (!finished) saveGameSession('connected', { groups, remainingWords, solvedGroups, lives: gameLives });
+    }
+    onSyncLivesCallback = persist;
 
     stage.innerHTML = `
       <div class="w-full max-w-lg flex flex-col items-center">
@@ -1963,7 +2322,7 @@
         </div>
       </div>
     `;
-    onContinueCallback = () => { finished = false; selected = []; render(); };
+    onContinueCallback = () => { finished = false; selected = []; render(); persist(); };
 
     function render() {
       document.getElementById('cn-solved').innerHTML = solvedGroups.map(g => `<div class="${g.color} rounded-2xl p-3 text-center"><div class="font-black text-xs uppercase tracking-wider">${g.title}</div><div class="font-semibold text-xs mt-0.5">${g.words.join(' • ')}</div></div>`).join('');
@@ -1980,16 +2339,16 @@
       }));
     }
 
-    document.getElementById('cn-shuffle').addEventListener('click', () => { remainingWords.sort(() => Math.random() - 0.5); sfx.tap(); render(); });
+    document.getElementById('cn-shuffle').addEventListener('click', () => { remainingWords.sort(() => Math.random() - 0.5); sfx.tap(); render(); persist(); });
     document.getElementById('cn-submit').addEventListener('click', () => {
       if (selected.length !== 4 || finished) return;
       const match = groups.find(g => g.words.every(w => selected.includes(w)));
       if (match) {
         solvedGroups.push(match); remainingWords = remainingWords.filter(w => !match.words.includes(w)); selected = []; sfx.good(); render();
-        if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); }
+        if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); } else persist();
       } else {
         const almost = groups.some(g => g.words.filter(w => selected.includes(w)).length === 3);
-        showToast(almost ? 'Почти! 3 из 4 совпадают' : 'Неверная комбинация');
+        showToast(almost ? 'Близко! 3 из 4 совпадают' : 'Неверная комбинация');
         if (loseLife('Неверная группа слов!')) finished = true;
         render();
       }
@@ -1998,16 +2357,20 @@
       if (finished) return; const next = groups.find(g => !solvedGroups.includes(g));
       if (!next || !spendCoinsForHint(20)) return;
       solvedGroups.push(next); remainingWords = remainingWords.filter(w => !next.words.includes(w)); selected = []; render();
-      if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); }
+      if (solvedGroups.length === 4) { finished = true; setTimeout(() => completeGame('connected'), 250); } else persist();
     };
     render();
   }
 
   // =========================================================================
-  // GAME 7: ЛЕСЕНКА (3 Lives)
+  // GAME 7: ЛЕСЕНКА (With Save/Restore)
   // =========================================================================
-  function initCladderGame(stage) {
-    const p = pickPuzzle('cl', PUZZLES.cladder); let stepIdx = 0, finished = false;
+  function initCladderGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('cl', PUZZLES.cladder);
+    let stepIdx = saved?.stepIdx || 0, finished = false;
+    function persist() { if (!finished) saveGameSession('cladder', { puzzle: p, stepIdx, lives: gameLives }); }
+    onSyncLivesCallback = persist;
+
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
         <div id="cl-history" class="w-full space-y-2 mb-4"></div>
@@ -2018,7 +2381,7 @@
         </form>
       </div>
     `;
-    onContinueCallback = () => { finished = false; render(); };
+    onContinueCallback = () => { finished = false; render(); persist(); };
     function render() {
       const hist = document.getElementById('cl-history');
       let html = `<div class="flex items-center justify-between px-4 py-2 rounded-xl surface-pill border font-black tracking-widest"><span>СТАРТ</span><span>${p.start}</span></div>`;
@@ -2030,7 +2393,8 @@
     document.getElementById('cl-form').addEventListener('submit', (e) => {
       e.preventDefault(); if (finished) return;
       const inp = document.getElementById('cl-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е');
-      if (val === p.steps[stepIdx].word) { sfx.good(); stepIdx += 1; inp.value = ''; render(); if (stepIdx >= p.steps.length) { finished = true; setTimeout(() => completeGame('cladder'), 200); } }
+      if (!val) return;
+      if (val === p.steps[stepIdx].word) { sfx.good(); stepIdx += 1; inp.value = ''; render(); if (stepIdx >= p.steps.length) { finished = true; setTimeout(() => completeGame('cladder'), 200); } else persist(); }
       else { inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 350); if (loseLife('Неверное слово в Лесенке!')) finished = true; }
     });
     activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; const target = p.steps[stepIdx].word; document.getElementById('cl-input').value = target.slice(0, 2); showToast(`Первые 2 буквы: ${target.slice(0, 2)}...`); };
@@ -2038,10 +2402,15 @@
   }
 
   // =========================================================================
-  // GAME 8: АНАГРАММЫ (3 Lives)
+  // GAME 8: АНАГРАММЫ (With Save/Restore)
   // =========================================================================
-  function initAnygramGame(stage) {
-    const p = pickPuzzle('ag', PUZZLES.anygram); const found = new Set(); let pickedIndices = [], finished = false;
+  function initAnygramGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('ag', PUZZLES.anygram);
+    const found = new Set(saved?.found || []);
+    let pickedIndices = [], finished = false;
+    function persist() { if (!finished) saveGameSession('anygram', { puzzle: p, found: [...found], lives: gameLives }); }
+    onSyncLivesCallback = persist;
+
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
         <div id="ag-targets" class="flex flex-wrap justify-center gap-2 mb-6 w-full"></div>
@@ -2050,7 +2419,7 @@
         <div class="flex gap-2"><button id="ag-clear" class="px-4 py-2 rounded-xl surface-pill border font-bold text-sm">Сбросить</button><button id="ag-submit" class="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">Проверить</button></div>
       </div>
     `;
-    onContinueCallback = () => { finished = false; pickedIndices = []; render(); };
+    onContinueCallback = () => { finished = false; pickedIndices = []; render(); persist(); };
     function render() {
       document.getElementById('ag-targets').innerHTML = p.targets.map(w => `<div class="px-3 py-2 rounded-xl font-black text-sm tracking-widest border ${found.has(w) ? 'bg-emerald-500 text-white border-emerald-400' : 'surface-pill'}">${found.has(w) ? w : '• '.repeat(w.length).trim()}</div>`).join('');
       document.getElementById('ag-current').textContent = pickedIndices.map(i => p.letters[i]).join('');
@@ -2061,39 +2430,83 @@
     document.getElementById('ag-clear').addEventListener('click', () => { pickedIndices = []; sfx.tap(); render(); });
     document.getElementById('ag-submit').addEventListener('click', () => {
       if (finished) return; const word = pickedIndices.map(i => p.letters[i]).join('');
-      if (p.targets.includes(word) && !found.has(word)) { found.add(word); pickedIndices = []; sfx.good(); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } }
+      if (!word) return;
+      if (p.targets.includes(word) && !found.has(word)) { found.add(word); pickedIndices = []; sfx.good(); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } else persist(); }
       else { pickedIndices = []; render(); if (loseLife(found.has(word) ? 'Это слово уже открыто!' : 'Такого слова нет в списке!')) finished = true; }
     });
-    activeHintFn = () => { if (finished) return; const next = p.targets.find(w => !found.has(w)); if (!next || !spendCoinsForHint(20)) return; found.add(next); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } };
+    activeHintFn = () => { if (finished) return; const next = p.targets.find(w => !found.has(w)); if (!next || !spendCoinsForHint(20)) return; found.add(next); render(); if (found.size === p.targets.length) { finished = true; setTimeout(() => completeGame('anygram'), 200); } else persist(); };
     render();
   }
 
   // =========================================================================
-  // GAME 9: КРИПТОГРАММА (ЙЦУКЕН)
+  // GAME 9: КРИПТОГРАММА (Red Error + Life Loss + "Слабый" Hint Button + Save)
   // =========================================================================
-  function initCryptogramGame(stage) {
-    const p = pickPuzzle('cg', PUZZLES.cryptogram);
+  function initCryptogramGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('cg', PUZZLES.cryptogram);
     const uniqueLetters = [...new Set(p.quote.replace(/\s+/g, '').split(''))];
     const cipherMap = {}; uniqueLetters.forEach((ch, idx) => { cipherMap[ch] = idx + 1; });
-    const revealed = new Set(uniqueLetters.slice(0, state.hardMode ? 1 : 3)), userMap = {};
-    revealed.forEach(ch => { userMap[ch] = ch; });
-    let selectedChar = uniqueLetters.find(ch => !revealed.has(ch)) || uniqueLetters[0], finished = false;
+    const revealed = new Set(saved?.revealed || uniqueLetters.slice(0, state.hardMode ? 1 : 3));
+    const userMap = saved?.userMap ? { ...saved.userMap } : {};
+    const wrongMap = saved?.wrongMap ? { ...saved.wrongMap } : {};
+    revealed.forEach(ch => { userMap[ch] = ch; delete wrongMap[ch]; });
+    let selectedChar = uniqueLetters.find(ch => !revealed.has(ch) && userMap[ch] !== ch) || uniqueLetters[0];
+    let finished = false;
+
+    function persist() {
+      if (!finished) saveGameSession('cryptogram', {
+        puzzle: p, revealed: [...revealed], userMap, wrongMap, lives: gameLives
+      });
+    }
+    onSyncLivesCallback = persist;
 
     stage.innerHTML = `
       <div class="w-full max-w-2xl flex flex-col items-center">
         <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Автор: ${p.author}</div>
-        <div id="cg-phrase" class="flex flex-wrap justify-center gap-x-4 gap-y-3 mb-6"></div>
+        <div id="cg-phrase" class="flex flex-wrap justify-center gap-x-4 gap-y-3 mb-4"></div>
+        <button id="cg-weak-hint" class="mb-5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-rose-500/25 via-amber-500/25 to-purple-500/25 hover:from-rose-500/35 hover:to-purple-500/35 border border-amber-400/40 text-amber-200 font-black text-xs sm:text-sm shadow-lg transition transform active:scale-95">
+          😏 Нажми на подсказку, если слабый (откроет 1 букву)
+        </button>
         <div id="cg-kb" class="w-full max-w-md flex flex-col gap-1"></div>
       </div>
     `;
     const checkWin = () => uniqueLetters.every(ch => userMap[ch] === ch);
+    onContinueCallback = () => { finished = false; render(); persist(); };
+
+    function revealOneLetter(useCoinsCost = 0) {
+      if (finished) return;
+      const missing = uniqueLetters.find(c => userMap[c] !== c);
+      if (!missing) { showToast('Все буквы уже открыты!'); return; }
+      if (useCoinsCost > 0 && !spendCoinsForHint(useCoinsCost)) return;
+      userMap[missing] = missing;
+      delete wrongMap[missing];
+      revealed.add(missing);
+      selectedChar = uniqueLetters.find(c => !revealed.has(c) && userMap[c] !== c) || missing;
+      sfx.good();
+      showToast(`Открыта буква «${missing}»!`);
+      render();
+      if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram', `«${p.quote}» — ${p.author}`), 250); }
+      else persist();
+    }
 
     function render() {
       document.getElementById('cg-phrase').innerHTML = p.quote.split(' ').map(word => `<div class="flex gap-1">${word.split('').map(ch => {
-        const guess = userMap[ch] || '', isSel = selectedChar === ch, isFixed = revealed.has(ch);
-        return `<button data-ch="${ch}" class="cg-cell flex flex-col items-center w-8 sm:w-9 py-1.5 rounded-lg border-2 transition ${isFixed ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-400' : (isSel ? 'bg-amber-400/25 border-amber-400 text-amber-300' : 'surface-pill border')}"><span class="font-black text-base h-6 leading-6">${guess}</span><span class="text-[10px] font-bold text-muted-adaptive border-t border-white/10 w-full text-center mt-0.5 pt-0.5">${cipherMap[ch]}</span></button>`;
+        const isFixed = revealed.has(ch);
+        const isCorrect = userMap[ch] === ch;
+        const badAttempt = wrongMap[ch];
+        const guess = isCorrect ? ch : (badAttempt || '');
+        const isSel = selectedChar === ch && !isFixed;
+        let cls = 'surface-pill border';
+        if (isFixed) cls = 'bg-emerald-500/20 border-emerald-400/50 text-emerald-300';
+        else if (isCorrect) cls = 'bg-emerald-500/25 border-emerald-400 text-emerald-200 tile-pop';
+        else if (badAttempt) cls = 'bg-rose-500/30 border-rose-500 text-rose-200 shake';
+        else if (isSel) cls = 'bg-amber-400/25 border-amber-400 text-amber-300';
+        return `<button data-ch="${ch}" class="cg-cell flex flex-col items-center w-8 sm:w-9 py-1.5 rounded-lg border-2 transition ${cls}"><span class="font-black text-base h-6 leading-6">${guess}</span><span class="text-[10px] font-bold text-muted-adaptive border-t border-white/10 w-full text-center mt-0.5 pt-0.5">${cipherMap[ch]}</span></button>`;
       }).join('')}</div>`).join('');
-      document.querySelectorAll('.cg-cell').forEach(b => b.addEventListener('click', () => { if (!revealed.has(b.dataset.ch)) { selectedChar = b.dataset.ch; sfx.tap(); render(); } }));
+
+      document.querySelectorAll('.cg-cell').forEach(b => b.addEventListener('click', () => {
+        if (!revealed.has(b.dataset.ch)) { selectedChar = b.dataset.ch; sfx.tap(); render(); }
+      }));
+
       const kb = document.getElementById('cg-kb');
       const cgRows = [['Й','Ц','У','К','Е','Н','Г','Ш','Щ','З','Х'],['Ф','Ы','В','А','П','Р','О','Л','Д','Ж','Э'],['Я','Ч','С','М','И','Т','Ь','Б','Ю','⌫']];
       kb.innerHTML = cgRows.map(row => `<div class="flex justify-center gap-1">${row.map(l => `<button class="cg-key ${l === '⌫' ? 'px-3 bg-rose-500/25 text-rose-400' : 'flex-1 min-w-[24px] max-w-[34px] surface-pill border'} h-10 rounded-lg font-bold text-xs flex items-center justify-center transition">${l}</button>`).join('')}</div>`).join('');
@@ -2102,22 +2515,47 @@
 
     function inputLetter(ch) {
       if (finished || !selectedChar || revealed.has(selectedChar)) return;
-      if (ch === '⌫') { delete userMap[selectedChar]; sfx.tap(); render(); return; }
-      userMap[selectedChar] = ch; if (ch === selectedChar) sfx.good(); else sfx.tap();
-      const next = uniqueLetters.find(c => !revealed.has(c) && userMap[c] !== c); if (next) selectedChar = next;
-      render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram', `«${p.quote}» — ${p.author}`), 250); }
+      if (ch === '⌫') {
+        delete userMap[selectedChar];
+        delete wrongMap[selectedChar];
+        sfx.tap(); render(); persist(); return;
+      }
+      const norm = ch === 'Ё' ? 'Е' : ch;
+      if (norm === selectedChar) {
+        userMap[selectedChar] = norm;
+        delete wrongMap[selectedChar];
+        sfx.good();
+        const next = uniqueLetters.find(c => !revealed.has(c) && userMap[c] !== c);
+        if (next) selectedChar = next;
+        render();
+        if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram', `«${p.quote}» — ${p.author}`), 250); }
+        else persist();
+      } else {
+        wrongMap[selectedChar] = norm;
+        delete userMap[selectedChar];
+        render();
+        const dead = loseLife(`Буква «${norm}» не подходит для кода №${cipherMap[selectedChar]}! (−1 ❤️)`);
+        if (dead) finished = true;
+        else persist();
+      }
     }
+
+    document.getElementById('cg-weak-hint').addEventListener('click', () => revealOneLetter(15));
     const onKey = (e) => { if (e.key === 'Backspace') inputLetter('⌫'); else { const up = e.key.toUpperCase().replace('Ё','Е'); if (/^[А-Я]$/.test(up)) inputLetter(up); } };
     window.addEventListener('keydown', onKey); activeCleanup = () => window.removeEventListener('keydown', onKey);
-    activeHintFn = () => { if (finished) return; const missing = uniqueLetters.find(c => userMap[c] !== c); if (!missing || !spendCoinsForHint(20)) return; userMap[missing] = missing; revealed.add(missing); selectedChar = uniqueLetters.find(c => !revealed.has(c)) || missing; render(); if (checkWin()) { finished = true; setTimeout(() => completeGame('cryptogram'), 250); } };
+    activeHintFn = () => revealOneLetter(20);
     render();
   }
 
   // =========================================================================
-  // GAME 10: ЦЕПОЧКА СЛОВ (3 Lives)
+  // GAME 10: ЦЕПОЧКА СЛОВ (With Save/Restore)
   // =========================================================================
-  function initWordChainGame(stage) {
-    const p = pickPuzzle('wc', PUZZLES.wordchain); let idx = 1, revealedCount = 1, finished = false;
+  function initWordChainGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('wc', PUZZLES.wordchain);
+    let idx = saved?.idx || 1, revealedCount = saved?.revealedCount || 1, finished = false;
+    function persist() { if (!finished) saveGameSession('wordchain', { puzzle: p, idx, revealedCount, lives: gameLives }); }
+    onSyncLivesCallback = persist;
+
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
         <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-400/30 px-3 py-1 rounded-full mb-4">Тема: ${p.theme}</div>
@@ -2125,7 +2563,7 @@
         <form id="wc-form" class="flex gap-2 w-full"><input id="wc-input" type="text" placeholder="Следующее слово..." class="flex-1 px-4 py-3 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-black text-center text-base uppercase tracking-widest" autocomplete="off" /><button type="submit" class="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm">ОК</button></form>
       </div>
     `;
-    onContinueCallback = () => { finished = false; render(); };
+    onContinueCallback = () => { finished = false; render(); persist(); };
     function render() {
       document.getElementById('wc-list').innerHTML = p.words.map((w, i) => {
         if (i < idx) return `<div class="px-4 py-2.5 rounded-xl bg-emerald-500/25 border border-emerald-400/40 text-emerald-400 font-black tracking-widest flex justify-between"><span>${i + 1}.</span><span>${w}</span><span>✓</span></div>`;
@@ -2136,30 +2574,53 @@
     document.getElementById('wc-form').addEventListener('submit', (e) => {
       e.preventDefault(); if (finished) return;
       const inp = document.getElementById('wc-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е'), target = p.words[idx];
-      if (val === target) { sfx.good(); idx += 1; revealedCount = 1; inp.value = ''; render(); if (idx >= p.words.length) { finished = true; setTimeout(() => completeGame('wordchain'), 200); } }
+      if (!val) return;
+      if (val === target) { sfx.good(); idx += 1; revealedCount = 1; inp.value = ''; render(); if (idx >= p.words.length) { finished = true; setTimeout(() => completeGame('wordchain'), 200); } else persist(); }
       else { if (revealedCount < target.length - 1) revealedCount += 1; inp.classList.add('shake'); setTimeout(() => inp.classList.remove('shake'), 350); render(); if (loseLife('Неверное слово в цепочке!')) finished = true; }
     });
-    activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; if (revealedCount < p.words[idx].length) revealedCount += 1; render(); };
+    activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; if (revealedCount < p.words[idx].length) revealedCount += 1; render(); persist(); };
     render();
   }
 
   // =========================================================================
-  // GAME 11: СТОП-ИГРА! (3 Lives)
+  // GAME 11: СТОП-ИГРА! (With Save/Restore)
   // =========================================================================
-  function initStopGame(stage) {
-    const p = pickPuzzle('sg', PUZZLES.stopgame);
-    const samples = { 'К':['Киев','Ксерокс','Криминальное чтиво','Консультант','Карбонара'],'М':['Мадрид','Майкрософт','Матрица','Маркетолог','Мохито'],'С':['Сингапур','Спотифай','Сопрано','Сценарист','Стейк'],'П':['Прага','Порше','Побег','Продюсер','Паста'],'А':['Амстердам','Адидас','Аватар','Архитектор','Апероль'],'В':['Вена','Вольво','Во все тяжкие','Венчурный инвестор','Виски'],'Б':['Берлин','БМВ','Бойцовский клуб','Брокер','Бургер'],'Р':['Рим','Ролекс','Рокки','Режиссёр','Ризотто'] };
+  function initStopGame(stage, saved) {
+    const p = saved?.puzzle || pickPuzzle('sg', PUZZLES.stopgame);
+    const draftVals = saved?.vals || [];
+    const samples = {
+      'К':['Киев','Ксерокс','Криминальное чтиво','Консультант','Карбонара'],
+      'М':['Мадрид','Майкрософт','Матрица','Маркетолог','Мохито'],
+      'С':['Сингапур','Спотифай','Сопрано','Сценарист','Стейк'],
+      'П':['Прага','Порше','Побег','Продюсер','Паста'],
+      'А':['Амстердам','Адидас','Аватар','Архитектор','Апероль'],
+      'В':['Вена','Вольво','Во все тяжкие','Венчурный инвестор','Виски'],
+      'Б':['Берлин','БМВ','Бойцовский клуб','Брокер','Бургер'],
+      'Р':['Рим','Ролекс','Рокки','Режиссёр','Ризотто'],
+      'Т':['Токио','Тесла','Титаник','Трейдер','Тирамису'],
+      'Д':['Дубай','Дисней','Джокер','Дизайнер','Дайкири']
+    };
     let finished = false;
+
+    function persist() {
+      if (!finished) {
+        const vals = [...stage.querySelectorAll('.sg-inp')].map(inp => inp.value);
+        saveGameSession('stopgame', { puzzle: p, vals, lives: gameLives });
+      }
+    }
+    onSyncLivesCallback = persist;
+
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-white font-black text-3xl flex items-center justify-center shadow-lg mb-2">${p.letter}</div>
         <p class="text-xs text-muted-adaptive mb-4 text-center">Подберите слова 20+ на букву «<strong class="text-amber-400">${p.letter}</strong>»:</p>
         <form id="sg-form" class="w-full space-y-3">
-          ${p.categories.map((cat, i) => `<div class="flex items-center gap-2"><label class="w-36 text-xs font-bold text-white-adaptive">${cat}</label><input data-i="${i}" type="text" placeholder="${p.letter}..." class="sg-inp flex-1 px-3 py-2.5 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-bold text-sm" autocomplete="off" /></div>`).join('')}
+          ${p.categories.map((cat, i) => `<div class="flex items-center gap-2"><label class="w-36 text-xs font-bold text-white-adaptive">${cat}</label><input data-i="${i}" value="${draftVals[i] || ''}" type="text" placeholder="${p.letter}..." class="sg-inp flex-1 px-3 py-2.5 rounded-xl surface-pill border-2 focus:border-amber-400 focus:outline-none font-bold text-sm" autocomplete="off" /></div>`).join('')}
           <button type="submit" class="w-full mt-2 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition">СТОП! Проверить</button>
         </form>
       </div>
     `;
+    stage.querySelectorAll('.sg-inp').forEach(inp => inp.addEventListener('input', persist));
     onContinueCallback = () => { finished = false; };
     document.getElementById('sg-form').addEventListener('submit', (e) => {
       e.preventDefault(); if (finished) return;
@@ -2167,19 +2628,24 @@
       const badIdx = vals.findIndex(v => v.length < 3 || v[0] !== p.letter);
       if (badIdx !== -1 || new Set(vals).size < vals.length) {
         if (badIdx !== -1) { inputs[badIdx].classList.add('shake'); setTimeout(() => inputs[badIdx].classList.remove('shake'), 350); }
-        if (loseLife('Проверьте первую букву и длину слов (от 3 букв)!')) finished = true;
+        if (loseLife('Проверьте первую букву, уникальность и длину слов (от 3 букв)!')) finished = true;
         return;
       }
       finished = true; completeGame('stopgame', `Отличная подборка на букву «${p.letter}»!`);
     });
-    activeHintFn = () => { if (finished) return; const inputs = [...stage.querySelectorAll('.sg-inp')], empty = inputs.find(inp => inp.value.trim().length < 3); if (!empty || !spendCoinsForHint(20)) return; empty.value = (samples[p.letter] || [])[+empty.dataset.i] || `${p.letter}...`; sfx.good(); };
+    activeHintFn = () => { if (finished) return; const inputs = [...stage.querySelectorAll('.sg-inp')], empty = inputs.find(inp => inp.value.trim().length < 3); if (!empty || !spendCoinsForHint(20)) return; empty.value = (samples[p.letter] || [])[+empty.dataset.i] || `${p.letter}...`; sfx.good(); persist(); };
   }
 
   // =========================================================================
-  // GAME 12: КЛУБОК (3 Lives)
+  // GAME 12: КЛУБОК (With Save/Restore)
   // =========================================================================
-  function initTangleGame(stage) {
-    const p = generateTanglePuzzle(), chain = [p.start]; let finished = false;
+  function initTangleGame(stage, saved) {
+    const p = saved?.puzzle || generateTanglePuzzle();
+    const chain = saved?.chain ? [...saved.chain] : [p.start];
+    let finished = false;
+    function persist() { if (!finished) saveGameSession('tangle', { puzzle: p, chain, lives: gameLives }); }
+    onSyncLivesCallback = persist;
+
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
         <div class="flex items-center gap-3 mb-4">
@@ -2192,25 +2658,111 @@
         <p class="text-xs text-muted-adaptive mt-3">Меняйте 1 букву за ход (ориентир: ${p.par} ходов)</p>
       </div>
     `;
-    onContinueCallback = () => { finished = false; render(); };
+    onContinueCallback = () => { finished = false; render(); persist(); };
     function render() { document.getElementById('tg-chain').innerHTML = chain.map((w, i) => `<span class="px-3 py-1.5 rounded-xl font-black text-sm tracking-widest ${i === chain.length - 1 ? 'bg-amber-400 text-slate-950' : 'surface-pill border'}">${w}</span>`).join(''); }
     document.getElementById('tg-form').addEventListener('submit', (e) => {
       e.preventDefault(); if (finished) return;
       const inp = document.getElementById('tg-input'), val = inp.value.trim().toUpperCase().replace(/Ё/g, 'Е'), prev = chain[chain.length - 1];
+      if (!val) return;
       if (!diff1(prev, val) || (!TANGLE_4_SET.has(val) && val !== p.target)) {
         if (loseLife(!diff1(prev, val) ? 'Нужно изменить ровно ОДНУ букву!' : 'Слова нет в словаре!')) finished = true;
         return;
       }
       chain.push(val); inp.value = ''; sfx.good(); render();
-      if (val === p.target) { finished = true; setTimeout(() => completeGame('tangle', `Маршрут пройден за ${chain.length - 1} ход(ов)!`), 200); }
+      if (val === p.target) { finished = true; setTimeout(() => completeGame('tangle', `Маршрут пройден за ${chain.length - 1} ход(ов)!`), 200); } else persist();
     });
     activeHintFn = () => { if (finished || !spendCoinsForHint(20)) return; showToast(`Путь: ${p.path.join(' → ')}`); };
     render();
   }
 
   // =========================================================================
-  // 6. GLOBAL EVENT WIRING
+  // 6. PROFILE MODAL: LEADERBOARD, PER-GAME STATS & BADGES
   // =========================================================================
+  function renderProfileTabContent(tab) {
+    const bodyEl = document.getElementById('modal-body');
+    if (!bodyEl) return;
+
+    const lvl = getLevel(state.xp);
+    const headerSummary = `
+      <div class="grid grid-cols-4 gap-2 mb-4 text-center">
+        <div class="bg-white/10 rounded-xl p-2"><div class="text-base font-black text-white">${lvl}</div><div class="text-[10px] text-slate-400 font-bold">Уровень</div></div>
+        <div class="bg-amber-500/20 rounded-xl p-2"><div class="text-base font-black text-amber-300">${state.chessElo || 1000}</div><div class="text-[10px] text-amber-300 font-bold">Шахматы ELO</div></div>
+        <div class="bg-emerald-500/20 rounded-xl p-2"><div class="text-base font-black text-emerald-300">${state.totalSolved}</div><div class="text-[10px] text-emerald-300 font-bold">Побед</div></div>
+        <div class="bg-orange-500/20 rounded-xl p-2"><div class="text-base font-black text-orange-300">${state.bestBlitz || 0} ⚡</div><div class="text-[10px] text-orange-300 font-bold">Блиц</div></div>
+      </div>
+      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10 mb-4 text-xs font-black">
+        <button data-ptab="leaders" class="ptab-btn py-1.5 rounded-lg transition ${tab === 'leaders' ? 'bg-amber-400 text-slate-950' : 'text-slate-300 hover:bg-white/10'}">🏅 Лидеры</button>
+        <button data-ptab="games" class="ptab-btn py-1.5 rounded-lg transition ${tab === 'games' ? 'bg-amber-400 text-slate-950' : 'text-slate-300 hover:bg-white/10'}">🎮 По играм</button>
+        <button data-ptab="badges" class="ptab-btn py-1.5 rounded-lg transition ${tab === 'badges' ? 'bg-amber-400 text-slate-950' : 'text-slate-300 hover:bg-white/10'}">🎖️ Ачивки</button>
+      </div>
+    `;
+
+    let sectionHtml = '';
+    if (tab === 'leaders') {
+      const me = {
+        name: `${playerDisplayName} (Вы)`,
+        xp: state.xp,
+        elo: state.chessElo || 1000,
+        blitz: state.bestBlitz || 0,
+        tag: `Ур. ${lvl} • ${state.totalSolved} побед`,
+        isMe: true
+      };
+      const rows = [...LEADERBOARD_BOTS, me].sort((a, b) => b.xp - a.xp || b.elo - a.elo);
+      sectionHtml = `<div class="space-y-2">${rows.map((r, idx) => {
+        const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx + 1}`));
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl border ${r.isMe ? 'bg-amber-400/20 border-amber-400/50' : 'bg-white/5 border-white/10'}">
+            <div class="flex items-center gap-2.5">
+              <span class="w-6 text-center font-black text-sm ${r.isMe ? 'text-amber-300' : 'text-slate-300'}">${medal}</span>
+              <div>
+                <div class="text-xs font-black ${r.isMe ? 'text-amber-300' : 'text-white'}">${r.name}</div>
+                <div class="text-[10px] text-slate-400">${r.tag} • ELO ${r.elo} • Блиц ${r.blitz}</div>
+              </div>
+            </div>
+            <div class="text-xs font-black text-emerald-300">${r.xp} XP</div>
+          </div>
+        `;
+      }).join('')}</div>`;
+    } else if (tab === 'games') {
+      sectionHtml = `<div class="space-y-2">${GAMES_META.map(g => {
+        const solvedDaysCount = DAYS.filter(d => !!(state.solved[d.id] && state.solved[d.id][g.id])).length;
+        const hasSession = !!gameSessions[g.id];
+        let extra = `Дней закрыто: ${solvedDaysCount}/${DAYS.length}`;
+        if (g.id === 'chess') extra = `Рейтинг: ${state.chessElo || 1000} ELO`;
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">${g.icon}</span>
+              <div>
+                <div class="text-xs font-black text-white">${g.name}</div>
+                <div class="text-[10px] text-slate-400">${extra}</div>
+              </div>
+            </div>
+            <span class="text-[11px] font-black px-2 py-0.5 rounded-lg ${hasSession ? 'bg-amber-400/20 text-amber-300' : (solvedDaysCount > 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-slate-400')}">
+              ${hasSession ? 'В процессе' : (solvedDaysCount > 0 ? 'Активен' : 'Новый')}
+            </span>
+          </div>
+        `;
+      }).join('')}</div>`;
+    } else {
+      sectionHtml = `<div class="space-y-2">${BADGES.map(b => {
+        const unlocked = b.check(state);
+        return `<div class="flex items-center gap-3 p-2.5 rounded-xl border ${unlocked ? 'bg-amber-400/15 border-amber-400/40' : 'bg-white/5 border-white/10 opacity-50'}"><div class="text-2xl">${b.icon}</div><div><div class="font-bold text-white text-xs">${b.name} ${unlocked ? '✓' : ''}</div><div class="text-[11px] text-slate-400">${b.desc}</div></div></div>`;
+      }).join('')}</div>`;
+    }
+
+    bodyEl.innerHTML = headerSummary + sectionHtml;
+    bodyEl.querySelectorAll('.ptab-btn').forEach(btn => {
+      btn.addEventListener('click', () => { sfx.tap(); renderProfileTabContent(btn.dataset.ptab); });
+    });
+  }
+
+  // =========================================================================
+  // 7. GLOBAL EVENT WIRING & AUTO-DICTIONARY MERGE
+  // =========================================================================
+  window.addEventListener('pagehide', flushSessionsNow);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushSessionsNow(); });
+
   document.getElementById('btn-home').addEventListener('click', showHub);
   document.getElementById('btn-back-hub').addEventListener('click', showHub);
   document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -2218,52 +2770,80 @@
 
   document.querySelectorAll('.theme-btn').forEach(btn => btn.addEventListener('click', () => { sfx.tap(); applyTheme(btn.dataset.theme); }));
 
+  document.getElementById('btn-daily-bonus').addEventListener('click', () => { sfx.tap(); openDailyBonusModal(); });
+  document.getElementById('btn-hero-bonus').addEventListener('click', () => { sfx.tap(); openDailyBonusModal(); });
+
   document.getElementById('btn-sound').addEventListener('click', (e) => { soundEnabled = !soundEnabled; e.currentTarget.textContent = soundEnabled ? '🔊' : '🔇'; if (soundEnabled) sfx.tap(); });
   document.getElementById('btn-toggle-hard').addEventListener('click', () => { sfx.tap(); state.hardMode = !state.hardMode; renderHub(); showToast(state.hardMode ? 'Сложность Pro ⚡' : 'Стандарт 20+'); });
   document.getElementById('btn-endless-mode').addEventListener('click', () => { sfx.tap(); state.endless = !state.endless; renderHub(); });
   document.getElementById('btn-start-blitz').addEventListener('click', () => { sfx.tap(); startBlitz(); });
-  document.getElementById('btn-start-chess').addEventListener('click', () => { sfx.tap(); launchGame('chess'); });
-  document.getElementById('btn-new-round').addEventListener('click', () => { if (!state.activeGame) return; sfx.tap(); state.endless = true; launchGame(state.activeGame); });
+  document.getElementById('btn-start-chess').addEventListener('click', () => { sfx.tap(); launchGame('chess', false); });
+  document.getElementById('btn-restart-same').addEventListener('click', () => {
+    if (!state.activeGame) return;
+    sfx.tap();
+    if (typeof activeForceNewFn === 'function') activeForceNewFn();
+    else launchGame(state.activeGame, true);
+  });
+  document.getElementById('btn-new-round').addEventListener('click', () => { if (!state.activeGame) return; sfx.tap(); state.endless = true; launchGame(state.activeGame, true); });
   document.getElementById('btn-game-rules').addEventListener('click', () => { if (state.activeGame) showTutorial(state.activeGame, true); });
   document.getElementById('btn-game-hint').addEventListener('click', () => { if (typeof activeHintFn === 'function') activeHintFn(); });
 
   document.getElementById('btn-profile').addEventListener('click', () => {
-    const lvl = getLevel(state.xp);
-    const badgesHtml = BADGES.map(b => {
-      const unlocked = b.check(state);
-      return `<div class="flex items-center gap-3 p-2.5 rounded-xl border ${unlocked ? 'bg-amber-400/15 border-amber-400/40' : 'bg-white/5 border-white/10 opacity-50'}"><div class="text-2xl">${b.icon}</div><div><div class="font-bold text-white text-xs">${b.name} ${unlocked ? '✓' : ''}</div><div class="text-[11px] text-slate-400">${b.desc}</div></div></div>`;
-    }).join('');
-    openModal(
-      '🏆 Профиль borevichh quiz #7',
-      `<div class="grid grid-cols-4 gap-2 mb-4 text-center">
-        <div class="bg-white/10 rounded-xl p-2"><div class="text-base font-black text-white">${lvl}</div><div class="text-[10px] text-slate-400 font-bold">Уровень</div></div>
-        <div class="bg-orange-500/20 rounded-xl p-2"><div class="text-base font-black text-orange-300">${state.streak} 🔥</div><div class="text-[10px] text-orange-300 font-bold">Серия</div></div>
-        <div class="bg-emerald-500/20 rounded-xl p-2"><div class="text-base font-black text-emerald-300">${state.totalSolved}</div><div class="text-[10px] text-emerald-300 font-bold">Побед</div></div>
-        <div class="bg-amber-400/20 rounded-xl p-2"><div class="text-base font-black text-amber-300">${state.bestBlitz || 0} ⚡</div><div class="text-[10px] text-amber-300 font-bold">Блиц</div></div>
-      </div><div class="space-y-2">${badgesHtml}</div>`,
-      `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`
-    );
+    sfx.tap();
+    openModal('🏆 Профиль borevichh quiz #7', '', `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`);
+    renderProfileTabContent('leaders');
     document.getElementById('prof-ok').addEventListener('click', closeModal);
   });
 
   const _origApplyTheme = applyTheme;
-applyTheme = function(theme) {
-  _origApplyTheme(theme);
-  if (tg && tg.setHeaderColor && tg.setBackgroundColor) {
-    const colors = { dark: '#0b0e1a', light: '#ffffff', cr7: '#190509' };
-    const c = colors[theme] || '#0b0e1a';
-    try { tg.setHeaderColor(c); tg.setBackgroundColor(c); } catch (_) {}
+  applyTheme = function(theme) {
+    _origApplyTheme(theme);
+    if (tg && tg.setHeaderColor && tg.setBackgroundColor) {
+      const colors = { dark: '#0b0e1a', light: '#ffffff', cr7: '#190509' };
+      const c = colors[theme] || '#0b0e1a';
+      try { tg.setHeaderColor(c); tg.setBackgroundColor(c); } catch (_) {}
+    }
+  };
+
+  async function mergeExternalPuzzles() {
+    try {
+      const res = await fetch(`./extra_puzzles.json?v=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const ext = await res.json();
+      if (Array.isArray(ext.words5) && ext.words5.length) {
+        PUZZLES.password5 = [...new Set([...PUZZLES.password5, ...ext.words5])];
+      }
+      if (Array.isArray(ext.words6) && ext.words6.length) {
+        PUZZLES.password6 = [...new Set([...PUZZLES.password6, ...ext.words6])];
+      }
+      if (Array.isArray(ext.tangle4) && ext.tangle4.length) {
+        ext.tangle4.forEach(w => {
+          if (typeof w === 'string' && w.length === 4 && !TANGLE_4_SET.has(w)) {
+            TANGLE_4_SET.add(w);
+            TANGLE_4_WORDS.push(w);
+          }
+        });
+      }
+      if (Array.isArray(ext.cryptograms) && ext.cryptograms.length) {
+        PUZZLES.cryptogram.push(...ext.cryptograms);
+      }
+      if (Array.isArray(ext.wordchains) && ext.wordchains.length) {
+        PUZZLES.wordchain.push(...ext.wordchains);
+      }
+    } catch (_) {}
   }
-};
 
-loadState();
-applyTheme(state.theme || 'dark');
-renderHub();
+  loadState();
+  applyTheme(state.theme || 'dark');
+  renderHub();
+  mergeExternalPuzzles();
 
-const startMode = new URLSearchParams(window.location.search).get('mode');
-if (startMode === 'chess') launchGame('chess');
-else if (startMode === 'blitz') startBlitz();
+  const startMode = new URLSearchParams(window.location.search).get('mode');
+  if (startMode === 'chess') launchGame('chess', false);
+  else if (startMode === 'blitz') startBlitz();
 })();
 </script>
 </body>
 </html>
+
+```
