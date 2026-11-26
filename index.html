@@ -2246,9 +2246,23 @@
     document.getElementById('prof-ok').addEventListener('click', closeModal);
   });
 
-  loadState();
-  applyTheme(state.theme || 'dark');
-  renderHub();
+  const _origApplyTheme = applyTheme;
+applyTheme = function(theme) {
+  _origApplyTheme(theme);
+  if (tg && tg.setHeaderColor && tg.setBackgroundColor) {
+    const colors = { dark: '#0b0e1a', light: '#ffffff', cr7: '#190509' };
+    const c = colors[theme] || '#0b0e1a';
+    try { tg.setHeaderColor(c); tg.setBackgroundColor(c); } catch (_) {}
+  }
+};
+
+loadState();
+applyTheme(state.theme || 'dark');
+renderHub();
+
+const startMode = new URLSearchParams(window.location.search).get('mode');
+if (startMode === 'chess') launchGame('chess');
+else if (startMode === 'blitz') startBlitz();
 })();
 </script>
 </body>
