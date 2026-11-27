@@ -2286,8 +2286,8 @@
       usedHint = true;
       hintSquare = [next.fr, next.fc];
       hintTargetSquare = null;
-      selected = [next.fr, next.fc];
-      legalForSel = getLegalTargetsForSquareShared(board, next.fr, next.fc, playerColor, castling, epSquare);
+      selected = null;
+      legalForSel = [];
       sfx.good();
       showToast('Подсвечена фигура, которой нужно походить!');
       persistPuzzle();
@@ -4344,7 +4344,7 @@
 
   document.getElementById('btn-profile').addEventListener('click', () => {
     sfx.tap();
-    openModal('🏆 Профиль borevichh quiz #7', '', `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`);
+    openModal('🏆 Профиль borevichh quiz #7 (v12)', '', `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`);
     renderProfileTabContent('leaders');
     document.getElementById('prof-ok').addEventListener('click', closeModal);
   });
