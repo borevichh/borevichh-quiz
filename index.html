@@ -371,6 +371,14 @@
     SUPABASE_URL.startsWith('https://') &&
     SUPABASE_ANON_KEY.length > 20 &&
     !SUPABASE_URL.includes('ВСТАВЬ');
+  function getSupabaseHeaders(extra = {}) {
+    const h = { 'apikey': SUPABASE_ANON_KEY, ...extra };
+    // Новые ключи sb_publishable_... не являются JWT — передавать их в Authorization: Bearer нельзя (будет 401)
+    if (SUPABASE_ANON_KEY.startsWith('eyJ')) {
+      h['Authorization'] = `Bearer ${SUPABASE_ANON_KEY}`;
+    }
+    return h;
+  }
 
   let audioCtx = null, soundEnabled = true;
   let tgUserId = null, playerDisplayName = 'Игрок #7', playerUsername = '', playerPhotoUrl = '';
@@ -620,7 +628,7 @@
       chessElo: state.chessElo, puzzleElo: state.puzzleElo, puzzlesSolved: state.puzzlesSolved,
       dailyStreak: state.dailyStreak, lastClaimDay: state.lastClaimDay,
       dailyPuzzleClaimedDay: state.dailyPuzzleClaimedDay,
-      solved: state.solved, solvedLichessIds: (state.solvedLichessIds || []).slice(-500),
+      solved: state.solved, solvedLichessIds: (state.solvedLichessIds || []).slice(-2500),
       hideTutorial: state.hideTutorial, theme: state.theme
     };
   }
@@ -630,12 +638,10 @@
     try {
       await fetch(`${SUPABASE_URL}/rest/v1/players?on_conflict=tg_id`, {
         method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        headers: getSupabaseHeaders({
           'Content-Type': 'application/json',
           'Prefer': 'resolution=merge-duplicates'
-        },
+        }),
         body: JSON.stringify({
           tg_id: tgUserId,
           display_name: playerDisplayName,
@@ -668,10 +674,7 @@
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/players?tg_id=eq.${encodeURIComponent(tgUserId)}&select=*&limit=1`,
         {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          },
+          headers: getSupabaseHeaders(),
           cache: 'no-store'
         }
       );
@@ -695,7 +698,7 @@
             puzzlesSolved: Math.max(state.puzzlesSolved || 0, cloud.puzzles_solved || 0),
             dailyStreak: Math.max(state.dailyStreak || 0, cloud.daily_streak || 0),
             solved: { ...(cj.solved || {}), ...(state.solved || {}) },
-            solvedLichessIds: [...new Set([...(cj.solvedLichessIds || []), ...(state.solvedLichessIds || [])])].slice(-500)
+            solvedLichessIds: [...new Set([...(cj.solvedLichessIds || []), ...(state.solvedLichessIds || [])])].slice(-2500)
           };
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(getSerializableState())); } catch (_) {}
           applyTheme(state.theme || 'dark');
@@ -716,10 +719,7 @@
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/players?select=tg_id,display_name,username,photo_url,xp,chess_elo,puzzle_elo,puzzles_solved,best_blitz,total_solved&order=${col}.desc&limit=50`,
         {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          },
+          headers: getSupabaseHeaders(),
           cache: 'no-store'
         }
       );
@@ -1946,6 +1946,8 @@
       if (!state.solvedLichessIds.includes(puzzle.id)) {
         state.solvedLichessIds.push(puzzle.id);
       }
+      // Удаляем решённую задачу из активного пула текущей сессии
+      LICHESS_POOL = LICHESS_POOL.filter(item => item.id !== puzzle.id);
 
       if (isDaily && !isDailyPuzzleSolvedToday()) {
         state.dailyPuzzleClaimedDay = getTodayKey();
@@ -2274,17 +2276,15 @@
       if (!pieceOnSq || pieceColorOf(pieceOnSq) !== playerColor) return;
 
       usedHint = true;
-      if (hintSquare && hintSquare[0] === next.fr && hintSquare[1] === next.fc) {
-        hintTargetSquare = [next.tr, next.tc];
-        showToast('Подсвечена целевая клетка хода!');
-      } else {
-        hintSquare = [next.fr, next.fc];
-        hintTargetSquare = null;
-        showToast('Подсвечена ваша фигура! Нажмите ещё раз, чтобы увидеть клетку.');
-      }
+      hintSquare = [next.fr, next.fc];
+      hintTargetSquare = [next.tr, next.tc];
       selected = [next.fr, next.fc];
-      legalForSel = getLegalTargetsForSquareShared(board, next.fr, next.fc, playerColor, castling, epSquare);
+      // Показываем ТОЛЬКО 1 правильный ход, чтобы не сбивать игрока лишними кружками
+      const allLegals = getLegalTargetsForSquareShared(board, next.fr, next.fc, playerColor, castling, epSquare);
+      const exactMove = allLegals.filter(m => m[2] === next.tr && m[3] === next.tc);
+      legalForSel = exactMove.length ? exactMove : [[next.fr, next.fc, next.tr, next.tc]];
       sfx.good();
+      showToast('Подсвечен единственный правильный ход!');
       persistPuzzle();
       render('prompt');
     };
@@ -2307,6 +2307,10 @@
         }
         moveStep += 1;
       }
+      if (!state.solvedLichessIds.includes(puzzle.id)) {
+        state.solvedLichessIds.push(puzzle.id);
+      }
+      LICHESS_POOL = LICHESS_POOL.filter(item => item.id !== puzzle.id);
       const delta = -randInt(15, 25);
       lastEloDelta = delta;
       state.puzzleElo = Math.max(400, (state.puzzleElo || 1000) + delta);
