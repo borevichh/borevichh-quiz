@@ -711,8 +711,9 @@
     } catch (_) {}
   }
 
+  let lastLbError = '';
   async function fetchRealLeaderboard(sortBy = 'xp') {
-    if (!isCloudConfigured()) return null;
+    if (!isCloudConfigured()) { lastLbError = 'Ключи не заданы'; return null; }
     const allowed = ['xp', 'chess_elo', 'puzzle_elo'];
     const col = allowed.includes(sortBy) ? sortBy : 'xp';
     try {
@@ -723,13 +724,20 @@
           cache: 'no-store'
         }
       );
-      if (!res.ok) return null;
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        lastLbError = `HTTP ${res.status}: ${txt.slice(0, 90)}`;
+        return null;
+      }
       const rows = await res.json();
       if (Array.isArray(rows)) {
+        lastLbError = '';
         leaderboardCache[col] = rows;
         return rows;
       }
-    } catch (_) {}
+    } catch (e) {
+      lastLbError = e?.message || 'Ошибка сети';
+    }
     return null;
   }
 
@@ -1747,7 +1755,7 @@
     function persistPuzzle() {
       if (finished || isOpponentMoving || !puzzle || isDaily || moveStep % 2 !== 1) return;
       saveGameSession('lichess', {
-        v: 3, tier, puzzle, board, castling, epSquare, playerColor, moveStep, lastMove, usedHint, hadError
+        v: 4, tier, puzzle, board, castling, epSquare, playerColor, moveStep, lastMove, usedHint, hadError
       });
     }
 
@@ -1757,7 +1765,7 @@
     if (topHintBtn) topHintBtn.classList.add('hidden');
 
     function isSavedSessionValid(s) {
-      if (!s || s.v !== 3 || !s.puzzle || !s.board) return false;
+      if (!s || s.v !== 4 || !s.puzzle || !s.board) return false;
       if (!validateLichessPuzzle(s.puzzle)) return false;
       if (typeof s.moveStep !== 'number' || s.moveStep % 2 !== 1 || s.moveStep >= s.puzzle.moves.length) return false;
       const next = parseUCI(s.puzzle.moves[s.moveStep]);
@@ -4293,7 +4301,7 @@
               listEl.innerHTML = renderLeadersRows(rows);
               if (stEl) stEl.textContent = `Реальных игроков в рейтинге: ${rows.length}`;
             } else if (stEl) {
-              stEl.textContent = 'Не удалось загрузить рейтинг (проверьте ключи Supabase)';
+              stEl.textContent = `Ошибка Supabase: ${lastLbError || 'проверьте таблицу players и ключи'}`;
             }
           });
         });
@@ -4376,13 +4384,14 @@
       if (lres.ok) {
         const lp = await lres.json();
         if (Array.isArray(lp) && lp.length) {
-          const valid = lp.filter(item => item && (item.rating || 1500) >= 1450 && validateLichessPuzzle(item));
+          const solvedSet = new Set(state.solvedLichessIds || []);
+          const valid = lp.filter(item => item && !solvedSet.has(item.id) && (item.rating || 1500) >= 1450 && validateLichessPuzzle(item));
+          const unsolvedBuiltIn = LICHESS_BUILT_IN.filter(item => !solvedSet.has(item.id));
           if (valid.length >= 10) {
-            // Если подтянулась настоящая база с Lichess — ставим её в приоритет
-            LICHESS_POOL = [...valid, ...LICHESS_BUILT_IN];
+            LICHESS_POOL = [...valid, ...unsolvedBuiltIn];
             updateHeader();
           } else if (valid.length) {
-            LICHESS_POOL = [...LICHESS_BUILT_IN, ...valid];
+            LICHESS_POOL = [...unsolvedBuiltIn, ...valid];
             updateHeader();
           }
         }
