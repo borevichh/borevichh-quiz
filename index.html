@@ -530,7 +530,7 @@
     xp: 0, coins: 140, streak: 1, totalSolved: 0, bestBlitz: 0,
     chessElo: 1000, puzzleElo: 1000, puzzlesSolved: 0,
     dailyStreak: 0, lastClaimDay: null, dailyPuzzleClaimedDay: null,
-    solved: {}, currentDay: 'day0', endless: true, hardMode: false,
+    solved: {}, usedCrosswordWords: [], currentDay: 'day0', endless: true, hardMode: false,
     theme: 'dark', activeGame: null, lastIndices: {}, hideTutorial: {}
   };
 
@@ -610,6 +610,7 @@
           dailyPuzzleClaimedDay: parsed.dailyPuzzleClaimedDay || null,
           solved: parsed.solved || {},
           solvedLichessIds: Array.isArray(parsed.solvedLichessIds) ? parsed.solvedLichessIds : [],
+          usedCrosswordWords: Array.isArray(parsed.usedCrosswordWords) ? parsed.usedCrosswordWords : [],
           hideTutorial: parsed.hideTutorial || {}
         };
       }
@@ -628,7 +629,7 @@
       chessElo: state.chessElo, puzzleElo: state.puzzleElo, puzzlesSolved: state.puzzlesSolved,
       dailyStreak: state.dailyStreak, lastClaimDay: state.lastClaimDay,
       dailyPuzzleClaimedDay: state.dailyPuzzleClaimedDay,
-      solved: state.solved, solvedLichessIds: (state.solvedLichessIds || []).slice(-2500),
+      solved: state.solved, solvedLichessIds: (state.solvedLichessIds || []).slice(-2500), usedCrosswordWords: (state.usedCrosswordWords || []).slice(-1000),
       hideTutorial: state.hideTutorial, theme: state.theme
     };
   }
@@ -698,7 +699,8 @@
             puzzlesSolved: Math.max(state.puzzlesSolved || 0, cloud.puzzles_solved || 0),
             dailyStreak: Math.max(state.dailyStreak || 0, cloud.daily_streak || 0),
             solved: { ...(cj.solved || {}), ...(state.solved || {}) },
-            solvedLichessIds: [...new Set([...(cj.solvedLichessIds || []), ...(state.solvedLichessIds || [])])].slice(-2500)
+            solvedLichessIds: [...new Set([...(cj.solvedLichessIds || []), ...(state.solvedLichessIds || [])])].slice(-2500),
+            usedCrosswordWords: [...new Set([...(cj.usedCrosswordWords || []), ...(state.usedCrosswordWords || [])])].slice(-1000)
           };
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(getSerializableState())); } catch (_) {}
           applyTheme(state.theme || 'dark');
@@ -932,76 +934,7 @@
       { h1: 'ПЕСОК', h2: 'ЧЕХОЛ', v1: 'ВЕТЕР', v2: 'ГОРОД' },
       { h1: 'МАРКА', h2: 'МОЛОТ', v1: 'ЗАБОР', v2: 'СКЛОН' }
     ],
-    crossword: [
-      {
-        grid: [['Л','О','Т','.','.'],['О','К','О','.','.'],['Т','А','П','О','К'],['.','.','О','С','А'],['.','.','Р','А','К']],
-        across: [
-          { r:0, c:0, clue: 'Позиция товара на аукционе' },
-          { r:1, c:0, clue: 'Архаичное название глаза' },
-          { r:2, c:0, clue: 'Мягкая домашняя обувь (ед. ч.)' },
-          { r:3, c:2, clue: 'Жалящее насекомое' },
-          { r:4, c:2, clue: 'Речной обитатель с клешнями' }
-        ],
-        down: [
-          { r:0, c:0, clue: 'Единица торгов на бирже' },
-          { r:0, c:1, clue: 'Правый приток Волги' },
-          { r:0, c:2, clue: 'Инструмент Раскольникова' },
-          { r:2, c:3, clue: 'Полосатое насекомое' },
-          { r:2, c:4, clue: 'Вопросительное наречие' }
-        ]
-      },
-      {
-        grid: [['К','О','Т','.','.'],['О','К','О','.','.'],['К','А','П','О','Т'],['.','.','О','К','О'],['.','.','Р','А','К']],
-        across: [
-          { r:0, c:0, clue: 'Персонаж Булгакова Бегемот' },
-          { r:1, c:0, clue: 'Орган зрения в поэзии' },
-          { r:2, c:0, clue: 'Крышка моторного отсека авто' },
-          { r:3, c:2, clue: 'Зеркало души в старину' },
-          { r:4, c:2, clue: 'Знак зодиака (июнь–июль)' }
-        ],
-        down: [
-          { r:0, c:0, clue: 'Повар на морском судне' },
-          { r:0, c:1, clue: 'Река в центральной России' },
-          { r:0, c:2, clue: 'Орудие дровосека' },
-          { r:2, c:3, clue: 'Российская река' },
-          { r:2, c:4, clue: 'Движение электрических зарядов' }
-        ]
-      },
-      {
-        grid: [['Д','О','М','.','.'],['О','С','А','.','.'],['М','А','Р','К','А'],['.','.','К','О','Т'],['.','.','А','Р','К']],
-        across: [
-          { r:0, c:0, clue: 'Жилище или здание' },
-          { r:1, c:0, clue: 'Насекомое с болезненным укусом' },
-          { r:2, c:0, clue: 'Знак почтовой оплаты или бренд' },
-          { r:3, c:2, clue: 'Домашний хищник' },
-          { r:4, c:2, clue: 'Дуга в архитектуре' }
-        ],
-        down: [
-          { r:0, c:0, clue: 'Свод законов или дом' },
-          { r:0, c:1, clue: 'Восьмая буква алфавита' },
-          { r:0, c:2, clue: 'Созвездие или животное' },
-          { r:2, c:3, clue: 'Единица измерения угла' },
-          { r:2, c:4, clue: 'Часть речи или слово' }
-        ]
-      },
-      {
-        grid: [['Р','О','М','.','.'],['О','С','А','.','.'],['М','А','Т','Ч','А'],['.','.','Р','А','К'],['.','.','А','С','Т']],
-        across: [
-          { r:0, c:0, clue: 'Пиратский напиток' },
-          { r:1, c:0, clue: 'Полосатое жалоносное насекомое' },
-          { r:2, c:0, clue: 'Японский зелёный порошковый чай' },
-          { r:3, c:2, clue: 'Речной обитатель, пятящийся назад' },
-          { r:4, c:2, clue: 'Древнегреческий поэт или имя' }
-        ],
-        down: [
-          { r:0, c:0, clue: 'Тростниковый крепкий напиток' },
-          { r:0, c:1, clue: 'Воображаемая линия вращения' },
-          { r:0, c:2, clue: 'Гимн в индуизме и буддизме' },
-          { r:2, c:3, clue: 'Час в сокращении или порода' },
-          { r:2, c:4, clue: 'Юридический документ, протокол' }
-        ]
-      }
-    ],
+    crosswordDict: [["КОД", "Секретная комбинация символов или текст программы"], ["ТОК", "Направленное движение электрических зарядов"], ["ЛОТ", "Отдельный объект на торгах или аукционе"], ["ПИК", "Высшая точка графика или горная вершина"], ["ТУР", "Этап чемпионата или туристическая поездка"], ["ГОЛ", "Мяч, забитый в ворота соперника"], ["МАТ", "Финальная позиция в шахматной партии"], ["ПАТ", "Ничья в шахматах при отсутствии легальных ходов"], ["ХИТ", "Сверхпопулярная песня или товар"], ["ГИД", "Проводник по городу или справочник"], ["БАР", "Заведение с коктейлями или единица давления"], ["ВЕК", "Столетие в истории"], ["МИФ", "Древнее предание или популярное заблуждение"], ["ТИП", "Разновидность данных или характер личности"], ["РЯД", "Последовательность элементов в таблице или зале"], ["ЧАС", "Шестьдесят минут"], ["БОЙ", "Поединок на ринге или сражение"], ["КЭШ", "Наличные деньги или быстрая память браузера"], ["ТОП", "Рейтинг лучших из лучших"], ["ЛАГ", "Задержка отклика в онлайн-игре"], ["БАГ", "Ошибка в коде программы"], ["БОТ", "Автоматическая программа-помощник"], ["ШАГ", "Одно действие в алгоритме или ходьбе"], ["ФОН", "Задний план на изображении"], ["ЛУК", "Стильный образ в одежде или овощ"], ["БАНК", "Финансовая организация для вкладов и кредитов"], ["КУРС", "Стоимость валюты или обучающая программа"], ["РИСК", "Вероятность потерь в бизнесе или игре"], ["СРОК", "Установленный дедлайн или период"], ["ПЛАН", "Схема действий для достижения цели"], ["ФАКТ", "Доказанное событие, не требующее споров"], ["ТАКТ", "Чувство меры в общении или ритм в музыке"], ["ПАКТ", "Международный договор о союзе"], ["РАНГ", "Звание, уровень или позиция в рейтинге"], ["РИНГ", "Квадратная площадка для бокса"], ["ДИСК", "Круглый носитель данных или часть колеса"], ["ПОСТ", "Публикация в соцсети или должность"], ["ТОСТ", "Короткая речь с бокалом или поджаренный хлеб"], ["РОСТ", "Увеличение прибыли или высоты человека"], ["МОСТ", "Сооружение через реку или связующее звено"], ["ХОСТ", "Сервер в сети или ведущий мероприятия"], ["БЛЕФ", "Намеренный обман соперника в покере"], ["ФОНД", "Организация для инвестиций или резерв средств"], ["ФОРТ", "Укреплённая военная крепость"], ["ПОРТ", "Гавань для судов или разъём на компьютере"], ["СОРТ", "Категория качества вина, кофе или товара"], ["ТОРГ", "Обсуждение цены на рынке"], ["СЕЙФ", "Бронированный шкаф для ценностей"], ["ЧЕК", "Документ, подтверждающий оплату покупки"], ["КЛИК", "Нажатие кнопки мыши"], ["ЛАЙК", "Отметка «нравится» в соцсетях"], ["МЕМ", "Вирусная шутка или картинка в интернете"], ["ТРЭП", "Поджанр хип-хопа с тяжёлым басом"], ["ДЖАЗ", "Музыкальный жанр, основанный на импровизации"], ["РОЛЬ", "Персонаж актёра или функция в команде"], ["ЦЕЛЬ", "Конечный результат, к которому стремятся"], ["ТЕМП", "Скорость развития событий или игры"], ["ШТАБ", "Центр управления операцией или командой"], ["ШИФР", "Система кодирования секретных сообщений"], ["КЛАН", "Закрытая группа игроков или род"], ["СЕТЬ", "Система связанных компьютеров или филиалов"], ["ТЕСТ", "Проверка знаний или качества кода"], ["ФАЙЛ", "Именованная единица хранения данных"], ["ЧАТ", "Переписка в реальном времени"], ["ЛИГА", "Спортивный дивизион или союз клубов"], ["МАТЧ", "Официальная встреча двух команд или игроков"], ["ПАС", "Передача мяча партнёру по команде"], ["ФОЛ", "Нарушение правил в спорте"], ["СЧЕТ", "Результат игры или банковский реквизит"], ["КЛУБ", "Спортивное объединение или ночное заведение"], ["ТРОН", "Символ верховной власти"], ["ВИЗА", "Официальное разрешение на въезд в страну"], ["ЗВУК", "Колебания воздуха, воспринимаемые слухом"], ["СВЕТ", "Электромагнитное излучение, видимое глазом"], ["УРОК", "Занятие или жизненный опыт"], ["ОФИС", "Рабочее помещение компании"], ["ШЕФ", "Главный руководитель или повар"], ["БОСС", "Начальник или сильный враг в конце уровня"], ["ТИТР", "Текстовая надпись на экране в кино"], ["КАДР", "Отдельный снимок в киноленте"], ["ЖАНР", "Категория искусства, кино или музыки"], ["БЮСТ", "Скульптурный портрет по грудь"], ["ЭПОС", "Героическое повествование в литературе"], ["ХАОС", "Полный беспорядок и непредсказуемость"], ["МИР", "Планета Земля или согласие"], ["АУДИТ", "Независимая проверка финансовой отчётности"], ["МАРЖА", "Разница между ценой продажи и себестоимостью"], ["АКТИВ", "Имущество или ресурс, приносящий доход"], ["ДЕБЕТ", "Левая сторона бухгалтерского счёта"], ["АВАНС", "Предоплата за будущую работу или товар"], ["БОНУС", "Дополнительное вознаграждение за результат"], ["БРЕНД", "Узнаваемая торговая марка и её репутация"], ["ВЗНОС", "Денежный платёж в фонд или капитал"], ["ГРАНТ", "Безвозмездная субсидия на проект или науку"], ["ДИЛЕР", "Посредник на бирже или продавец авто"], ["ДОГМА", "Утверждение, принимаемое без доказательств"], ["ДОСЬЕ", "Собрание документов и фактов о человеке"], ["ДРАЙВ", "Мощный заряд энергии и азарта"], ["ДУЭЛЬ", "Поединок один на один"], ["ЗАКОН", "Обязательное правило, принятое государством"], ["ЗАЛОГ", "Имущество как гарантия возврата долга"], ["ЗАПАС", "Резерв ресурсов на будущее"], ["ЗЕНИТ", "Высшая точка расцвета или точка над головой"], ["ИДЕАЛ", "Высший образец совершенства"], ["ИМИДЖ", "Сформированный образ человека или компании"], ["ИСХОД", "Конечный результат события или партии"], ["КАЗУС", "Сложный или запутанный юридический случай"], ["КАНОН", "Установленное правило или стандарт"], ["КАРМА", "Закон причины и следствия в философии"], ["КВОТА", "Установленная доля или лимит"], ["КЛИШЕ", "Избитый шаблон в речи или кино"], ["КРЕДО", "Главное жизненное убеждение человека"], ["КУРАЖ", "Смелый задор и состояние потока"], ["ЛАЗЕР", "Источник узконаправленного пучка света"], ["ЛИДЕР", "Человек, ведущий команду за собой"], ["ЛИМИТ", "Предельное ограничение на сумму или время"], ["МАКЕТ", "Предварительная модель дизайна или здания"], ["МЕДИА", "Средства массовой информации и контент"], ["МЕТОД", "Системный способ решения задачи"], ["МИРАЖ", "Оптическая иллюзия в пустыне или мечтах"], ["МОТИВ", "Внутренняя причина поступка"], ["НАЛОГ", "Обязательный платёж государству"], ["НОРМА", "Принятый стандарт или правило"], ["НЮАНС", "Тонкая деталь, меняющая смысл"], ["ОБРАЗ", "Визуальное или художественное представление"], ["ОМЕГА", "Последняя буква греческого алфавита"], ["ОПЦИЯ", "Дополнительная функция или право выбора"], ["ПАФОС", "Чрезмерная торжественность в речи"], ["ПОВОД", "Предлог для какого-либо действия"], ["ПОЛИС", "Договор страхования или город-государство"], ["ПОРОГ", "Минимальная граница срабатывания"], ["ПОТОК", "Состояние полной вовлечённости в дело"], ["ПРАВО", "Система юридических норм и свобод"], ["ПРАЙС", "Список цен на товары и услуги"], ["ПРОФИ", "Мастер высшего класса в своём деле"], ["ПУЛЬС", "Ритм сердцебиения или темп жизни"], ["РАУНД", "Отрезок боя или этап инвестиций"], ["РЕБУС", "Загадка, зашифрованная в картинках"], ["РЕЖИМ", "Установленный порядок работы или дня"], ["РЕЛИЗ", "Официальный выход новой версии продукта"], ["РЕНТА", "Регулярный доход от капитала или земли"], ["РИФМА", "Созвучие окончаний стихотворных строк"], ["РОМАН", "Крупное литературное произведение"], ["РУБИН", "Драгоценный камень насыщенного красного цвета"], ["РЫНОК", "Сфера обмена товарами и спроса"], ["СЕЗОН", "Игровой цикл или время года"], ["СМЕТА", "Подробный расчёт предстоящих расходов"], ["СМЫСЛ", "Суть и внутреннее значение идеи"], ["СПОРТ", "Соревновательная физическая активность"], ["СТИЛЬ", "Уникальный почерк в одежде или работе"], ["СТРИМ", "Прямая видеотрансляция в интернете"], ["СУММА", "Итог сложения чисел или денег"], ["СФЕРА", "Область деятельности или геометрический шар"], ["СХЕМА", "Упрощённый чертёж или план действий"], ["ТАЙНА", "Скрытая от других информация"], ["ТАРИФ", "Система ставок оплаты за услугу"], ["ТЕЗИС", "Кратко сформулированная главная мысль"], ["ТИРАЖ", "Общее количество экземпляров издания"], ["ТИТАН", "Сверхпрочный металл или мифический гигант"], ["ТОНУС", "Уровень жизненной энергии организма"], ["ТРАСТ", "Доверительное управление активами"], ["ТРЕНД", "Актуальное направление развития или моды"], ["УСПЕХ", "Достижение поставленной амбициозной цели"], ["ФИНАЛ", "Решающий матч или развязка истории"], ["ФИНИШ", "Заключительная черта дистанции"], ["ФИРМА", "Коммерческое предприятие"], ["ФИШКА", "Главная особенность или игровой жетон"], ["ФЛАНГ", "Правый или левый край поля или доски"], ["ФОБИЯ", "Сильный иррациональный страх"], ["ФОКУС", "Концентрация внимания или иллюзия"], ["ФОРМА", "Внешний вид или спортивное состояние"], ["ФОРУМ", "Площадка для обсуждений и конференций"], ["ФРАЗА", "Законченное речевое высказывание"], ["ФРОНТ", "Передняя линия или клиентская часть сайта"], ["ХОББИ", "Любимое увлечение в свободное время"], ["ЦИКЛ", "Повторяющаяся последовательность этапов"], ["ШАНС", "Благоприятная вероятность успеха"], ["ШАРМ", "Тонкое обаяние и притягательность"], ["ШТРАФ", "Денежное взыскание за нарушение"], ["ШТУРМ", "Стремительная атака или мозговой штурм"], ["ЭКРАН", "Дисплей смартфона, монитора или кинотеатра"], ["ЭЛИТА", "Лучшие представители какой-либо сферы"], ["ЭПОХА", "Крупный исторический период"], ["ЭТИКА", "Нормы морали и делового поведения"], ["ЮМОР", "Способность видеть смешное и шутить"], ["ЮРИСТ", "Специалист в области законов и права"], ["ДЕБЮТ", "Начальная стадия шахматной партии"], ["КВАРЦ", "Минерал, используемый в часах и электронике"], ["ФЬОРД", "Узкий морской залив со скалистыми берегами"], ["ТЕМБР", "Уникальная окраска голоса или звука"], ["ФАКЕЛ", "Олимпийский символ с открытым огнём"], ["СПЛАВ", "Соединение нескольких металлов"], ["АЗАРТ", "Сильное увлечение игрой и риском"], ["АЛИБИ", "Доказательство непричастности к событию"], ["АМПИР", "Торжественный архитектурный стиль XIX века"], ["БАЛАНС", "Равновесие доходов и расходов или сил"], ["ВАКУУМ", "Пространство, полностью лишённое вещества"], ["ГРАНИТ", "Твёрдая горная порода для памятников и науки"], ["ДИЗАЙН", "Проектирование эстетики и удобства вещи"], ["ЗАПРОС", "Обращение к базе данных или поисковику"], ["ИНДЕКС", "Биржевой показатель или почтовый код"], ["ИНСАЙД", "Закрытая информация изнутри компании"], ["ИНСАЙТ", "Внезапное озарение и понимание сути"], ["ИРОНИЯ", "Тонкая насмешка, скрытая за серьёзностью"], ["КОДЕКС", "Свод законов или правил чести"], ["КОЗЫРЬ", "Решающий аргумент или старшая масть"], ["КОНТУР", "Внешнее очертание фигуры или схемы"], ["КРИЗИС", "Переломный момент в экономике или жизни"], ["КРИПТА", "Цифровые активы на базе блокчейна"], ["ЛИЗИНГ", "Долгосрочная аренда техники с правом выкупа"], ["ЛОГИКА", "Наука о правильном мышлении и выводах"], ["ЛОЗУНГ", "Краткий призыв или девиз кампании"], ["МАНЕВР", "Тактическое перемещение сил или фигур"], ["ОРБИТА", "Траектория движения планеты или спутника"], ["ОФЕРТА", "Официальное предложение заключить сделку"], ["ОФСАЙД", "Положение «вне игры» в футболе"], ["ПРИЗМА", "Стеклянный многогранник, разлагающий свет"], ["РАКУРС", "Точка съёмки объекта в фото и кино"], ["РЕВАНШ", "Повторный матч ради отыгрыша"], ["РЕМЕЙК", "Новая версия старого фильма или игры"], ["РЕСУРС", "Запас времени, денег или материалов"], ["САЛЬДО", "Разница между поступлениями и расходами"], ["СДЕЛКА", "Соглашение о покупке, продаже или партнёрстве"], ["СЕКТОР", "Отрасль экономики или часть круга"], ["СЕРВИС", "Уровень обслуживания или онлайн-платформа"], ["СИГНАЛ", "Передаваемый импульс или знак к действию"], ["СИНТЕЗ", "Объединение элементов в единое целое"], ["СЛОГАН", "Запоминающаяся рекламная фраза бренда"], ["СПИКЕР", "Выступающий с речью на конференции"], ["СПРИНТ", "Короткий забег на максимум или цикл в Agile"], ["СТАТУС", "Положение в обществе или состояние задачи"], ["СТУДИЯ", "Творческая мастерская или продакшн"], ["ТАЛАНТ", "Выдающиеся природные способности"], ["ТЕНДЕР", "Конкурсный отбор поставщиков на заказ"], ["ТЕОРИЯ", "Система знаний, объясняющая явления"], ["ТЕРМИН", "Точное специальное понятие в науке"], ["ТРОФЕЙ", "Кубок или награда за победу в турнире"], ["ТЮНИНГ", "Доработка и улучшение автомобиля"], ["ФАБУЛА", "Хронологическая основа сюжета"], ["ФАКТОР", "Существенное условие, влияющее на итог"], ["ФИАСКО", "Полный и громкий провал"], ["ФИЛЬТР", "Инструмент отсеивания лишних данных"], ["ФУТБОЛ", "Самая популярная командная игра с мячом"], ["ЦИКЛОН", "Мощный атмосферный вихрь"], ["ЦИТАТА", "Точная выдержка из речи или книги"], ["ШЕДЕВР", "Выдающееся произведение искусства"], ["ЭМОЦИЯ", "Внутреннее переживание и реакция человека"], ["ЭФФЕКТ", "Производимое впечатление или результат"], ["ЯНТАРЬ", "Окаменелая смола древних хвойных деревьев"], ["КОМПАС", "Прибор для определения сторон света"], ["МАГНИТ", "Тело, притягивающее металл"], ["РАКЕТА", "Космический носитель для выхода на орбиту"], ["ГАМБИТ", "Шахматный дебют с жертвой пешки ради темпа"], ["СЕРВЕР", "Мощный компьютер, обслуживающий сайты"], ["ДЕПЛОЙ", "Выкладка новой версии кода на сервер"], ["ТОКЕН", "Цифровой ключ доступа или единица текста ИИ"], ["БЭКЕНД", "Серверная часть веб-приложения"], ["МОНТАЖ", "Сборка видеоролика из отдельных сцен"], ["СИКВЕЛ", "Продолжение популярного фильма или игры"], ["АРБИТР", "Судья на футбольном поле или в споре"], ["ТАЙФУН", "Тропический ураган в Тихом океане"], ["ЭКСПЕРТ", "Признанный специалист в своей области"], ["СТАРТАП", "Молодая технологическая компания"], ["ТРАФИК", "Поток посетителей на сайт или машин"], ["АПГРЕЙД", "Обновление и улучшение системы"], ["КАПИТАЛ", "Средства, вложенные для получения прибыли"], ["ТРИУМФ", "Блестящая и громкая победа"], ["ТУРНИР", "Серия соревнований за главный приз"], ["ФОРВАРД", "Нападающий игрок в футболе"], ["КАПИТАН", "Лидер команды на поле с повязкой"], ["СТАДИОН", "Крупная арена для матчей и концертов"], ["ХЕТТРИК", "Три гола одного игрока за один матч"], ["ТАКТИКА", "Искусство ведения боя или шахматных комбинаций"], ["ТРИГГЕР", "Событие, мгновенно запускающее реакцию"], ["ЭМПАТИЯ", "Способность глубоко понимать чувства других"], ["ХАРИЗМА", "Яркая притягательность сильного лидера"], ["КАСТИНГ", "Отбор актёров на роли в проекте"], ["ТЕОРЕМА", "Утверждение, требующее доказательства"], ["КВАЗАР", "Сверхъяркое активное ядро далёкой галактики"], ["СПЕКТР", "Диапазон цветов или частот"], ["РЕЙТИНГ", "Числовая оценка уровня игрока или сервиса"], ["БЮДЖЕТ", "План доходов и расходов на период"], ["ПРОЕКТ", "Уникальная задача с целью и сроками"], ["ПАРТНЕР", "Союзник в бизнесе или игре"], ["КЛИЕНТ", "Покупатель товаров или заказчик услуг"], ["ПРОДУКТ", "Готовый товар или цифровой сервис"], ["МЕТРИКА", "Измеримый показатель эффективности"], ["АКЦИЯ", "Ценная бумага, дающая долю в компании"], ["КРЕДИТ", "Деньги в долг под проценты"], ["БИРЖА", "Площадка для торговли акциями и сырьём"], ["ВАЛЮТА", "Денежная единица государства"], ["ДОХОД", "Деньги, полученные от работы или активов"], ["ПРИБЫЛЬ", "Чистый заработок за вычетом расходов"], ["ВЫРУЧКА", "Общая сумма всех продаж бизнеса"], ["ПРОЦЕНТ", "Сотая доля числа или ставка по вкладу"], ["ДИАЛОГ", "Разговор между двумя людьми"], ["ВЕРДИКТ", "Окончательное решение судей"], ["ФЕНОМЕН", "Уникальное и редкое явление"], ["СИМВОЛ", "Условный знак, несущий глубокий смысл"], ["ЭЛЕМЕНТ", "Составная часть сложной системы"], ["ФОРМУЛА", "Краткая запись закона в математике"], ["МОМЕНТ", "Короткий миг или важная точка во времени"], ["СЕКРЕТ", "Скрытый способ или личная тайна"], ["РЕКОРД", "Высшее достижение в спорте или деле"], ["ЧЕМПИОН", "Победитель главного турнира"], ["МЕДАЛЬ", "Почётный знак отличия за победу"], ["КУБОК", "Главный приз спортивного первенства"]],
     wordsearch: [
       { theme: 'Финансы и Рынок', words: ['АУДИТ','МАРЖА','ЛИЗИНГ','ДИВИДЕНД','АКТИВ','САЛЬДО','КВОТА','ОФЕРТА','ДЕБЕТ','ИНДЕКС'] },
       { theme: 'Футбол и CR7', words: ['ПЕНАЛЬТИ','ОФСАЙД','ХЕТТРИК','ДРИБЛИНГ','МАДРИД','ТРОФЕЙ','СТАДИОН','ФОРВАРД','КАПИТАН','ТУРНИР'] },
@@ -3323,71 +3256,230 @@
   }
 
   // =========================================================================
-  // GAME 3: МИНИ-КРОССВОРД (EVERYDAY PUZZLES UX: TOP CLUE BAR + INSTANT GREEN/RED)
+  // GAME 3: ДИНАМИЧЕСКИЙ КРОССВОРД (БЕЗ ПОВТОРОВ СЛОВ • EVERYDAY PUZZLES UX)
   // =========================================================================
+  function generateDynamicCrossword() {
+    if (!Array.isArray(state.usedCrosswordWords)) state.usedCrosswordWords = [];
+    const usedSet = new Set(state.usedCrosswordWords);
+    let pool = PUZZLES.crosswordDict.filter(([w]) => !usedSet.has(w));
+
+    // Если игрок прошёл почти всю базу (осталось меньше 8 слов), начинаем новый цикл
+    if (pool.length < 8) {
+      state.usedCrosswordWords = [];
+      saveState();
+      pool = [...PUZZLES.crosswordDict];
+      showToast('🎉 Все слова пройдены! Словарь кроссвордов обновлён.');
+    }
+
+    const gridSize = 7;
+    const targetWords = state.hardMode ? 7 : 6;
+    let best = null;
+    let bestScore = -1;
+
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      const starters = shuffled.filter(([w]) => w.length >= 5);
+      const [firstW, firstC] = starters.length ? starters[0] : shuffled[0];
+
+      const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+      const placed = [];
+      const inThis = new Set([firstW]);
+
+      const r0 = Math.floor(gridSize / 2);
+      const c0 = Math.floor((gridSize - firstW.length) / 2);
+      for (let i = 0; i < firstW.length; i++) grid[r0][c0 + i] = firstW[i];
+      placed.push({ word: firstW, clue: firstC, r: r0, c: c0, dir: 'across' });
+
+      const canPlace = (word, r, c, d) => {
+        const L = word.length;
+        if (d === 'across') {
+          if (c < 0 || c + L > gridSize || r < 0 || r >= gridSize) return 0;
+          if (c > 0 && grid[r][c - 1] !== null) return 0;
+          if (c + L < gridSize && grid[r][c + L] !== null) return 0;
+          let inter = 0;
+          for (let i = 0; i < L; i++) {
+            const cur = grid[r][c + i];
+            if (cur !== null) {
+              if (cur !== word[i]) return 0;
+              inter += 1;
+            } else {
+              if (r > 0 && grid[r - 1][c + i] !== null) return 0;
+              if (r + 1 < gridSize && grid[r + 1][c + i] !== null) return 0;
+            }
+          }
+          return inter;
+        } else {
+          if (r < 0 || r + L > gridSize || c < 0 || c >= gridSize) return 0;
+          if (r > 0 && grid[r - 1][c] !== null) return 0;
+          if (r + L < gridSize && grid[r + L][c] !== null) return 0;
+          let inter = 0;
+          for (let i = 0; i < L; i++) {
+            const cur = grid[r + i][c];
+            if (cur !== null) {
+              if (cur !== word[i]) return 0;
+              inter += 1;
+            } else {
+              if (c > 0 && grid[r + i][c - 1] !== null) return 0;
+              if (c + 1 < gridSize && grid[r + i][c + 1] !== null) return 0;
+            }
+          }
+          return inter;
+        }
+      };
+
+      let totalInter = 0;
+      for (let pass = 0; pass < 2; pass++) {
+        for (const [w, cl] of shuffled) {
+          if (placed.length >= targetWords) break;
+          if (inThis.has(w)) continue;
+          let bestPos = null, bestI = 0;
+          for (let r = 0; r < gridSize; r++) {
+            for (let c = 0; c < gridSize; c++) {
+              const ch = grid[r][c];
+              if (ch === null) continue;
+              for (let idx = 0; idx < w.length; idx++) {
+                if (w[idx] !== ch) continue;
+                for (const d of ['across', 'down']) {
+                  const sr = d === 'across' ? r : r - idx;
+                  const sc = d === 'across' ? c - idx : c;
+                  const inter = canPlace(w, sr, sc, d);
+                  if (inter > bestI) {
+                    bestI = inter;
+                    bestPos = { sr, sc, d };
+                  }
+                }
+              }
+            }
+          }
+          if (bestPos) {
+            const { sr, sc, d } = bestPos;
+            for (let i = 0; i < w.length; i++) {
+              if (d === 'across') grid[sr][sc + i] = w[i];
+              else grid[sr + i][sc] = w[i];
+            }
+            placed.push({ word: w, clue: cl, r: sr, c: sc, dir: d });
+            inThis.add(w);
+            totalInter += bestI;
+          }
+        }
+      }
+
+      const score = placed.length * 12 + totalInter * 6;
+      if (score > bestScore) {
+        bestScore = score;
+        best = { grid, placed };
+      }
+    }
+
+    // Обрезаем пустые края сетки
+    const { grid, placed } = best;
+    let minR = gridSize, maxR = 0, minC = gridSize, maxC = 0;
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        if (grid[r][c] !== null) {
+          if (r < minR) minR = r;
+          if (r > maxR) maxR = r;
+          if (c < minC) minC = c;
+          if (c > maxC) maxC = c;
+        }
+      }
+    }
+
+    const rows = maxR - minR + 1;
+    const cols = maxC - minC + 1;
+    const trimmed = Array.from({ length: rows }, (_, r) =>
+      Array.from({ length: cols }, (_, c) => grid[r + minR][c + minC] || '.')
+    );
+
+    const words = placed.map(item => ({
+      word: item.word,
+      clue: item.clue,
+      r: item.r - minR,
+      c: item.c - minC,
+      dir: item.dir
+    }));
+
+    // Присваиваем классические номера клеток (сверху вниз, слева направо)
+    const startMap = {};
+    let nextNum = 1;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const startsHere = words.filter(w => w.r === r && w.c === c);
+        if (startsHere.length) {
+          startMap[`${r},${c}`] = nextNum;
+          startsHere.forEach(w => { w.num = nextNum; });
+          nextNum += 1;
+        }
+      }
+    }
+
+    words.sort((a, b) => a.num - b.num || (a.dir === 'across' ? -1 : 1));
+
+    // Сразу удаляем все выпавшие слова из доступного пула, чтобы они НИКОГДА не повторялись
+    const newlyUsed = words.map(w => w.word);
+    state.usedCrosswordWords = [...new Set([...(state.usedCrosswordWords || []), ...newlyUsed])];
+    saveState();
+
+    return { v: 2, rows, cols, grid: trimmed, words, startMap };
+  }
+
   function initCrosswordGame(stage, saved) {
-    const p = saved?.puzzle || pickPuzzle('cw', PUZZLES.crossword);
-    const userGrid = saved?.userGrid ? saved.userGrid.map(r => r.slice()) : p.grid.map(row => row.map(ch => ch === '.' ? '.' : ''));
-    let sel = saved?.sel ? [...saved.sel] : [0, 0], dir = saved?.dir || 'across', finished = false;
+    const validSaved = saved && saved.puzzle && saved.puzzle.v === 2 && Array.isArray(saved.userGrid);
+    const p = validSaved ? saved.puzzle : generateDynamicCrossword();
+    const rows = p.rows, cols = p.cols;
+    const userGrid = validSaved
+      ? saved.userGrid.map(r => r.slice())
+      : p.grid.map(row => row.map(ch => ch === '.' ? '.' : ''));
+
+    const firstWord = p.words[0];
+    let sel = validSaved && saved.sel ? [...saved.sel] : [firstWord.r, firstWord.c];
+    let dir = validSaved && saved.dir ? saved.dir : firstWord.dir;
+    let finished = false;
 
     function persist() {
       if (!finished) saveGameSession('crossword', { puzzle: p, userGrid, sel, dir, lives: gameLives });
     }
 
-    // Определяем начало слова и подсказку для выбранной клетки и направления
-    function getWordBounds(r, c, d) {
-      let sr = r, sc = c;
-      if (d === 'across') {
-        while (sc > 0 && p.grid[sr][sc - 1] !== '.') sc -= 1;
-        const cells = [];
-        let cc = sc;
-        while (cc < 5 && p.grid[sr][cc] !== '.') { cells.push([sr, cc]); cc += 1; }
-        return { startR: sr, startC: sc, cells };
-      } else {
-        while (sr > 0 && p.grid[sr - 1][sc] !== '.') sr -= 1;
-        const cells = [];
-        let rr = sr;
-        while (rr < 5 && p.grid[rr][sc] !== '.') { cells.push([rr, sc]); rr += 1; }
-        return { startR: sr, startC: sc, cells };
+    function getCellsOfWord(wObj) {
+      const cells = [];
+      for (let i = 0; i < wObj.word.length; i++) {
+        cells.push(wObj.dir === 'across' ? [wObj.r, wObj.c + i] : [wObj.r + i, wObj.c]);
       }
+      return cells;
     }
 
-    function getActiveClueInfo() {
+    function findWordsAt(r, c) {
+      return p.words.filter(w => {
+        if (w.dir === 'across') return r === w.r && c >= w.c && c < w.c + w.word.length;
+        return c === w.c && r >= w.r && r < w.r + w.word.length;
+      });
+    }
+
+    function getActiveWordObj() {
       const [r, c] = sel;
-      let bounds = getWordBounds(r, c, dir);
-      // Если в текущем направлении слово из 1 буквы, пробуем перпендикулярное
-      if (bounds.cells.length <= 1) {
-        const altDir = dir === 'across' ? 'down' : 'across';
-        const altBounds = getWordBounds(r, c, altDir);
-        if (altBounds.cells.length > 1) {
-          dir = altDir;
-          bounds = altBounds;
-        }
-      }
-      const list = dir === 'across' ? p.across : p.down;
-      const idx = list.findIndex(item => item.r === bounds.startR && item.c === bounds.startC);
-      const clueObj = idx !== -1 ? list[idx] : list[0];
-      return {
-        dirLabel: dir === 'across' ? 'По горизонтали →' : 'По вертикали ↓',
-        num: idx !== -1 ? idx + 1 : 1,
-        clue: clueObj ? clueObj.clue : 'Заполните слово',
-        cells: bounds.cells
-      };
+      const atCell = findWordsAt(r, c);
+      if (!atCell.length) return p.words[0];
+      const match = atCell.find(w => w.dir === dir);
+      if (match) return match;
+      dir = atCell[0].dir;
+      return atCell[0];
     }
 
-    // Собираем список всех слов для удобного переключения стрелками < >
-    const allClues = [
-      ...p.across.map((item, i) => ({ dir: 'across', r: item.r, c: item.c, num: i + 1, clue: item.clue })),
-      ...p.down.map((item, i) => ({ dir: 'down', r: item.r, c: item.c, num: i + 1, clue: item.clue }))
-    ];
+    const remainingPoolCount = Math.max(0, PUZZLES.crosswordDict.length - (state.usedCrosswordWords || []).length);
 
     stage.innerHTML = `
       <div class="w-full max-w-md flex flex-col items-center">
+        <!-- Counter of remaining unique words -->
+        <div class="w-full flex items-center justify-between text-[11px] font-bold text-slate-400 px-1 mb-2">
+          <span>Слов в кроссворде: <strong class="text-white">${p.words.length}</strong></span>
+          <span>Новых слов в запасе: <strong class="text-emerald-400">${remainingPoolCount}</strong></span>
+        </div>
+
         <!-- Everyday Puzzles Style Active Clue Banner -->
-        <div class="w-full mb-4 rounded-2xl bg-gradient-to-r from-sky-500/20 via-indigo-500/20 to-amber-500/15 border-2 border-sky-400/40 p-3.5 shadow-lg">
+        <div class="w-full mb-3.5 rounded-2xl bg-gradient-to-r from-sky-500/20 via-indigo-500/20 to-amber-500/15 border-2 border-sky-400/40 p-3 shadow-lg">
           <div class="flex items-center justify-between gap-2 mb-1">
             <button id="cw-prev-clue" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 font-black text-sm flex items-center justify-center">◀</button>
-            <button id="cw-dir-pill" class="px-3 py-1 rounded-full bg-sky-400/20 text-sky-300 font-black text-[11px] uppercase tracking-wider">По горизонтали →</button>
+            <button id="cw-dir-pill" class="px-3 py-1 rounded-full bg-sky-400/20 text-sky-300 font-black text-[11px] uppercase tracking-wider">№1 • По горизонтали →</button>
             <button id="cw-next-clue" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 font-black text-sm flex items-center justify-center">▶</button>
           </div>
           <div id="cw-active-clue" class="text-center font-extrabold text-sm sm:text-base text-white-adaptive min-h-[2.5rem] flex items-center justify-center px-2">
@@ -3395,8 +3487,8 @@
           </div>
         </div>
 
-        <!-- 5x5 Grid -->
-        <div id="cw-grid" class="grid grid-cols-5 gap-1.5 mb-4 p-2 rounded-2xl bg-black/30 border border-white/10"></div>
+        <!-- Dynamic Responsive Crossword Grid -->
+        <div id="cw-grid" class="grid gap-1 sm:gap-1.5 mb-4 p-2 rounded-2xl bg-black/30 border border-white/10 w-full" style="max-width: ${Math.min(400, cols * 58)}px; grid-template-columns: repeat(${cols}, minmax(0, 1fr));"></div>
 
         <!-- Custom Russian Keyboard -->
         <div class="w-full flex flex-col gap-1" id="cw-mobile-kb"></div>
@@ -3406,51 +3498,62 @@
     const checkWin = () => p.grid.every((row, r) => row.every((ch, c) => ch === '.' || userGrid[r][c] === ch));
 
     function render() {
-      const info = getActiveClueInfo();
-      const activeSet = new Set(info.cells.map(([rr, cc]) => `${rr},${cc}`));
+      const activeWord = getActiveWordObj();
+      const activeCells = getCellsOfWord(activeWord);
+      const activeSet = new Set(activeCells.map(([rr, cc]) => `${rr},${cc}`));
 
-      document.getElementById('cw-dir-pill').textContent = `${info.dirLabel} • №${info.num}`;
-      document.getElementById('cw-active-clue').textContent = info.clue;
+      document.getElementById('cw-dir-pill').textContent = `№${activeWord.num} • ${activeWord.dir === 'across' ? 'По горизонтали →' : 'По вертикали ↓'} (${activeWord.word.length} б.)`;
+      document.getElementById('cw-active-clue').textContent = activeWord.clue;
 
       const gridEl = document.getElementById('cw-grid');
       let html = '';
-      for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
-        if (p.grid[r][c] === '.') {
-          html += `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-950/80 border border-white/5"></div>`;
-        } else {
-          const isSel = sel[0] === r && sel[1] === c;
-          const inWord = activeSet.has(`${r},${c}`);
-          const val = userGrid[r][c];
-          const targetCh = p.grid[r][c];
-          const isCorrect = val !== '' && val === targetCh;
-          const isWrong = val !== '' && val !== targetCh;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (p.grid[r][c] === '.') {
+            html += `<div class="aspect-square rounded-lg bg-slate-950/50 border border-white/[0.03]"></div>`;
+          } else {
+            const isSel = sel[0] === r && sel[1] === c;
+            const inWord = activeSet.has(`${r},${c}`);
+            const val = userGrid[r][c];
+            const targetCh = p.grid[r][c];
+            const isCorrect = val !== '' && val === targetCh;
+            const isWrong = val !== '' && val !== targetCh;
+            const numLabel = p.startMap[`${r},${c}`] || '';
 
-          let cls = 'surface-pill border text-white-adaptive';
-          if (isCorrect) {
-            cls = isSel
-              ? 'bg-emerald-500 text-white border-white ring-4 ring-amber-300/70'
-              : 'bg-emerald-500/85 text-white border-emerald-300';
-          } else if (isWrong) {
-            cls = isSel
-              ? 'bg-rose-500 text-white border-white ring-4 ring-rose-300/70 shake'
-              : 'bg-rose-500/85 text-white border-rose-300';
-          } else if (isSel) {
-            cls = 'bg-amber-400 text-slate-950 border-white ring-4 ring-amber-300/60 scale-105';
-          } else if (inWord) {
-            cls = 'bg-sky-500/25 text-white-adaptive border-sky-400';
+            let cls = 'surface-pill border text-white-adaptive';
+            if (isCorrect) {
+              cls = isSel
+                ? 'bg-emerald-500 text-white border-white ring-2 ring-amber-300'
+                : 'bg-emerald-500/85 text-white border-emerald-300';
+            } else if (isWrong) {
+              cls = isSel
+                ? 'bg-rose-500 text-white border-white ring-2 ring-rose-300 shake'
+                : 'bg-rose-500/85 text-white border-rose-300';
+            } else if (isSel) {
+              cls = 'bg-amber-400 text-slate-950 border-white ring-2 ring-amber-200 scale-105 z-10';
+            } else if (inWord) {
+              cls = 'bg-sky-500/25 text-white-adaptive border-sky-400';
+            }
+
+            html += `<button data-r="${r}" data-c="${c}" class="cw-cell relative aspect-square rounded-lg sm:rounded-xl border-2 font-black text-base sm:text-xl flex items-center justify-center transition ${cls}">
+              ${numLabel ? `<span class="absolute top-0.5 left-1 text-[8px] sm:text-[9px] font-black opacity-75 leading-none pointer-events-none">${numLabel}</span>` : ''}
+              <span>${val}</span>
+            </button>`;
           }
-
-          html += `<button data-r="${r}" data-c="${c}" class="cw-cell w-12 h-12 sm:w-14 sm:h-14 rounded-xl border-2 font-black text-xl sm:text-2xl flex items-center justify-center transition ${cls}">${val}</button>`;
         }
       }
       gridEl.innerHTML = html;
 
       gridEl.querySelectorAll('.cw-cell').forEach(b => b.addEventListener('click', () => {
         const r = +b.dataset.r, c = +b.dataset.c;
+        const wordsHere = findWordsAt(r, c);
         if (sel[0] === r && sel[1] === c) {
-          dir = dir === 'across' ? 'down' : 'across';
+          if (wordsHere.length > 1) dir = dir === 'across' ? 'down' : 'across';
         } else {
           sel = [r, c];
+          if (!wordsHere.some(w => w.dir === dir) && wordsHere.length) {
+            dir = wordsHere[0].dir;
+          }
         }
         sfx.tap();
         render();
@@ -3459,10 +3562,26 @@
     }
 
     function advanceCursor(step = 1) {
-      const info = getActiveClueInfo();
-      const pos = info.cells.findIndex(([rr, cc]) => rr === sel[0] && cc === sel[1]);
-      if (pos !== -1 && info.cells[pos + step]) {
-        sel = [...info.cells[pos + step]];
+      const activeWord = getActiveWordObj();
+      const cells = getCellsOfWord(activeWord);
+      const pos = cells.findIndex(([rr, cc]) => rr === sel[0] && cc === sel[1]);
+      if (step > 0) {
+        // Ищем следующую незаполненную/неверную клетку в этом слове
+        for (let i = pos + 1; i < cells.length; i++) {
+          const [rr, cc] = cells[i];
+          if (userGrid[rr][cc] !== p.grid[rr][cc]) { sel = [rr, cc]; return; }
+        }
+        if (cells[pos + 1]) { sel = [...cells[pos + 1]]; return; }
+        // Если слово полностью разгадано — автоматически переходим к следующему нерешённому слову
+        const curIdx = p.words.indexOf(activeWord);
+        for (let offset = 1; offset < p.words.length; offset++) {
+          const cand = p.words[(curIdx + offset) % p.words.length];
+          const candCells = getCellsOfWord(cand);
+          const emptyCell = candCells.find(([rr, cc]) => userGrid[rr][cc] !== p.grid[rr][cc]);
+          if (emptyCell) { dir = cand.dir; sel = [...emptyCell]; return; }
+        }
+      } else if (pos > 0) {
+        sel = [...cells[pos - 1]];
       }
     }
 
@@ -3481,30 +3600,35 @@
       render();
       if (checkWin()) {
         finished = true;
-        setTimeout(() => completeGame('crossword', 'Кроссворд решён без единого белого пятна!'), 250);
+        setTimeout(() => completeGame('crossword', `Кроссворд из ${p.words.length} уникальных слов решён! Все слова удалены из базы повторов.`), 250);
       } else {
         persist();
       }
     }
 
     function cycleClue(delta) {
-      const info = getActiveClueInfo();
-      const bounds = getWordBounds(sel[0], sel[1], dir);
-      let idx = allClues.findIndex(item => item.dir === dir && item.r === bounds.startR && item.c === bounds.startC);
-      if (idx === -1) idx = 0;
-      const next = allClues[(idx + delta + allClues.length) % allClues.length];
+      const activeWord = getActiveWordObj();
+      const idx = Math.max(0, p.words.indexOf(activeWord));
+      const next = p.words[(idx + delta + p.words.length) % p.words.length];
       dir = next.dir;
-      sel = [next.r, next.c];
+      const cells = getCellsOfWord(next);
+      const firstEmpty = cells.find(([rr, cc]) => userGrid[rr][cc] !== p.grid[rr][cc]) || cells[0];
+      sel = [...firstEmpty];
       sfx.tap();
       render();
       persist();
     }
 
     document.getElementById('cw-dir-pill').addEventListener('click', () => {
-      dir = dir === 'across' ? 'down' : 'across';
-      sfx.tap();
-      render();
-      persist();
+      const wordsHere = findWordsAt(sel[0], sel[1]);
+      if (wordsHere.length > 1) {
+        dir = dir === 'across' ? 'down' : 'across';
+        sfx.tap();
+        render();
+        persist();
+      } else {
+        cycleClue(1);
+      }
     });
     document.getElementById('cw-prev-clue').addEventListener('click', () => cycleClue(-1));
     document.getElementById('cw-next-clue').addEventListener('click', () => cycleClue(1));
@@ -3541,15 +3665,28 @@
 
     activeHintFn = () => {
       if (finished) return;
-      for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) if (p.grid[r][c] !== '.' && userGrid[r][c] !== p.grid[r][c]) {
-        if (!spendCoinsForHint(20)) return;
-        userGrid[r][c] = p.grid[r][c];
-        sel = [r, c];
-        render();
-        if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); }
-        else persist();
-        return;
+      const [sr, sc] = sel;
+      let targetCell = null;
+      if (p.grid[sr][sc] !== '.' && userGrid[sr][sc] !== p.grid[sr][sc]) {
+        targetCell = [sr, sc];
+      } else {
+        outer: for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (p.grid[r][c] !== '.' && userGrid[r][c] !== p.grid[r][c]) {
+              targetCell = [r, c];
+              break outer;
+            }
+          }
+        }
       }
+      if (!targetCell || !spendCoinsForHint(20)) return;
+      const [tr, tc] = targetCell;
+      userGrid[tr][tc] = p.grid[tr][tc];
+      sel = [tr, tc];
+      advanceCursor(1);
+      render();
+      if (checkWin()) { finished = true; setTimeout(() => completeGame('crossword'), 200); }
+      else persist();
     };
     render();
   }
@@ -4344,7 +4481,7 @@
 
   document.getElementById('btn-profile').addEventListener('click', () => {
     sfx.tap();
-    openModal('🏆 Профиль borevichh quiz #7 (v12)', '', `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`);
+    openModal('🏆 Профиль borevichh quiz #7 (v13)', '', `<button id="prof-ok" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-950 font-black text-sm">Закрыть</button>`);
     renderProfileTabContent('leaders');
     document.getElementById('prof-ok').addEventListener('click', closeModal);
   });
