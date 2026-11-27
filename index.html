@@ -2253,10 +2253,10 @@
         }
 
         if (isHint) {
-          cell.dot.className = 'absolute inset-[6%] rounded-full border-[4px] border-emerald-500 bg-emerald-500/20 pointer-events-none animate-pulse';
+          cell.dot.className = 'absolute inset-[5%] rounded-full border-[4px] border-neutral-800/75 bg-black/10 pointer-events-none animate-pulse';
         } else if (isLegal) {
           cell.dot.className = p
-            ? 'absolute inset-[8%] rounded-full border-[4px] border-emerald-500/85 pointer-events-none'
+            ? 'absolute inset-[6%] rounded-full border-[5px] border-sky-400/90 shadow-[0_0_10px_rgba(56,189,248,0.45)] pointer-events-none'
             : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[30%] rounded-full bg-black/25 pointer-events-none';
         } else {
           cell.dot.className = 'hidden';
@@ -2285,14 +2285,11 @@
 
       usedHint = true;
       hintSquare = [next.fr, next.fc];
-      hintTargetSquare = [next.tr, next.tc];
+      hintTargetSquare = null;
       selected = [next.fr, next.fc];
-      // Показываем ТОЛЬКО 1 правильный ход, чтобы не сбивать игрока лишними кружками
-      const allLegals = getLegalTargetsForSquareShared(board, next.fr, next.fc, playerColor, castling, epSquare);
-      const exactMove = allLegals.filter(m => m[2] === next.tr && m[3] === next.tc);
-      legalForSel = exactMove.length ? exactMove : [[next.fr, next.fc, next.tr, next.tc]];
+      legalForSel = getLegalTargetsForSquareShared(board, next.fr, next.fc, playerColor, castling, epSquare);
       sfx.good();
-      showToast('Подсвечен единственный правильный ход!');
+      showToast('Подсвечена фигура, которой нужно походить!');
       persistPuzzle();
       render('prompt');
     };
@@ -3067,7 +3064,7 @@
 
         if (isLegal) {
           cell.dot.className = p
-            ? 'legal-dot absolute inset-[8%] border-[4px] border-emerald-500/85 rounded-full pointer-events-none'
+            ? 'legal-dot absolute inset-[6%] border-[5px] border-sky-400/90 shadow-[0_0_10px_rgba(56,189,248,0.45)] rounded-full pointer-events-none'
             : 'legal-dot absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[30%] rounded-full bg-black/25 pointer-events-none';
         } else {
           cell.dot.className = 'legal-dot hidden';
